@@ -24,6 +24,7 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -34,6 +35,8 @@ import java.util.List;
 
 public class XenoEntity extends Monster {
     private static final EntityDataAccessor<Boolean> BIPED = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CLIMB = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> HANG = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ATTACK = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.INT);
 
     public final Caste caste;
@@ -68,7 +71,67 @@ public class XenoEntity extends Monster {
         super.defineSynchedData();
         entityData.define(BIPED, false);
         entityData.define(ATTACK, 0);
+        entityData.define(CLIMB, false);
+        entityData.define(HANG, false);
     }
+    public boolean isClimbing() { return entityData.get(CLIMB); }
+    public boolean isHanging() { return entityData.get(HANG); }
+    public boolean canHang() { return caste.attacks.contains(Attack.DROP_STRIKE); }
+    private int hangTimer = 100, climbGrace;
+    private boolean landed;
+    @Override protected net.minecraft.world.entity.ai.navigation.PathNavigation createNavigation(Level l) { return new net.minecraft.world.entity.ai.navigation.WallClimberNavigation(this, l); }
+    @Override public boolean onClimbable() { return isClimbing(); }
+    @Override public boolean isImmobile() { return isHanging() || super.isImmobile(); }
+    @Override public boolean causeFallDamage(float f, float m, DamageSource s) { return false; }
+
+    /** Cling to a ceiling above (dark places only, called from idle AI). */
+    public boolean tryHang() {
+        if (level().isClientSide || isHanging() || !canHang() || isInWater()) return false;
+        BlockPos base = blockPosition();
+        double ceil = Double.NaN;
+        for (int dy = 1; dy <= 7; dy++) {
+            BlockPos c = base.above(dy); var st = level().getBlockState(c);
+            if (st.isFaceSturdy(level(), c, net.minecraft.core.Direction.DOWN)) { ceil = c.getY(); break; }
+            if (!st.getCollisionShape(level(), c).isEmpty()) return false;
+        }
+        if (Double.isNaN(ceil)) return false;
+        boolean wasBiped = isBiped();
+        entityData.set(BIPED, false); refreshDimensions();
+        double ny = ceil - getBbHeight() - 0.02;
+        if (ny < getY() || !level().noCollision(this, getBoundingBox().move(0, ny - getY(), 0))) { if (wasBiped) entityData.set(BIPED, true); return false; }
+        setPos(getX(), ny, getZ()); setNoGravity(true); setDeltaMovement(Vec3.ZERO); entityData.set(HANG, true); getNavigation().stop();
+        return true;
+    }
+    private void unhang() { entityData.set(HANG, false); setNoGravity(false); }
+
+    /** Hanging: watch for prey, creep along the ceiling toward it, then drop. */
+    private void tickHang() {
+        setDeltaMovement(Vec3.ZERO);
+        BlockPos above = BlockPos.containing(getX(), getBoundingBox().maxY + 0.05, getZ());
+        if (!level().getBlockState(above).isFaceSturdy(level(), above, net.minecraft.core.Direction.DOWN)) { unhang(); return; }
+        LivingEntity t = getTarget();
+        if (t == null || !t.isAlive() || friendly(t)) {
+            t = null; double best = 1e9;
+            for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(14, 8, 14), e -> e != this && e.isAlive() && !friendly(e)
+                    && (e instanceof Player p ? !p.isCreative() && !p.isSpectator() : e instanceof net.minecraft.world.entity.npc.AbstractVillager || faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy))) {
+                double d = distanceToSqr(e); if (d < best) { best = d; t = e; }
+            }
+            setTarget(t);
+        }
+        if (t == null) return;
+        double dx = t.getX() - getX(), dz = t.getZ() - getZ(), hd = Math.sqrt(dx * dx + dz * dz);
+        float yaw = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90f;
+        setYRot(Mth.rotLerp(0.3f, getYRot(), yaw)); setYBodyRot(getYRot()); setYHeadRot(getYRot());
+        if (hd < 4.8 && getY() - t.getY() < 9 && hasLineOfSight(t)) { startAttack(Attack.DROP_STRIKE); return; }
+        if (hd < 24 && hd > 0.1) {
+            Vec3[] steps = {new Vec3(dx / hd * 0.17, 0, dz / hd * 0.17), new Vec3(Math.signum(dx) * 0.17, 0, 0), new Vec3(0, 0, Math.signum(dz) * 0.17)};
+            for (Vec3 st : steps) {
+                BlockPos n = BlockPos.containing(getX() + st.x, getBoundingBox().maxY + 0.05, getZ() + st.z);
+                if (level().noCollision(this, getBoundingBox().move(st)) && level().getBlockState(n).isFaceSturdy(level(), n, net.minecraft.core.Direction.DOWN)) { setPos(getX() + st.x, getY(), getZ() + st.z); break; }
+            }
+        }
+    }
+
     public boolean isBiped() { return entityData.get(BIPED); }
     public Attack attack() { return Attack.values()[entityData.get(ATTACK)]; }
 
@@ -114,7 +177,7 @@ public class XenoEntity extends Monster {
     // ---------- attack control ----------
     public void startAttack(Attack a) {
         entityData.set(ATTACK, a.ordinal());
-        attackTick = 0; held = null; impaled = false;
+        attackTick = 0; held = null; impaled = false; landed = false;
         LivingEntity t = getTarget();
         if (t != null) { vx = t.getX() - getX(); vz = t.getZ() - getZ(); double l = Math.sqrt(vx * vx + vz * vz); if (l > 1e-4) { vx /= l; vz /= l; } }
         if (a == Attack.SCREECH) playSound(SoundEvents.ENDER_DRAGON_GROWL, 3f, 1.7f);
@@ -126,7 +189,7 @@ public class XenoEntity extends Monster {
         int lock = switch (a) { case POUNCE -> 80; case SPIT -> 50; case SCREECH -> 260; case GRAB -> 120; case CHARGE -> 140; case IMPALE -> 120; case SLAM -> 60; case TAIL_SWEEP -> 50;
             case STOMP -> 100; case GRAB_SLAM -> 160; case SHADOW_STRIKE -> 90; case IMPREGNATE -> 220; case DEATH_ROLL -> 140; case LEAP_SLASH -> 70; case SPORE -> 200;
             case LOB -> 60; case VOLLEY -> 80; case VOMIT -> 100; case SUMMON -> 500; case FACE_TOSS -> 120; case WEB -> 140; case HORN_TOSS -> 80; case CREST_RAM -> 70;
-            case FLAIL -> 90; case FRENZY -> 120; case BLADE_FLURRY -> 100; case MULTI_STAB -> 80; default -> 0; };
+            case FLAIL -> 90; case DROP_STRIKE -> 120; case FRENZY -> 120; case BLADE_FLURRY -> 100; case MULTI_STAB -> 80; default -> 0; };
         if (lock > 0) lockout.put(a, lock);
         entityData.set(ATTACK, 0);
         cooldown = (int) ((8 + random.nextInt(14)) * (1 - 0.7f * caste.ferocity()) * (0.7f + 0.3f * caste.weight()));
@@ -147,6 +210,16 @@ public class XenoEntity extends Monster {
         lockout.replaceAll((k, v) -> v - 1);
         lockout.values().removeIf(v -> v <= 0);
         if (getTarget() != null && friendly(getTarget())) setTarget(null);
+        {
+            if (getTarget() != null) climbGrace = 40; else if (climbGrace > 0) climbGrace--;     // brief target loss mid-wall must not drop us
+            boolean cl = !isHanging() && horizontalCollision && caste.weight() < 1.5f && climbGrace > 0;
+            if (cl != isClimbing()) entityData.set(CLIMB, cl);
+        }
+        if (isHanging() && attack() == Attack.NONE) tickHang();
+        else if (!isHanging() && canHang() && getTarget() == null && attack() == Attack.NONE && --hangTimer <= 0) {
+            hangTimer = 120 + random.nextInt(240);
+            if (random.nextInt(3) == 0 && level().getMaxLocalRawBrightness(blockPosition()) < 8) tryHang();
+        }
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
@@ -163,6 +236,7 @@ public class XenoEntity extends Monster {
     }
 
     private void updateStance() {
+        if (isHanging()) return;
         if (caste.stance != 1) { if (isBiped() != (caste.stance == 2)) entityData.set(BIPED, caste.stance == 2); return; }
         if (stanceTimer > 0) { stanceTimer--; return; }
         LivingEntity t = getTarget();
@@ -338,6 +412,20 @@ public class XenoEntity extends Monster {
             case LEAP_SLASH -> {
                 if (t == 8) { setDeltaMovement(vx * 0.95, 0.5, vz * 0.95); hasImpulse = true; playSound(SoundEvents.RAVAGER_ROAR, 1f, 1.7f); }
                 if (t >= 9 && t <= 22) for (LivingEntity e : around(1.6)) if (!sweptAlready(e) && strike(e, 1.1f, 3.0, 0.5)) markSwept(e);
+            }
+            case DROP_STRIKE -> {
+                if (t == 1) {
+                    boolean hung = isHanging(); if (hung) unhang();
+                    Vec3 d = target != null ? target.position().subtract(position()).multiply(1, 0, 1) : Vec3.ZERO; double l = d.length();
+                    Vec3 dir = l > 1e-3 ? d.scale(1 / l) : fwd();
+                    setDeltaMovement(dir.x * Math.min(0.55, l * 0.13), hung ? -0.5 : 0.55, dir.z * Math.min(0.55, l * 0.13)); hasImpulse = true;
+                    playSound(SoundEvents.RAVAGER_ROAR, 1.5f, 1.8f);
+                }
+                if (t > 3 && onGround() && !landed) {
+                    landed = true; dust(getX(), getY(), getZ(), 14); playSound(SoundEvents.GENERIC_EXPLODE, 1.2f, 0.9f);
+                    for (LivingEntity e : around(3.6)) if (strike(e, 1.8f, 6, 0.9)) e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1));
+                    attackTick = Math.max(attackTick, a.duration - 12);
+                }
             }
             case FLAIL -> {
                 if (t >= a.hit && t <= a.hit + 24 && (t - a.hit) % 3 == 0) {
@@ -594,6 +682,6 @@ public class XenoEntity extends Monster {
         return e != MobEffects.POISON && e != MobEffects.WITHER && e != MobEffects.CONFUSION && e != MobEffects.HUNGER && super.canBeAffected(i);
     }
 
-    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putBoolean("Biped", isBiped()); }
-    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); if (tag.contains("Biped") && caste.stance == 1) entityData.set(BIPED, tag.getBoolean("Biped")); }
+    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putBoolean("Biped", isBiped()); tag.putBoolean("Hang", isHanging()); }
+    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); if (tag.contains("Biped") && caste.stance == 1) entityData.set(BIPED, tag.getBoolean("Biped")); if (tag.getBoolean("Hang")) { entityData.set(HANG, true); entityData.set(BIPED, false); setNoGravity(true); } }
 }

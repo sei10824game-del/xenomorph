@@ -36,7 +36,8 @@ public enum Attack {
     FACE_TOSS(32, 14, 3, 14),       // hurl facehuggers
     WEB(26, 11, 4, 14),             // sticky strand, reel prey in
     MULTI_STAB(34, 8, 0, 4.2),      // all legs piston-stab
-    CREST_RAM(26, 11, 0, 4);        // crest headbutt, stun
+    CREST_RAM(26, 11, 0, 4),        // crest headbutt, stun
+    DROP_STRIKE(30, 10, 0, 0);      // ceiling ambush: drop onto prey (only chosen from the hanging state)
 
     public final int duration, hit;
     public final double min, max;

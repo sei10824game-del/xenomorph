@@ -24,7 +24,9 @@ public class XenoAttackGoal extends Goal {
         if (t == null || x.attack() != Attack.NONE) return;
         double d = Math.sqrt(x.distanceToSqr(t));
         x.getLookControl().setLookAt(t, 30, 30);
-        if (--repath <= 0) {
+        if (x.isClimbing()) {                                  // on a wall: keep pressing toward the prey, don't let path recalcs pull it back down
+            x.getNavigation().stop(); x.getMoveControl().setWantedPosition(t.getX(), t.getY(), t.getZ(), 1.3);
+        } else if (--repath <= 0) {
             repath = 4 + x.getRandom().nextInt(4);
             double sp = d > 6 && !x.isBiped() ? 1.5 : 1.15;
             // no path (big body, odd terrain, unreachable): steer straight at the target instead of standing still

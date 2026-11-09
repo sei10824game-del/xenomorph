@@ -76,5 +76,7 @@
  "entity.xenomorph.predator": "Predator",
  "item.xenomorph.predator_spawn_egg": "Predator Spawn Egg",
  "entity.xenomorph.engineer": "Engineer",
- "item.xenomorph.engineer_spawn_egg": "Engineer Spawn Egg"
+ "item.xenomorph.engineer_spawn_egg": "Engineer Spawn Egg",
+ "entity.xenomorph.berserker": "Berserker",
+ "item.xenomorph.berserker_spawn_egg": "Berserker Spawn Egg"
 }

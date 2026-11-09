@@ -76,5 +76,7 @@
  "entity.xenomorph.predator": "プレデター",
  "item.xenomorph.predator_spawn_egg": "プレデター スポーンエッグ",
  "entity.xenomorph.engineer": "エンジニア",
- "item.xenomorph.engineer_spawn_egg": "エンジニア スポーンエッグ"
+ "item.xenomorph.engineer_spawn_egg": "エンジニア スポーンエッグ",
+ "entity.xenomorph.berserker": "バーサーカー",
+ "item.xenomorph.berserker_spawn_egg": "バーサーカー スポーンエッグ"
 }
