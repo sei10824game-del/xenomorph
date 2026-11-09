@@ -199,16 +199,16 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int s = 0; s < 2; s++) {
             float sx = s == 0 ? 1 : -1;
             String n = s == 0 ? "L" : "R";
-            CubeListBuilder ab = box(-1.6f * L, -1, -1.6f * L, 3.2f * L, 7, 3.2f * L);
-            if (sp.elbow) add(ab, -0.5f, 4.5f, 1.4f * L, 1, 1, 3.4f);
+            CubeListBuilder ab = box(-1.6f * L, -1, -1.6f * L, 3.2f * L, 9.5f, 3.2f * L);
+            if (sp.elbow) add(ab, -0.5f, 6.5f, 1.4f * L, 1, 1, 3.4f);
             PartDefinition a = chest.addOrReplaceChild("arm" + n, ab, PartPose.offset(sx * 5 * T, -6.5f, 0));
-            CubeListBuilder fb = box(-1.3f * L, 0, -1.3f * L, 2.6f * L, 7.5f, 2.6f * L);
-            if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 8f, 1.6f);
-            PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 6, 0));
+            CubeListBuilder fb = box(-1.3f * L, 0, -1.3f * L, 2.6f * L, 10f, 2.6f * L);
+            if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 10.5f, 1.6f);
+            PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
             float fl = 3.8f * sp.clawL;
             CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
             for (int k = -1; k <= 1; k++) add(h, k * 1.0f * L - 0.35f, 0.3f, -2.4f - fl, 0.7f, 0.9f, fl);
-            f.addOrReplaceChild("hand", h, PartPose.offset(0, 7.5f, 0));
+            f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
             PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
         }
@@ -627,7 +627,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             if (u < 0.58f) { gz = Mth.lerp(u / 0.58f, -stride, stride); lift = 0; }
             else { float k = (u - 0.58f) / 0.42f; gz = Mth.lerp(smooth(k), stride, -stride); lift = Mth.sin(k * Mth.PI) * (2f + 2f * spd); }
             float wz = shoulderZ - 3.5f + gz;                                // hand ground contact (hips frame z)
-            float[] q = ik(wz - shoulderZ, Math.max(1f, hAct + shoulderUp - 1.6f - lift), 6.6f, 7.5f, false);
+            float[] q = ik(wz - shoulderZ, Math.max(1f, hAct + shoulderUp - 1.6f - lift), 8.5f, 10f, false);
             float qPitch = q[0], qEl = q[1] - q[0], qHand = -q[1];
             float wq = 1 - b;
             float pitch = Mth.lerp(wq, A[s][0], qPitch);        // A[][0] is world pitch; IK result is world too

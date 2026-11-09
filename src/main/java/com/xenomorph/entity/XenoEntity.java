@@ -88,11 +88,21 @@ public class XenoEntity extends Monster {
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8));
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(1, new HurtByTargetGoal(this, XenoEntity.class, FacehuggerEntity.class, ChestbursterEntity.class).setAlertOthers());
+        targetSelector.addGoal(1, new HurtByTargetGoal(this, FacehuggerEntity.class, ChestbursterEntity.class).setAlertOthers());
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
         targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
+        // enemy faction xenos and every other hostile mob (husks, mutant zombies, other mods' monsters)
+        targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
+                e -> !friendly(e) && (faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy)));
     }
+
+    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen. Different non-zero factions fight each other. */
+    public static int faction(Entity e) {
+        if (e instanceof XenoEntity x) return x.caste.id.startsWith("pathogen") ? 2 : 1;
+        return isXeno(e) ? 1 : 0;
+    }
+    public boolean friendly(Entity e) { return faction(e) == faction(this); }
 
     public static boolean isXeno(Entity e) {
         return e instanceof XenoEntity || e instanceof FacehuggerEntity || e instanceof ChestbursterEntity || e instanceof XenoEggEntity;
@@ -157,14 +167,14 @@ public class XenoEntity extends Monster {
     private Vec3 fwd() { return new Vec3(-Mth.sin(yBodyRot * Mth.DEG_TO_RAD), 0, Mth.cos(yBodyRot * Mth.DEG_TO_RAD)); }
 
     private boolean strike(LivingEntity t, float mult, double reach, double kb) {
-        if (t == null || !t.isAlive() || isXeno(t)) return false;
+        if (t == null || !t.isAlive() || friendly(t)) return false;
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
         boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * mult);
         if (ok && kb > 0) { Vec3 d = t.position().subtract(position()).multiply(1, 0, 1).normalize(); t.push(d.x * kb, 0.25 * kb, d.z * kb); t.hurtMarked = true; }
         return ok;
     }
     private List<LivingEntity> around(double r) {
-        return level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(r, 1.0, r), e -> e != this && !isXeno(e) && e.isAlive() && distanceTo(e) <= r + e.getBbWidth() / 2);
+        return level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(r, 1.0, r), e -> e != this && !friendly(e) && e.isAlive() && distanceTo(e) <= r + e.getBbWidth() / 2);
     }
     private void faceTarget(float lerp) {
         LivingEntity t = tgt();
@@ -270,7 +280,7 @@ public class XenoEntity extends Monster {
     // Seize -> lift -> inner jaw execution -> throw
     private void tickGrab(Attack a, LivingEntity target) {
         int t = attackTick;
-        if (t == a.hit && held == null && target != null && !isXeno(target) && distanceTo(target) <= reach() + 1.0) {
+        if (t == a.hit && held == null && target != null && !friendly(target) && distanceTo(target) <= reach() + 1.0) {
             held = target; playSound(SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1.2f, 0.5f);
             held.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 5));
         }
@@ -290,7 +300,7 @@ public class XenoEntity extends Monster {
     // Tail pierces the victim, hoists it overhead, then flings it
     private void tickImpale(Attack a, LivingEntity target) {
         int t = attackTick;
-        if (t == a.hit && held == null && target != null && !isXeno(target) && distanceTo(target) <= 7) {
+        if (t == a.hit && held == null && target != null && !friendly(target) && distanceTo(target) <= 7) {
             held = target; impaled = true;
             held.hurt(damageSources().mobAttack(this), caste.dmg * 1.8f);
             playSound(SoundEvents.TRIDENT_HIT, 1.5f, 0.5f);
@@ -320,7 +330,7 @@ public class XenoEntity extends Monster {
     // ---------- acid blood ----------
     @Override public boolean hurt(DamageSource src, float amount) {
         boolean r = super.hurt(src, amount);
-        if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !isXeno(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, 1 + random.nextInt(2));
+        if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !friendly(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, 1 + random.nextInt(2));
         return r;
     }
     private void acidBurn(LivingEntity e, float dmg) {

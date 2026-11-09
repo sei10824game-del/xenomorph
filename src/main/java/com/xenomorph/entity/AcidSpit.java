@@ -27,7 +27,7 @@ public class AcidSpit extends ThrowableProjectile {
         if (tickCount > 80) discard();
     }
     @Override protected void onHitEntity(EntityHitResult r) {
-        if (r.getEntity() instanceof LivingEntity e && !XenoEntity.isXeno(e)) {
+        if (r.getEntity() instanceof LivingEntity e && (getOwner() instanceof XenoEntity o ? !o.friendly(e) : !XenoEntity.isXeno(e))) {
             e.hurt(damageSources().indirectMagic(this, getOwner()), dmg);
             e.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
             for (EquipmentSlot s : EquipmentSlot.values()) {

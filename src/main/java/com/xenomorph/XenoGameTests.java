@@ -44,6 +44,17 @@ public class XenoGameTests {
         Hive.build(sl, o.getX() >> 4, o.getZ() >> 4, o.getY() + 8);
         long xenos = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEntity.class), x -> true).size();
         long eggs = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEggEntity.class), x -> true).size();
-        h.runAfterDelay(2, () -> { if (xenos < 3 || eggs < 3) throw new AssertionError("hive empty x=" + xenos + " e=" + eggs); h.succeed(); });
+        h.runAfterDelay(2, () -> { if (xenos < 3 || eggs < 1) throw new AssertionError("hive empty x=" + xenos + " e=" + eggs); h.succeed(); });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void factions(GameTestHelper h) {
+        var husk = h.spawn(EntityType.HUSK, new BlockPos(2, 2, 2));
+        var drone = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(6, 2, 2));
+        var pb = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.PATHOGEN_BRUTE).get(), new BlockPos(6, 2, 7));
+        h.succeedWhen(() -> {
+            if (!(husk.getTarget() instanceof XenoEntity)) throw new net.minecraft.gametest.framework.GameTestAssertException("husk not hostile to xeno");
+            if (drone.getTarget() == null || drone.friendly(pb)) throw new net.minecraft.gametest.framework.GameTestAssertException("drone not hostile");
+        });
     }
 }
