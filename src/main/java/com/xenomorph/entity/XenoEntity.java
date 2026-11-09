@@ -50,6 +50,7 @@ public class XenoEntity extends Monster {
         this.caste = caste;
         this.xpReward = (int) (caste.hp / 4);
         this.setMaxUpStep(1.1f);
+        if (caste.stance == 2) entityData.set(BIPED, true);
     }
 
     public static AttributeSupplier.Builder attributes(Caste c) {
@@ -64,7 +65,7 @@ public class XenoEntity extends Monster {
 
     @Override protected void defineSynchedData() {
         super.defineSynchedData();
-        entityData.define(BIPED, caste.stance == 2);
+        entityData.define(BIPED, false);
         entityData.define(ATTACK, 0);
     }
     public boolean isBiped() { return entityData.get(BIPED); }
