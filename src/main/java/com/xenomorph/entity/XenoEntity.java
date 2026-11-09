@@ -462,7 +462,7 @@ public class XenoEntity extends Monster {
         hold(position().add(fwd().scale(0.8 * caste.scale + 0.3)).add(0, getBbHeight() * 0.5 * lift, 0));
         if (t == 34) {
             if (!held.hasEffect(XenomorphMod.EMBRYO.get())) held.addEffect(new MobEffectInstance(XenomorphMod.EMBRYO.get(), 2400, 0));
-            held.hurt(damageSources().mobAttack(this), caste.dmg * 1.2f);
+            if (!hurtHeld(caste.dmg * 1.2f)) return;
             playSound(SoundEvents.SLIME_SQUISH, 1.5f, 0.5f);
         }
         if (t == a.duration - 6) releaseHeld(true);
@@ -473,7 +473,7 @@ public class XenoEntity extends Monster {
         if (!seize(target, a, 1.0)) return;
         double ang = (t - a.hit) * 0.55; Vec3 f = fwd(), rt = new Vec3(-f.z, 0, f.x);
         hold(position().add(f.scale(0.9 * caste.scale + 0.2)).add(0, getBbHeight() * 0.45 + (Math.cos(ang) - 1) * 0.3, 0).add(rt.scale(Math.sin(ang) * 0.7 * caste.scale)));
-        if (t >= 16 && (t - 16) % 8 == 0) { held.hurt(damageSources().mobAttack(this), caste.dmg * 0.6f); playSound(SoundEvents.RAVAGER_ATTACK, 1f, 0.9f); }
+        if (t >= 16 && (t - 16) % 8 == 0) { if (!hurtHeld(caste.dmg * 0.6f)) return; playSound(SoundEvents.RAVAGER_ATTACK, 1f, 0.9f); }
         if (t == a.duration - 6) releaseHeld(true);
     }
     /** Hoist overhead, slam into the ground twice, then hurl. */
@@ -484,7 +484,7 @@ public class XenoEntity extends Monster {
         Vec3 f = fwd();
         hold(position().add(f.scale((up > 0 ? 0.3 : 1.4) * caste.scale)).add(0, getBbHeight() * (0.4 + 0.8 * up) * (up > 0 ? 1 : 0), 0));
         if (t == 30 || t == 44) {
-            held.hurt(damageSources().mobAttack(this), caste.dmg * 1.5f);
+            if (!hurtHeld(caste.dmg * 1.5f)) return;
             playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, 0.7f); dust(held.getX(), held.getY(), held.getZ(), 14);
         }
         if (t == 48) releaseHeld(true);
@@ -514,7 +514,7 @@ public class XenoEntity extends Monster {
         hold(p);
         if (t == 30 || t == 42) {
             playSound(SoundEvents.RAVAGER_ATTACK, 1.5f, 0.6f);
-            held.hurt(damageSources().mobAttack(this), caste.dmg * 1.6f);
+            if (!hurtHeld(caste.dmg * 1.6f)) return;
             if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.DAMAGE_INDICATOR, held.getX(), held.getEyeY(), held.getZ(), 6, 0.2, 0.2, 0.2, 0.1);
         }
         if (t == a.duration - 6) releaseHeld(true);
@@ -524,7 +524,7 @@ public class XenoEntity extends Monster {
         int t = attackTick;
         if (t == a.hit && held == null && target != null && !friendly(target) && distanceTo(target) <= 7) {
             held = target; impaled = true;
-            held.hurt(damageSources().mobAttack(this), caste.dmg * 1.8f);
+            if (!hurtHeld(caste.dmg * 1.8f)) return;
             playSound(SoundEvents.TRIDENT_HIT, 1.5f, 0.5f);
         }
         if (held == null) { if (t > a.hit + 2) attackTick = a.duration; return; }
@@ -532,10 +532,18 @@ public class XenoEntity extends Monster {
         double lift = Mth.clamp((t - a.hit) / 8.0, 0, 1);
         Vec3 f = fwd();
         hold(position().add(f.scale(0.6)).add(0, getBbHeight() * (0.9 + 0.35 * lift), 0));
-        if (t == a.hit + 10) held.hurt(damageSources().mobAttack(this), caste.dmg * 0.8f);
+        if (t == a.hit + 10 && !hurtHeld(caste.dmg * 0.8f)) return;
         if (t == a.duration - 4) releaseHeld(true);
     }
+    /** Damages the held victim. Returns false if `held` was cleared meanwhile (e.g. thorns/reflect killed us and die() released it). */
+    private boolean hurtHeld(float amount) {
+        LivingEntity h = held;
+        if (h == null) return false;
+        h.hurt(damageSources().mobAttack(this), amount);
+        return held != null && isAlive();
+    }
     private void hold(Vec3 p) {
+        if (held == null) return;
         held.fallDistance = 0;
         held.setDeltaMovement(Vec3.ZERO);
         held.teleportTo(p.x, p.y, p.z);

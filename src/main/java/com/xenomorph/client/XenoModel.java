@@ -68,7 +68,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
     /** Per-caste silhouette parameters. Limb LENGTHS are fixed (IK depends on them); everything else varies. */
     static final class Sp {
-        float domeL = 12, domeH = 4.5f, domeW = 4.4f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12;
+        float domeL = 12, domeH = 4.5f, domeW = 4.4f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1;
         int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 11;
         boolean cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
@@ -92,8 +92,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case SENTINEL -> { p.style = 5; p.spines = 4; p.horns = 2; p.domeL = 10; p.limb = 0.95f; p.cheek = true; p.tailEnd = 1; }
             case CARRIER -> { p.belly = true; p.domeL = 12; p.limb = 1.1f; p.torso = 1.15f; p.ribs = 2; p.plates = 1; }
             case PREDALIEN -> { p.dreads = true; p.domeL = 8; p.domeW = 5.4f; p.domeH = 5; p.mand = true; p.torso = 1.25f; p.plates = 1; p.spines = 3; p.ribs = 4; p.limb = 1.15f; p.cheek = true; p.brow = true; }
-            case NEOMORPH -> { p.style = 4; p.domeW = 5f; p.limb = 0.85f; p.torso = 0.85f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
-            case NEWBORN -> { p.style = 4; p.domeW = 6.4f; p.limb = 1.25f; p.torso = 1.1f; p.tailSegs = 0; p.cheek = true; p.ribs = 0; p.spines = 0; p.brow = true; p.tubeLen = 0; }
+            case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
+            // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
+            case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }
             case DEACON -> { p.domeL = 7; p.domeH = 4; p.limb = 0.9f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 1; p.tubeLen = 0; }
             case BOILER -> { p.belly = true; p.sac = true; p.domeL = 10; p.torso = 1.35f; p.spines = 8; p.limb = 1.1f; p.tailEnd = 4; p.ribs = 2; }
             case PROTOMORPH -> { p.style = 4; p.domeW = 4.4f; p.ribs = 1; p.spines = 5; p.limb = 0.95f; p.tailEnd = 1; p.cheek = true; p.tubeLen = 0; }
@@ -270,11 +271,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
         tubeL.visible = tubeR.visible = c.tubes && sp.tubeLen > 0;
         arm2[0].visible = arm2[1].visible = c.extraArms;
         for (int i = 0; i < TAIL; i++) tail[i].visible = i < Math.max(1, sp.tailSegs);
+        neck.yScale = sp.neckK;
         tail0.visible = sp.tailSegs > 0;
 
         // ---- stance
         P = Mth.lerp(b, 1.38f, 0.5f);
-        float H = Mth.lerp(b, 10.5f, 13.6f);
+        float H = Mth.lerp(b, 10.5f, 13.6f) * Math.min(1.25f, spec(c).legK);
         float spd = Mth.clamp(amt * 1.6f, 0, 1);
         float wt = c.weight(), fer = c.ferocity();
         float ph = limbSwing * 0.82f / (float) Math.pow(Math.max(0.6f, wt), 0.35);
@@ -813,7 +815,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
             tz += Mth.lerp(b, 0.5f, 1.0f);                           // keep feet slightly forward of hip
             float ty = footH - lift;
             tz = Mth.lerp(legOv[0], tz, legOv[1]); ty = Mth.lerp(legOv[0], ty, legOv[2] + footH * 0.0f);
-            float[] a = ik(tz, ty, 8f, 8f, true);
+            float lk = sp.legK;
+            float[] a = ik(tz, ty, 8f * lk, 8f * lk, true);
+            thigh[s].yScale = lk;
             thigh[s].xRot = a[0]; shin[s].xRot = a[1] - a[0];
             foot[s].xRot = -a[1] + Mth.lerp(legOv[0], 0.0f, 0.9f) + lift * 0.06f;
             thigh[s].zRot = (s == 0 ? -1 : 1) * 0.06f; 
@@ -829,7 +833,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             if (u < 0.58f) { gz = Mth.lerp(u / 0.58f, -stride, stride); lift = 0; }
             else { float k = (u - 0.58f) / 0.42f; gz = Mth.lerp(smooth(k), stride, -stride); lift = Mth.sin(k * Mth.PI) * (2f + 2f * spd); }
             float wz = shoulderZ - 3.5f + gz;                                // hand ground contact (hips frame z)
-            float[] q = ik(wz - shoulderZ, Math.max(1f, hAct + shoulderUp - 1.6f - lift), 8.5f, 10f, false);
+            float[] q = ik(wz - shoulderZ, Math.max(1f, hAct + shoulderUp - 1.6f - lift), 8.5f * sp.armK, 10f * sp.armK, false);
             float qPitch = q[0], qEl = q[1] - q[0], qHand = -q[1];
             float wq = 1 - b;
             float pitch = Mth.lerp(wq, A[s][0], qPitch);        // A[][0] is world pitch; IK result is world too
@@ -844,6 +848,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 yaw = Mth.lerp(w, yaw, A[s][1]); roll = Mth.lerp(w, roll, A[s][2]);
             }
             if (c == Caste.PATHOGEN_BRUTE) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 1.9f; fore[s].xScale = fore[s].zScale = 1.25f; }
+            arm[s].yScale = sp.armK;
             arm[s].xRot = pitch - body.xRot - chest.xRot; arm[s].yRot = yaw; arm[s].zRot = roll;
             fore[s].xRot = el; hand[s].xRot = hnd;
         }

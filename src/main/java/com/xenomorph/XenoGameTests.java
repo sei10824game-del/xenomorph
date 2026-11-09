@@ -90,4 +90,17 @@ public class XenoGameTests {
             h.succeed();
         });
     }
+
+    /** Regression: victim's retaliation kills the grabber mid-hit (die() clears the held target) -> used to NPE in tickGrab. */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void grabberKilledMidGrab(GameTestHelper h) {
+        floor(h);
+        var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(4, 2, 4));
+        var q = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.QUEEN).get(), new BlockPos(2, 2, 4));
+        q.setTarget(vill);
+        java.util.function.Consumer<net.minecraftforge.event.entity.living.LivingHurtEvent> l = e -> { if (e.getSource().getEntity() instanceof XenoEntity x) x.kill(); };
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(l);
+        h.runAfterDelay(5, () -> q.startAttack(Attack.GRAB));
+        h.runAfterDelay(100, () -> { net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(l); h.succeed(); });
+    }
 }
