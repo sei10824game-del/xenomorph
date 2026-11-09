@@ -1,0 +1,1 @@
+{"type": "forge:add_spawns", "biomes": "#minecraft:is_overworld", "spawners": {"type": "xenomorph:k_warrior", "weight": 1, "minCount": 1, "maxCount": 1}}

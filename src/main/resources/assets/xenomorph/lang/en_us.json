@@ -50,8 +50,8 @@
  "item.xenomorph.empress_spawn_egg": "Empress Spawn Egg",
  "entity.xenomorph.queen_mother": "Queen Mother",
  "item.xenomorph.queen_mother_spawn_egg": "Queen Mother Spawn Egg",
- "entity.xenomorph.king": "King",
- "item.xenomorph.king_spawn_egg": "King Spawn Egg",
+ "entity.xenomorph.king": "Rogue King (Anti-Queen)",
+ "item.xenomorph.king_spawn_egg": "Rogue King (Anti-Queen) Spawn Egg",
  "entity.xenomorph.charger": "Charger",
  "item.xenomorph.charger_spawn_egg": "Charger Spawn Egg",
  "entity.xenomorph.brute": "Brute",
@@ -88,5 +88,15 @@
  "item.xenomorph.red_facehugger_spawn_egg": "Red Facehugger Spawn Egg",
  "item.xenomorph.royal_facehugger_spawn_egg": "Royal Red Facehugger Spawn Egg",
  "item.xenomorph.red_egg_spawn_egg": "Red Egg Spawn Egg",
- "effect.xenomorph.red_embryo": "Red Embryo"
+ "effect.xenomorph.red_embryo": "Red Embryo",
+ "entity.xenomorph.true_king": "True King",
+ "item.xenomorph.true_king_spawn_egg": "True King Spawn Egg",
+ "entity.xenomorph.clone_xenomorph": "Clone Xenomorph",
+ "item.xenomorph.clone_xenomorph_spawn_egg": "Clone Xenomorph Spawn Egg",
+ "entity.xenomorph.white_hybrid": "White Hybrid",
+ "item.xenomorph.white_hybrid_spawn_egg": "White Hybrid Spawn Egg",
+ "entity.xenomorph.k_warrior": "K-Series Warrior",
+ "item.xenomorph.k_warrior_spawn_egg": "K-Series Warrior Spawn Egg",
+ "entity.xenomorph.k_fatalis": "K-Series Fatalis",
+ "item.xenomorph.k_fatalis_spawn_egg": "K-Series Fatalis Spawn Egg"
 }

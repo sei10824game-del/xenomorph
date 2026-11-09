@@ -30,6 +30,7 @@ public class AcidSpit extends ThrowableProjectile {
     @Override protected void onHitEntity(EntityHitResult r) {
         if (r.getEntity() instanceof LivingEntity e && (getOwner() instanceof XenoEntity o ? !o.friendly(e) : getOwner() instanceof HunterEntity ? !(e instanceof HunterEntity) : !XenoEntity.isXeno(e))) {
             if (plasma) { e.hurt(damageSources().indirectMagic(this, getOwner()), dmg); return; }
+            if (e instanceof XenoEntity k && k.caste.kSeries()) return;     // acid immunity
             e.hurt(damageSources().indirectMagic(this, getOwner()), dmg);
             e.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
             for (EquipmentSlot s : EquipmentSlot.values()) {

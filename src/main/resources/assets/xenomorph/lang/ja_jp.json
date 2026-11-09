@@ -50,8 +50,8 @@
  "item.xenomorph.empress_spawn_egg": "エンプレス スポーンエッグ",
  "entity.xenomorph.queen_mother": "クイーン・マザー",
  "item.xenomorph.queen_mother_spawn_egg": "クイーン・マザー スポーンエッグ",
- "entity.xenomorph.king": "キング",
- "item.xenomorph.king_spawn_egg": "キング スポーンエッグ",
+ "entity.xenomorph.king": "ローグ・キング（対クイーン用）",
+ "item.xenomorph.king_spawn_egg": "ローグ・キング（対クイーン用） スポーンエッグ",
  "entity.xenomorph.charger": "チャージャー",
  "item.xenomorph.charger_spawn_egg": "チャージャー スポーンエッグ",
  "entity.xenomorph.brute": "ブルート",
@@ -88,5 +88,15 @@
  "item.xenomorph.red_facehugger_spawn_egg": "レッド・フェイスハガー スポーンエッグ",
  "item.xenomorph.royal_facehugger_spawn_egg": "ロイヤル・レッド・フェイスハガー スポーンエッグ",
  "item.xenomorph.red_egg_spawn_egg": "赤いエッグ スポーンエッグ",
- "effect.xenomorph.red_embryo": "赤い胚"
+ "effect.xenomorph.red_embryo": "赤い胚",
+ "entity.xenomorph.true_king": "トゥルー・キング",
+ "item.xenomorph.true_king_spawn_egg": "トゥルー・キング スポーンエッグ",
+ "entity.xenomorph.clone_xenomorph": "クローン・ゼノモーフ",
+ "item.xenomorph.clone_xenomorph_spawn_egg": "クローン・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.white_hybrid": "ホワイト・ハイブリッド",
+ "item.xenomorph.white_hybrid_spawn_egg": "ホワイト・ハイブリッド スポーンエッグ",
+ "entity.xenomorph.k_warrior": "Kシリーズ・ウォリアー",
+ "item.xenomorph.k_warrior_spawn_egg": "Kシリーズ・ウォリアー スポーンエッグ",
+ "entity.xenomorph.k_fatalis": "Kシリーズ・フェイタリス",
+ "item.xenomorph.k_fatalis_spawn_egg": "Kシリーズ・フェイタリス スポーンエッグ"
 }

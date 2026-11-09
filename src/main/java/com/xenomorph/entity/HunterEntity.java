@@ -45,7 +45,7 @@ public class HunterEntity extends Monster {
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, net.minecraft.world.entity.player.Player.class, 10));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, e -> { int f = XenoEntity.faction(e); return f == 1 || f == 2 || f == 4 || f == 5 || f == 6 || f == 7; }));
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, e -> { int f = XenoEntity.faction(e); return f != 0 && f != 3; }));
     }
 
     @Override public void tick() {

@@ -170,4 +170,26 @@ public class XenoGameTests {
             if (!q) throw new net.minecraft.gametest.framework.GameTestAssertException("no red queen burster");
         });
     }
+
+    /** Rogue King hunts queens; K-series shrug off acid; new factions are separate. */
+    @GameTest(template = "empty", timeoutTicks = 120, batch = "b_kings")
+    public static void kingsAndKSeries(GameTestHelper h) {
+        floor(h);
+        var king = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.KING).get(), new BlockPos(1, 2, 1));
+        var queen = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.QUEEN).get(), new BlockPos(8, 2, 1));
+        var k = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.K_WARRIOR).get(), new BlockPos(1, 2, 7));
+        var red = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.RED_WARRIOR).get(), new BlockPos(2, 2, 7));
+        var clone = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.CLONE_XENOMORPH).get(), new BlockPos(3, 2, 7));
+        var wh = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.WHITE_HYBRID).get(), new BlockPos(4, 2, 7));
+        var tk = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.TRUE_KING).get(), new BlockPos(5, 2, 7));
+        var dr = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(6, 2, 7));
+        if (!tk.friendly(dr)) throw new AssertionError("true king belongs to the classic hive");
+        if (king.friendly(queen) || clone.friendly(wh) || k.friendly(clone) || k.friendly(red)) throw new AssertionError("factions merged");
+        h.runAfterDelay(2, () -> {
+            float hp = k.getHealth();
+            red.hurt(h.getLevel().damageSources().mobAttack(k), 1f);          // k hits red: red's acid must not hurt k
+            h.runAfterDelay(2, () -> { if (k.getHealth() < hp) throw new AssertionError("K-series was hurt by acid"); });
+        });
+        h.runAfterDelay(90, () -> { if (!(king.getTarget() == queen)) throw new AssertionError("rogue king not hunting the queen: " + king.getTarget()); h.succeed(); });
+    }
 }

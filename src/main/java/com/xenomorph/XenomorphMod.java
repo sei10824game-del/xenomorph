@@ -105,6 +105,7 @@ public class XenomorphMod {
 
     public XenomorphMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener((net.minecraftforge.event.entity.SpawnPlacementRegisterEvent e) -> { for (Caste c : Caste.values()) if (c.wild()) e.register(XENOS.get(c).get(), net.minecraft.world.entity.SpawnPlacements.Type.ON_GROUND, net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (ty, lv, rs, ps, rn) -> net.minecraft.world.entity.monster.Monster.checkMonsterSpawnRules(ty, lv, rs, ps, rn), net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.Operation.OR); });
         bus.addListener((net.minecraftforge.event.entity.SpawnPlacementRegisterEvent e) -> HUNTERS.values().forEach(t -> e.register(t.get(), net.minecraft.world.entity.SpawnPlacements.Type.ON_GROUND,
                 net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (ty, lv, rs, ps, rn) -> net.minecraft.world.entity.Mob.checkMobSpawnRules(ty, lv, rs, ps, rn), net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.Operation.OR)));
         BLOCKS.register(bus); ENTITIES.register(bus); ITEMS.register(bus); EFFECTS.register(bus); TABS.register(bus);

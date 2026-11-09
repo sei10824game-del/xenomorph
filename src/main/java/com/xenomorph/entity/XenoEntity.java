@@ -55,6 +55,8 @@ public class XenoEntity extends Monster {
         this.xpReward = (int) (caste.hp / 4);
         this.setMaxUpStep(1.1f);
         if (caste.stance == 2) entityData.set(BIPED, true);
+        if (caste == Caste.KING)                 // artificial queen-killer: every queen is prey number one
+            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> e instanceof XenoEntity x && x != this && x.caste.attacks.contains(Attack.LAY)));
         if (caste.red()) {                   // (added here: registerGoals runs inside super() before `caste` exists) the red strain hunts the black hive first, queens above all
             targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> e instanceof XenoEntity x && faction(x) == 1 && x.caste.attacks.contains(Attack.LAY)));
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> faction(e) == 1));
@@ -165,9 +167,9 @@ public class XenoEntity extends Monster {
                 e -> !friendly(e) && (faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy)));
     }
 
-    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
+    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 8 = rogue king, 9 = clone, 10 = white hybrid, 11 = K-series, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
-        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
+        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.KING ? 8 : x.caste == Caste.CLONE_XENOMORPH ? 9 : x.caste == Caste.WHITE_HYBRID ? 10 : x.caste.kSeries() ? 11 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
         if (e instanceof HunterEntity) return 3;
         if (e instanceof FacehuggerEntity f && f.variant() > 0) return 7;
         if (e instanceof ChestbursterEntity b && b.form.red()) return 7;
@@ -226,8 +228,8 @@ public class XenoEntity extends Monster {
             hangTimer = 120 + random.nextInt(240);
             if (random.nextInt(3) == 0 && level().getMaxLocalRawBrightness(blockPosition()) < 8) tryHang();
         }
-        if (caste == Caste.RED_QUEEN_MOTHER && tickCount % 20 == 0)            // red pheromone: whole red colony fights at its limit
-            for (XenoEntity x : level().getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(28), x -> x.caste.red())) {
+        if ((caste == Caste.RED_QUEEN_MOTHER || caste == Caste.TRUE_KING) && tickCount % 20 == 0)            // pheromone: the colony fights at its limit
+            for (XenoEntity x : level().getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(28), x -> caste == Caste.TRUE_KING ? faction(x) == 1 : x.caste.red())) {
                 x.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 60, 1, false, false)); x.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, false));
             }
         updateStance();
@@ -264,6 +266,7 @@ public class XenoEntity extends Monster {
     private boolean strike(LivingEntity t, float mult, double reach, double kb) {
         if (t == null || !t.isAlive() || friendly(t)) return false;
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
+        if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
         boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * mult);
         float wt = caste.weight();
         if (ok && kb > 0) { kb *= wt; Vec3 d = t.position().subtract(position()).multiply(1, 0, 1).normalize(); t.push(d.x * kb, 0.25 * kb, d.z * kb); t.hurtMarked = true; }
@@ -530,6 +533,7 @@ public class XenoEntity extends Monster {
     }
     private Caste[] brood() {
         return switch (caste) {
+            case TRUE_KING -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.BRUTE};
             case RED_QUEEN_MOTHER -> new Caste[]{Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE};
             case QUEEN -> new Caste[]{Caste.DRONE, Caste.DRONE, Caste.WARRIOR};
             case MATRIARCH -> new Caste[]{Caste.WARRIOR, Caste.WARRIOR, Caste.PRAETORIAN};
@@ -664,6 +668,7 @@ public class XenoEntity extends Monster {
         return r;
     }
     private void acidBurn(LivingEntity e, float dmg) {
+        if (e instanceof XenoEntity x && x.caste.kSeries()) return;                       // K-series: acid immunity
         e.hurt(damageSources().magic(), dmg);
         playSound(SoundEvents.LAVA_EXTINGUISH, 0.7f, 1.6f);
         if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, e.getX(), e.getY() + 1, e.getZ(), 8, 0.3, 0.4, 0.3, 0.05);
