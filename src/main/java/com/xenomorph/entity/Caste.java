@@ -85,4 +85,8 @@ public enum Caste {
     public boolean kSeries() { return id.startsWith("k_"); }
     /** Roams cave biomes on its own instead of living in a hive. */
     public boolean wild() { return this == CLONE_XENOMORPH || this == WHITE_HYBRID || this == WHITE_KING || this == NEWBORN || kSeries(); }
+    /** Has an emissive overlay texture <id>_glow.png (pustules, acid pouches, seams...). */
+    public boolean glows() {
+        return switch (this) { case SPITTER, BOILER, BURSTER, K_WARRIOR, K_FATALIS, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
+    }
 }

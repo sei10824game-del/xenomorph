@@ -184,7 +184,8 @@ public class XenoGameTests {
         var tk = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.TRUE_KING).get(), new BlockPos(5, 2, 7));
         var dr = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(6, 2, 7));
         if (!tk.friendly(dr)) throw new AssertionError("true king belongs to the classic hive");
-        if (king.friendly(queen) || clone.friendly(wh) || k.friendly(clone) || k.friendly(red)) throw new AssertionError("factions merged");
+        var nb = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.NEWBORN).get(), new BlockPos(7, 2, 7));
+        if (king.friendly(queen) || clone.friendly(wh) || k.friendly(clone) || k.friendly(red) || nb.friendly(clone)) throw new AssertionError("factions merged");
         h.runAfterDelay(2, () -> {
             float hp = k.getHealth();
             red.hurt(h.getLevel().damageSources().mobAttack(k), 1f);          // k hits red: red's acid must not hurt k

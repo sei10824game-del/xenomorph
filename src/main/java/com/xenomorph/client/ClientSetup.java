@@ -59,6 +59,10 @@ public final class ClientSetup {
         XenoRenderer(EntityRendererProvider.Context ctx, Caste c) {
             super(ctx, new XenoModel(ctx.bakeLayer(layer(c))), 0.6f * c.scale);
             texture = tex(c.id);
+            if (c.glows()) addLayer(new net.minecraft.client.renderer.entity.layers.EyesLayer<XenoEntity, XenoModel>(this) {
+                final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex(c.id + "_glow"));
+                @Override public net.minecraft.client.renderer.RenderType renderType() { return type; }
+            });
         }
         @Override public ResourceLocation getTextureLocation(XenoEntity e) { return texture; }
         @Override protected void scale(XenoEntity e, PoseStack ps, float pt) { float s = e.caste.scale; ps.scale(s, s, s); }

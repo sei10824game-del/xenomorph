@@ -29,7 +29,7 @@ Compared the mod's castes against the wiki. **Wiki-backed** = description matche
 | Pathogen "Blight" | A *non-xeno* mutated spider-like Pathogen creature (Fireteam Elite pack), acts like a Spitter | kept per user request; made four-legged |
 | Berserker-Alien | Super-Predator host; red pattern on mesoskeleton; smaller rounder Praetorian-like crest; **no dreadlocks**, only two small tusks; spear-like tail blade; spiked elbows; Runner-fast; Praetorian-tough; fire resistant | fixed (no dreads, round crest, tusks, spear tail, fast, Praetorian stats) |
 | Clone Xenomorph | Auriga lab clones with human DNA; ~7 ft; **can spit acid** | fixed (spit); Newborn joins their faction (it came from the Cloned Queen) |
-| Newborn | Human/xeno hybrid from the Cloned Queen (womb-born) | matches look; faction corrected to Clone |
+| Newborn | Human/xeno hybrid from the Cloned Queen (womb-born); it killed that Queen | matches look; own faction (hostile to the Clone hive) |
 | K-Series | Weyland-Yutani bioweapon (Dr. Kadinsky, LV-742); **gold-and-silver** mesoskeleton; fought the original strain in hive wars | fixed (gold/silver textures); acid immunity per user description |
 | White Hybrid | Engineered by AI "TOY"; Xenomorph + Yautja + human traits; intelligent, speak, use firearms; breed via facehuggers; a single huge king caste | fixed (Yautja traits, plasma firearm attack, added White Hybrid King) |
 | Red Queen Mother | Recessive-gene red mesoskeleton, born on Xenomorph Prime, civil war with the black Queen Mother's hive | matches the user-supplied description |

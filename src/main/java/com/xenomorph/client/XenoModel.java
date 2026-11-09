@@ -139,6 +139,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder chestB = box(-3.8f * T, -8.5f, -3.8f, 7.6f * T, 9, 7.6f);
         for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.4f * T, y, -3, 0.9f, 1.1f, 6); add(chestB, 3.5f * T, y, -3, 0.9f, 1.1f, 6); }
         add(chestB, -1, -8.5f, 3.7f, 2, 8, 1.5f);
+        add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
         for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
         for (int i = 0; i < sp.plates; i++) {
             add(chestB, -5.6f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f); add(chestB, 2.4f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f);   // pauldrons
@@ -147,7 +148,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.carapace) { add(chestB, -4.4f * T, -9.2f, 3.6f, 8.8f * T, 10.5f, 2.2f); add(chestB, -5f * T, -9.8f, 3.2f, 10f * T, 1.6f, 3f); }
         if (sp.belly) add(chestB, -4.4f * T, -2.5f, -4.8f, 8.8f * T, 3.5f, 2f);
         PartDefinition chest = body.addOrReplaceChild("chest", chestB, PartPose.offset(0, -8.5f, 0));
-        PartDefinition neck = chest.addOrReplaceChild("neck", box(-2 * L, -5, -2 * L, 4 * L, 6, 4 * L), PartPose.offset(0, -7.5f, 0));
+        CubeListBuilder neckB = box(-2 * L, -5, -2 * L, 4 * L, 6, 4 * L);
+        for (int i = 0; i < 3; i++) add(neckB, -2.35f * L, -4.4f + i * 2f, -2.35f * L, 4.7f * L, 0.7f, 4.7f * L);   // cartilage rings
+        PartDefinition neck = chest.addOrReplaceChild("neck", neckB, PartPose.offset(0, -7.5f, 0));
 
         // head
         float hw = sp.headW;
@@ -156,7 +159,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.brow) add(headB, -2.7f * hw, -4.6f, -5.8f, 5.4f * hw, 1.1f, 2.5f);
         PartDefinition head = neck.addOrReplaceChild("head", headB, PartPose.offset(0, -4.5f, 0));
         CubeListBuilder domeB = CubeListBuilder.create();
-        if (sp.style != 4) { box2(domeB, -sp.domeW / 2, -1 - sp.domeH, -1, sp.domeW, sp.domeH, sp.domeL); add(domeB, -sp.domeW * 0.32f, -sp.domeH - 1.7f, 2, sp.domeW * 0.64f, 1, sp.domeL * 0.66f); }
+        if (sp.style != 4) { box2(domeB, -sp.domeW / 2, -1 - sp.domeH, -1, sp.domeW, sp.domeH, sp.domeL); add(domeB, -sp.domeW * 0.32f, -sp.domeH - 1.7f, 2, sp.domeW * 0.64f, 1, sp.domeL * 0.66f);
+            add(domeB, -sp.domeW / 2 - 0.35f, -sp.domeH * 0.55f - 1, 0.5f, 0.45f, 0.8f, sp.domeL * 0.8f); add(domeB, sp.domeW / 2 - 0.1f, -sp.domeH * 0.55f - 1, 0.5f, 0.45f, 0.8f, sp.domeL * 0.8f); }
         head.addOrReplaceChild("dome", domeB, PartPose.ZERO);
         CubeListBuilder rid = CubeListBuilder.create();
         if (sp.style == 1) for (int i = 0; i < 3; i++) box2(rid, -0.7f, -sp.domeH - 2.6f, 0.5f + i * 3.6f, 1.4f, 1.4f, 3);
@@ -189,21 +193,23 @@ public class XenoModel extends EntityModel<XenoEntity> {
         head.addOrReplaceChild("bulb", bulbB, PartPose.ZERO);
 
         CubeListBuilder jawB = box(-2 * hw, 0, -6, 4 * hw, 1.5f, 8);
-        for (int i = 0; i < (sp.bare ? 0 : 4); i++) { tooth(jawB, -1.8f * hw, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); tooth(jawB, 1.3f * hw, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); }
+        for (int i = 0; i < (sp.bare ? 0 : 6); i++) { float th = 0.9f + (i % 2) * 0.6f; tooth(jawB, -1.8f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); tooth(jawB, 1.35f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); }
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
         CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 14);
         tooth(inB, -0.7f, -0.5f, -5.2f, 1.4f, 1.0f, 1.2f); tooth(inB, -0.5f, -1.2f, -4.8f, 1, 0.6f, 0.6f); tooth(inB, -0.5f, 0.6f, -4.6f, 1, 0.6f, 0.6f);
         head.addOrReplaceChild("inner", inB, PartPose.offset(0, 0.4f, -1.5f));
         CubeListBuilder upT = CubeListBuilder.create();
-        for (int i = 0; i < (sp.bare ? 0 : 4); i++) { tooth(upT, -2 * hw, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); tooth(upT, 1.5f * hw, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); }
+        for (int i = 0; i < (sp.bare ? 0 : 5); i++) { float th = 1.0f + ((i + 1) % 2) * 0.6f; tooth(upT, -2 * hw, 0.9f, -5.7f + i * 1.2f, 0.45f, th, 0.45f); tooth(upT, 1.55f * hw, 0.9f, -5.7f + i * 1.2f, 0.45f, th, 0.45f); }
         if (sp.mand) { box2(upT, -4f * hw, -0.5f, -8f, 1.3f, 1.3f, 6); box2(upT, 2.7f * hw, -0.5f, -8f, 1.3f, 1.3f, 6); box2(upT, -3.2f * hw, -0.4f, -9.5f, 0.8f, 0.8f, 2); box2(upT, 2.4f * hw, -0.4f, -9.5f, 0.8f, 0.8f, 2); }
         head.addOrReplaceChild("upperTeeth", upT, PartPose.ZERO);
 
         // back pipes
         float tl = Math.max(0.1f, sp.tubeLen);
-        chest.addOrReplaceChild("tubeL", pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl), PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
-        chest.addOrReplaceChild("tubeR", pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl), PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
+        CubeListBuilder pl = pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl), pr = pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl);
+        for (int i = 0; i * 2.6f < tl - 1; i++) { pl.addBox(-1.2f, -1.3f, 0.8f + i * 2.6f, 2.4f, 2.4f, 0.5f); pr.addBox(-1.2f, -1.3f, 0.8f + i * 2.6f, 2.4f, 2.4f, 0.5f); }   // ribbed rings
+        chest.addOrReplaceChild("tubeL", pl, PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
+        chest.addOrReplaceChild("tubeR", pr, PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
 
         // arms (index 0 = left / +x)
         for (int s = 0; s < 2; s++) {
@@ -213,11 +219,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
             if (sp.elbow) add(ab, -0.5f, 6.5f, 1.4f * L, 1, 1, 3.4f);
             PartDefinition a = chest.addOrReplaceChild("arm" + n, ab, PartPose.offset(sx * 5 * T, -6.5f, 0));
             CubeListBuilder fb = box(-1.3f * L, 0, -1.3f * L, 2.6f * L, 10f, 2.6f * L);
+            add(fb, -0.3f, 1.2f, -1.3f * L - 0.45f, 0.6f, 6.5f, 0.6f);                 // bone ridge
             if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 10.5f, 1.6f);
             PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
             float fl = 3.8f * sp.clawL;
             CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
-            for (int k = -1; k <= 1; k++) add(h, k * 1.0f * L - 0.35f, 0.3f, -2.4f - fl, 0.7f, 0.9f, fl);
+            for (int k = -1; k <= 1; k++) { add(h, k * 1.0f * L - 0.35f, 0.3f, -2.4f - fl, 0.7f, 0.9f, fl); add(h, k * 1.0f * L - 0.25f, 0.55f, -3.3f - fl, 0.5f, 0.5f, 1.0f); add(h, k * 1.0f * L - 0.4f, -0.5f, -2.8f, 0.8f, 0.7f, 0.9f); }   // finger, claw tip, knuckle
             f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
             PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
@@ -229,9 +236,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
             CubeListBuilder tb = box(-2.2f * L, -1, -2.3f * L, 4.4f * L, 9.5f, 4.6f * L);
             if (sp.knee) add(tb, -0.5f, 7f, -3.2f * L - 2, 1, 1.4f, 2.4f);
             PartDefinition t = hips.addOrReplaceChild("thigh" + n, tb, PartPose.offset(sx * 4.2f * T, 0, 1));
-            PartDefinition sh = t.addOrReplaceChild("shin", box(-1.5f * L, -0.5f, -1.5f * L, 3 * L, 8.5f, 3 * L), PartPose.offset(0, 8, 0));
+            CubeListBuilder shB = box(-1.5f * L, -0.5f, -1.5f * L, 3 * L, 8.5f, 3 * L);
+            add(shB, -0.4f, 0.8f, 1.5f * L, 0.8f, 5.5f, 0.8f);                           // calf ridge
+            PartDefinition sh = t.addOrReplaceChild("shin", shB, PartPose.offset(0, 8, 0));
             CubeListBuilder ft = box(-1.8f * L, 0, -5, 3.6f * L, 1.6f, 6.5f);
             for (int k = -1; k <= 1; k++) add(ft, k * 1.1f * L - 0.4f, 0.4f, -7.5f, 0.8f, 1, 3);
+            add(ft, -0.4f, 0.2f, 1.4f, 0.8f, 1.2f, 1.8f);                                // heel spur
             sh.addOrReplaceChild("foot", ft, PartPose.offset(0, 8, 0));
         }
         // tail
@@ -241,6 +251,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 1; i < TAIL; i++) {
             float w = Math.max(1.2f, (4.4f - i * taper) * sp.tailT);
             CubeListBuilder cb = box(-w / 2, -w / 2, 0, w, w, 7);
+            add(cb, -w * 0.18f, -w / 2 - 0.5f, 2.2f, w * 0.36f, 0.6f, 1.6f); add(cb, -w * 0.12f, w / 2 - 0.1f, 2.6f, w * 0.24f, 0.5f, 1.2f);   // serrated ridges
             if (i == N - 1) tailEnd(cb, sp.tailEnd, w);
             tp = tp.addOrReplaceChild("tail" + i, cb, PartPose.offset(0, 0, 7));
         }
