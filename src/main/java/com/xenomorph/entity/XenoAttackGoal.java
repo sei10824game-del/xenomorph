@@ -38,7 +38,7 @@ public class XenoAttackGoal extends Goal {
             int w = switch (a) { case CLAW_L, CLAW_R -> 4; case DOUBLE_CLAW -> 3; case BITE -> d < 2.4 * sc ? 2 : 0;
                 case GRAB -> 2; case TAIL_STAB -> 3; case TAIL_SWEEP -> x.level().getEntitiesOfClass(LivingEntity.class, x.getBoundingBox().inflate(3.5), e -> !XenoEntity.isXeno(e)).size() > 1 ? 5 : 1;
                 case SCREECH -> x.getHealth() < x.getMaxHealth() * 0.7f || d > 8 ? 3 : 0;
-                case LAY -> 0; default -> 3; };
+                case LAY -> 0; case SUMMON -> 2; case DETONATE -> d < 4.5 ? 6 : 0; case SPORE -> 2; case IMPREGNATE, GRAB_SLAM, DEATH_ROLL -> 3; default -> 4; };
             for (int i = 0; i < w; i++) pool.add(a);
         }
         if (!pool.isEmpty()) x.startAttack(pool.get(x.getRandom().nextInt(pool.size())));

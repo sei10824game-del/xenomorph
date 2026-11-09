@@ -276,7 +276,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         P = Mth.lerp(b, 1.38f, 0.5f);
         float H = Mth.lerp(b, 10.5f, 13.6f);
         float spd = Mth.clamp(amt * 1.6f, 0, 1);
-        float ph = limbSwing * 0.82f;
+        float wt = c.weight(), fer = c.ferocity();
+        float ph = limbSwing * 0.82f / (float) Math.pow(Math.max(0.6f, wt), 0.35);
         float crouch = 0;
         float bodyX = 0, bodyY = 0, chestX = 0, chestY = 0, chestZ = 0, neckX = 0, neckY = 0, headX = 0, headY = 0, headZ = 0;
         float jawOpen = 0, innerExt = 0, hipZ = 0, rootSpin = 0;
@@ -287,6 +288,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float[][] A = new float[2][6];  // [pitch, yaw, roll, elbow, wrist, weight]
         float[] legOv = new float[]{0, 0, 0};  // blend, tz, ty
         float legSpeed = 1;
+        float hRoll = 0, flip = 0, a2w = 0;
+        float[] a2p = new float[2];
 
         float breathe = Mth.sin(age * 0.09f);
         float sway = Mth.sin(age * 0.045f);
@@ -296,7 +299,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         neckY += sway * 0.12f * (1 - spd); headY += Mth.sin(age * 0.031f + 1) * 0.18f * (1 - spd);
         jawOpen += 0.06f + Mth.sin(age * 0.2f) * 0.03f * (1 - spd) + (Mth.sin(age * 0.013f) > 0.97f ? 0.4f : 0);
         innerExt += Math.max(0, Mth.sin(age * 0.07f + 2) - 0.8f) * 6f;      // occasional inner-jaw flick
-        float bob = -Mth.abs(Mth.sin(ph)) * 0.9f * spd * (0.4f + b * 0.6f);
+        float bob = -Mth.abs(Mth.sin(ph)) * 0.9f * spd * (0.4f + b * 0.6f) * wt;
         // spine undulation
         float und = Mth.sin(ph) * 0.22f * spd * (1.2f - 0.6f * b);
         bodyY += und; chestY -= und * 1.3f; neckY += und * 0.6f; headY -= und * 0.5f;
@@ -564,6 +567,205 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     float tw = kf(t, 30, 0, 35, 1, 45, 0);
                     hips.zScale = 1 + 0.12f * tw; hips.yScale = 1 + 0.12f * tw;
                 }
+                case BLADE_FLURRY -> {
+                    float w8 = t * 0.785f;
+                    rootSpin = kf(t, 0, 0, 5, 0.3f, 8, 0.9f, 30, 6.28f, 34, 6.28f);
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1, ps = Mth.sin(w8 - s * Mth.PI), pc = Mth.cos(w8 - s * Mth.PI);
+                        A[s][0] = -1.35f + 0.85f * ps; A[s][1] = sg * (0.5f + 0.9f * pc); A[s][2] = sg * 0.6f * ps; A[s][3] = 0.35f; A[s][4] = 0.4f * ps; A[s][5] = aw;
+                    }
+                    chestY += 0.5f * Mth.sin(w8) * aw; headY -= 0.4f * Mth.sin(w8) * aw; crouch += 1.4f * aw; jawOpen += 0.9f * aw;
+                    for (int i = 0; i < TAIL; i++) tailYaw[i] += Mth.sin(t * 0.9f - i * 0.6f) * 0.5f * aw;
+                }
+                case FRENZY -> {
+                    float w4 = t * 1.57f, bite = Math.max(0, Mth.sin(w4 * 0.5f)) * aw;
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1, sw = Mth.sin(w4 - s * Mth.PI);
+                        A[s][0] = -1.6f + 0.8f * sw; A[s][1] = sg * (0.1f + 0.8f * Mth.cos(w4 - s * Mth.PI)); A[s][2] = sg * 0.4f * sw; A[s][3] = 0.4f + 0.3f * sw; A[s][5] = aw;
+                    }
+                    headX += 0.5f * bite - 0.2f * aw; neckX += 0.4f * bite; chestX += 0.3f * bite; jawOpen += 1.0f * bite + 0.2f * aw; innerExt += 7 * Math.max(0, Mth.sin(w4 * 0.5f + 0.5f)) * aw;
+                    crouch += (1.5f + Mth.sin(w4 * 0.5f) * 0.8f) * aw; chestY += 0.4f * Mth.sin(w4) * aw; headY += 0.3f * Mth.cos(w4) * aw;
+                    for (int i = 0; i < TAIL; i++) tailYaw[i] += Mth.sin(t * 0.8f - i * 0.5f) * 0.4f * aw;
+                }
+                case HORN_TOSS -> {
+                    headX += kf(t, 0, 0, 6, 0.95f, 12, 1.0f, 17, -0.9f, 24, -0.3f, 30, 0);
+                    neckX += kf(t, 0, 0, 6, 0.6f, 12, 0.7f, 17, -0.7f, 30, 0);
+                    chestX += kf(t, 0, 0, 6, 0.35f, 12, 0.4f, 17, -0.5f, 30, 0);
+                    crouch += kf(t, 0, 0, 6, 3f, 13, 3.5f, 17, -0.5f, 30, 0);
+                    hipZ += kf(t, 0, 0, 6, 1.5f, 13, -1f, 30, 0);
+                    jawOpen += 0.1f;
+                    for (int s = 0; s < 2; s++) { float sg = s == 0 ? 1 : -1; A[s][0] = kf(t, 0, -0.6f, 6, -0.9f, 17, -1.8f, 30, -0.6f); A[s][1] = sg * kf(t, 0, -0.2f, 6, -0.7f, 17, -0.9f, 30, -0.2f); A[s][3] = 0.9f; A[s][5] = aw * 0.8f; }
+                    for (int i = 0; i < TAIL; i++) tailPitch[i] = -0.08f * i * aw;
+                }
+                case STOMP -> {
+                    float rise = kf(t, 0, 0, 10, 1, 15, 1, 17, 0);
+                    P = Mth.lerp(rise * 0.8f, P, 0.05f);
+                    crouch += kf(t, 0, 0, 6, -0.5f, 12, -3.5f, 15, -3f, 17, 4.5f, 22, 3f, 38, 0);
+                    chestX += kf(t, 0, 0, 12, -0.55f, 15, -0.5f, 17, 0.7f, 24, 0.3f, 38, 0);
+                    headX += kf(t, 0, 0, 12, -0.8f, 15, -0.8f, 17, 0.6f, 38, 0);
+                    jawOpen += kf(t, 0, 0.1f, 8, 1.2f, 15, 1.45f, 17, 0.3f, 38, 0.1f);
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = kf(t, 0, -0.6f, 12, -2.9f, 15, -2.9f, 17, -0.7f, 38, -0.6f); A[s][1] = sg * kf(t, 0, -0.2f, 12, -0.9f, 15, -0.9f, 17, -0.1f, 38, -0.2f);
+                        A[s][2] = sg * kf(t, 0, 0, 12, -0.5f, 17, 0, 38, 0); A[s][3] = kf(t, 0, 0.9f, 12, 0.3f, 17, 0.2f, 38, 0.9f); A[s][5] = aw;
+                    }
+                    float qk = Mth.sin(t * 5f) * kf(t, 17, 1, 30, 0); bodyX += qk * 0.05f; chestZ += qk * 0.04f;
+                    for (int i = 0; i < TAIL; i++) tailPitch[i] = kf(t, 0, tailPitch[i], 12, -0.07f * i, 17, 0.04f, 38, tailPitch[i]);
+                }
+                case GRAB_SLAM -> {
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = kf(t, 0, -0.6f, 5, -1.7f, 8, -1.65f, 14, -2.9f, 28, -3.0f, 30, -0.9f, 33, -0.9f, 40, -2.9f, 44, -3.0f, 46, -0.8f, 50, -1.5f, 58, -0.6f);
+                        A[s][1] = sg * kf(t, 0, -0.2f, 8, -0.4f, 14, 0.1f, 44, 0.1f, 46, -0.2f, 58, -0.2f); A[s][2] = sg * kf(t, 0, 0, 14, -0.2f, 58, 0);
+                        A[s][3] = kf(t, 0, 0.9f, 8, 0.15f, 14, 0.4f, 28, 0.3f, 30, 0.15f, 40, 0.4f, 46, 0.2f, 58, 0.9f); A[s][4] = 0.3f; A[s][5] = aw;
+                    }
+                    chestX += kf(t, 0, 0, 8, 0.2f, 14, -0.45f, 28, -0.5f, 30, 0.8f, 33, 0.6f, 40, -0.5f, 44, -0.5f, 46, 0.85f, 52, 0.2f, 58, 0);
+                    headX += kf(t, 0, 0, 14, -0.4f, 28, -0.5f, 30, 0.7f, 40, -0.5f, 46, 0.7f, 58, 0);
+                    jawOpen += kf(t, 0, 0.1f, 8, 1f, 14, 1.3f, 30, 0.5f, 40, 1.3f, 46, 0.5f, 58, 0.1f);
+                    crouch += kf(t, 0, 0, 8, 1f, 28, -0.5f, 30, 3.5f, 34, 1.5f, 44, -0.5f, 46, 4f, 52, 1f, 58, 0);
+                    for (int i = 0; i < TAIL; i++) tailPitch[i] -= 0.04f * i * aw;
+                }
+                case SHADOW_STRIKE -> {
+                    crouch += kf(t, 0, 0, 5, 5.5f, 12, 5.5f, 13, -0.5f, 18, 2f, 28, 0);
+                    P = Mth.lerp(kf(t, 2, 0, 6, 1, 12, 1, 15, 0), P, 1.45f);
+                    chestX += kf(t, 0, 0, 6, 0.3f, 12, 0.3f, 14, -0.3f, 28, 0); headX += kf(t, 0, 0, 6, 0.4f, 12, 0.4f, 14, -0.5f, 28, 0);
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1, d = s * 2;
+                        A[s][0] = kf(t - d, 0, -0.6f, 6, -0.2f, 12, 0.3f, 14, -2.2f, 17, -1.3f, 28, -0.6f); A[s][1] = sg * kf(t - d, 0, -0.2f, 12, -0.9f, 14, 1.0f, 17, 0.7f, 28, -0.2f); A[s][3] = 0.6f; A[s][5] = aw;
+                    }
+                    jawOpen += kf(t, 0, 0, 12, 0, 14, 1.2f, 20, 0.2f, 28, 0);
+                    for (int i = 0; i < TAIL; i++) tailPitch[i] = kf(t, 0, tailPitch[i], 6, -0.12f * i, 12, -0.12f * i, 14, 0.03f * i, 28, tailPitch[i]);
+                }
+                case IMPREGNATE -> {
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = kf(t, 0, -0.6f, 5, -1.75f, 8, -1.65f, 12, -1.6f, 20, -1.9f, 56, -1.9f, 60, -1.0f, 64, -0.6f); A[s][1] = sg * kf(t, 0, -0.2f, 8, -0.45f, 20, 0.4f, 56, 0.4f, 64, -0.2f);
+                        A[s][3] = kf(t, 0, 0.9f, 8, 0.15f, 20, 1.2f, 56, 1.2f, 64, 0.9f); A[s][5] = aw;
+                    }
+                    chestX += kf(t, 0, 0, 8, 0.2f, 20, 0.45f, 52, 0.4f, 64, 0); headX += kf(t, 0, 0, 20, 0.5f, 52, 0.5f, 64, 0);
+                    jawOpen += kf(t, 0, 0.1f, 8, 1.0f, 28, 1.3f, 52, 1.2f, 64, 0.1f); innerExt += kf(t, 28, 0, 34, 9, 40, 9, 46, 0);
+                    crouch += kf(t, 0, 0, 8, 1.2f, 56, 1.2f, 64, 0);
+                    float tl = kf(t, 0, 0, 14, 0, 26, 1, 34, 1.15f, 46, 1, 56, 0, 64, 0);       // tail curls forward under the body
+                    tailBaseX = Mth.lerp(tl, tailBaseX, 1.25f);
+                    for (int i = 0; i < TAIL; i++) { tailPitch[i] = Mth.lerp(tl, tailPitch[i], 0.22f); tailYaw[i] *= (1 - tl); }
+                }
+                case DEATH_ROLL -> {
+                    hRoll = kf(t, 8, 0, 50, 18.85f);
+                    float rl = kf(t, 8, 0, 12, 1, 48, 1, 52, 0);
+                    jawOpen += 1.2f * aw; crouch += 1.2f * aw; headZ += Mth.sin(t * 1.5f) * 0.2f * rl; headY += Mth.sin(t * 1.8f) * 0.4f * rl;
+                    for (int s = 0; s < 2; s++) { A[s][0] = kf(t, 0, -0.6f, 6, -1.7f, 10, -1.0f, 50, -1.0f, 56, -0.6f); A[s][1] = (s == 0 ? 1 : -1) * 0.5f; A[s][3] = 1.3f; A[s][5] = aw; }
+                    for (int i = 0; i < TAIL; i++) tailYaw[i] += Mth.sin(t * 0.9f - i * 0.5f) * 0.8f * rl;
+                }
+                case LEAP_SLASH -> {
+                    float air = kf(t, 7, 0, 9, 1, 22, 1, 25, 0);
+                    flip = kf(t, 8, 0, 21, 6.28f); legOv[0] = air; legOv[1] = 2f; legOv[2] = 7f;
+                    crouch += kf(t, 0, 0, 6, 4f, 8, -1f, 22, -1f, 25, 3f, 30, 0);
+                    jawOpen += kf(t, 0, 0.1f, 8, 1.0f, 20, 1.0f, 26, 0.1f);
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = kf(t, 0, -0.6f, 6, 0.3f, 8, -2.3f, 13, -2.3f, 15, -0.9f, 26, -0.6f); A[s][1] = sg * kf(t, 0, -0.2f, 6, -0.6f, 8, -1.4f, 12, -1.4f, 15, 0.9f, 26, -0.2f);
+                        A[s][3] = 0.4f; A[s][5] = aw;
+                    }
+                }
+                case FLAIL -> {
+                    float ww = t * 0.8f;
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = ww * (s == 0 ? 1 : -0.8f) - 1.0f; A[s][1] = sg * (0.3f + 0.5f * Mth.sin(ww * 1.3f + s)); A[s][2] = sg * 0.8f * Mth.sin(ww + s);
+                        A[s][3] = 0.3f + 0.4f * Mth.sin(ww * 2); A[s][5] = aw;
+                    }
+                    headY += 0.8f * Mth.sin(t * 1.1f) * aw; headX += 0.3f * Mth.sin(t * 1.7f) * aw; chestY += 0.6f * Mth.sin(t * 0.9f) * aw; chestX += 0.2f * Mth.sin(t * 1.3f) * aw;
+                    crouch += (1.0f + 0.8f * Mth.sin(t * 1.5f)) * aw; jawOpen += 1.2f * aw;
+                    for (int i = 0; i < TAIL; i++) tailYaw[i] += Mth.sin(t * 1.2f - i * 0.5f) * 0.7f * aw;
+                }
+                case SPORE -> {
+                    float sw = kf(t, 0, 0, 18, 1, 20, 1.15f, 26, 0.1f, 44, 0);
+                    chestScale = 1 + 0.4f * sw; neckScale = 1 + 0.2f * sw;
+                    headX += kf(t, 0, 0, 16, -0.8f, 20, -0.9f, 26, 0.2f, 44, 0); chestX += kf(t, 0, 0, 16, -0.4f, 20, -0.45f, 26, 0.1f, 44, 0);
+                    jawOpen += kf(t, 0, 0.1f, 16, 1.2f, 26, 1.3f, 34, 0.2f, 44, 0.1f); crouch += kf(t, 0, 0, 18, 1.2f, 20, -0.5f, 30, 0.5f, 44, 0);
+                    chestZ += Mth.sin(t * 3) * 0.04f * kf(t, 8, 0, 18, 1, 20, 0);
+                    for (int s = 0; s < 2; s++) { float sg = s == 0 ? 1 : -1; A[s][0] = -0.9f; A[s][1] = sg * (-0.2f - 0.9f * sw); A[s][2] = sg * -0.5f * sw; A[s][3] = 0.5f; A[s][5] = aw * Math.min(1, sw * 2); }
+                }
+                case LOB -> {
+                    headX += kf(t, 0, 0, 9, -1.0f, 12, -0.9f, 14, 0.7f, 22, 0.2f, 30, 0); neckX += kf(t, 0, 0, 9, -0.6f, 13, 0.5f, 30, 0);
+                    neckScale = 1 + 0.5f * kf(t, 0, 0, 9, 1, 13, 0, 22, 0); chestX += kf(t, 0, 0, 9, -0.6f, 14, 0.4f, 30, 0);
+                    jawOpen += kf(t, 0, 0.1f, 8, 0.7f, 13, 1.4f, 18, 0.3f, 30, 0.1f); crouch += kf(t, 0, 0, 9, -0.5f, 14, 2f, 30, 0);
+                    A[0][0] = kf(t, 0, -0.6f, 9, -2.8f, 14, -0.4f, 30, -0.6f); A[0][1] = 0.4f; A[0][3] = 0.5f; A[0][5] = aw;
+                    A[1][0] = -1.0f; A[1][1] = -0.4f; A[1][3] = 1.2f; A[1][5] = aw * 0.8f;
+                }
+                case VOLLEY -> {
+                    float v = Math.max(0, Mth.sin((t - 8f) * 1.25f)) * kf(t, 8, 0, 9, 1, 25, 1, 27, 0);
+                    headX += -0.5f * v - 0.2f * aw; jawOpen += 0.1f + 1.3f * v; neckScale = 1 + 0.35f * v; chestScale = 1 + 0.07f * v; chestX += -0.2f * v; crouch += 1.2f * aw;
+                    for (int s = 0; s < 2; s++) { A[s][0] = -1.0f; A[s][1] = (s == 0 ? 1 : -1) * 0.4f; A[s][3] = 1.2f; A[s][5] = aw * 0.8f; }
+                }
+                case VOMIT -> {
+                    float up = kf(t, 0, 0, 8, 1, 36, 1, 42, 0), pulse = Mth.sin(t * 0.9f) * kf(t, 10, 0, 14, 1, 34, 1, 38, 0);
+                    headX += -1.1f * up; neckX += -0.5f * up; chestX += -0.5f * up + pulse * 0.05f; jawOpen += 0.1f + 1.4f * up; innerExt += 4 * up;
+                    chestScale = 1 + 0.12f * pulse; neckScale = 1 + 0.4f * up + 0.2f * pulse; crouch += 1.2f * up;
+                    for (int s = 0; s < 2; s++) { A[s][0] = -0.9f; A[s][1] = (s == 0 ? 1 : -1) * 0.6f; A[s][3] = 0.8f; A[s][5] = aw * 0.8f; }
+                }
+                case DETONATE -> {
+                    float sw = kf(t, 0, 0, 34, 1, 36, 1), shake = Mth.sin(t * 2.9f) * sw * sw;
+                    chestScale = 1 + 0.9f * sw; neckScale = 1 + 0.4f * sw; bodyY += shake * 0.12f; chestZ += shake * 0.08f; headZ += shake * 0.2f; jawOpen += 0.1f + 1.4f * sw;
+                    crouch += 1.5f * sw + shake * 0.6f; innerExt += 3 * sw;
+                    for (int s = 0; s < 2; s++) { A[s][0] = -1.0f + shake * 0.5f; A[s][1] = (s == 0 ? 1 : -1) * 0.7f; A[s][3] = 0.5f; A[s][5] = aw; }
+                }
+                case SUMMON -> {
+                    float up = kf(t, 0, 0, 10, 1, 50, 1, 58, 0);
+                    P = Mth.lerp(up * b, P, 0.1f);
+                    chestX += -0.55f * up; headX += -0.9f * up; neckX += -0.5f * up; jawOpen += 0.1f + 1.4f * up * (0.6f + 0.4f * Mth.sin(t * 0.9f)); innerExt += 5 * up;
+                    crouch += 1.5f * up * Math.max(0, Mth.sin(t * 0.55f)); chestScale = 1 + 0.1f * up * Math.max(0, Mth.sin(t * 0.55f));
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = kf(t, 0, -0.6f, 10, -1.5f, 50, -1.5f, 58, -0.6f); A[s][1] = sg * (kf(t, 0, -0.2f, 10, -1.7f, 50, -1.7f, 58, -0.2f) + Mth.sin(t * 0.4f) * 0.15f * up);
+                        A[s][2] = sg * -0.9f * up; A[s][3] = 0.3f; A[s][5] = aw;
+                    }
+                    for (int i = 0; i < TAIL; i++) { tailPitch[i] = -0.09f * i * up + Mth.sin(t * 1.2f - i) * 0.05f * up; tailYaw[i] *= (1 - up); }
+                }
+                case FACE_TOSS -> {
+                    chestScale = 1 + 0.15f * kf(t, 0, 0, 8, 1, 24, 1, 30, 0);
+                    chestX += kf(t, 0, 0, 11, -0.55f, 14, 0.5f, 19, -0.55f, 22, 0.5f, 32, 0); headX += kf(t, 0, 0, 11, -0.3f, 14, 0.4f, 19, -0.3f, 22, 0.4f, 32, 0);
+                    jawOpen += kf(t, 0, 0.1f, 11, 1f, 14, 0.4f, 19, 1f, 22, 0.4f, 32, 0.1f); crouch += kf(t, 0, 0, 8, 1.5f, 24, 1.5f, 32, 0);
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1;
+                        A[s][0] = kf(t, 0, -0.6f, 5, -1.9f, 11, -3.0f, 14, -0.5f, 17, -1.7f, 19, -3.0f, 22, -0.5f, 32, -0.6f); A[s][1] = sg * 0.3f; A[s][3] = 0.4f; A[s][5] = aw;
+                    }
+                }
+                case WEB -> {
+                    headX += kf(t, 0, 0, 8, -0.5f, 11, 0.5f, 18, 0, 26, 0); neckScale = 1 + 0.4f * kf(t, 0, 0, 8, 1, 11, 0, 26, 0); jawOpen += kf(t, 0, 0.1f, 7, 0.9f, 12, 1.2f, 26, 0.1f);
+                    float rl = kf(t, 10, 0, 12, 1, 24, 1, 26, 0); a2w = aw;
+                    for (int s = 0; s < 2; s++) {
+                        float rs = Mth.sin((t - 11) * 0.9f - s * Mth.PI);
+                        A[s][0] = -1.6f + 0.9f * rs * rl; A[s][1] = (s == 0 ? 1 : -1) * 0.3f; A[s][3] = 0.8f; A[s][5] = aw; a2p[s] = -1.2f + 0.8f * rs * rl;
+                    }
+                    crouch += 1.5f * aw;
+                }
+                case MULTI_STAB -> {
+                    a2w = aw;
+                    for (int s = 0; s < 2; s++) {
+                        float sg = s == 0 ? 1 : -1, st0 = Math.max(0, Mth.sin((t - 6) * 1.05f - s * Mth.PI)) * kf(t, 6, 0, 8, 1, 26, 1, 30, 0);
+                        float st2 = Math.max(0, Mth.sin((t - 6) * 1.05f - s * Mth.PI + 1.57f)) * kf(t, 6, 0, 8, 1, 26, 1, 30, 0);
+                        A[s][0] = -1.0f - 0.7f * st0; A[s][1] = sg * (0.3f - 0.3f * st0); A[s][3] = 1.2f - 1.0f * st0; A[s][5] = aw; a2p[s] = -0.7f - 0.9f * st2;
+                    }
+                    chestX += 0.1f * Mth.sin(t * 1.05f) * aw; crouch += aw; jawOpen += 0.6f * aw;
+                }
+                case CREST_RAM -> {
+                    headX += kf(t, 0, 0, 5, -0.7f, 8, -0.8f, 11, 0.55f, 18, 0.3f, 26, 0); neckX += kf(t, 0, 0, 8, -0.5f, 11, 0.5f, 26, 0);
+                    chestX += kf(t, 0, 0, 8, -0.35f, 11, 0.5f, 18, 0.2f, 26, 0); crouch += kf(t, 0, 0, 8, 2f, 11, -0.3f, 26, 0); hipZ += kf(t, 0, 0, 8, 1.6f, 11, -2.2f, 26, 0);
+                    for (int s = 0; s < 2; s++) { float sg = s == 0 ? 1 : -1; A[s][0] = kf(t, 0, -0.6f, 8, -0.8f, 26, -0.6f); A[s][1] = sg * kf(t, 0, -0.2f, 8, -0.7f, 11, -0.4f, 26, -0.2f); A[s][3] = 0.9f; A[s][5] = aw * 0.8f; }
+                }
+                default -> {}
+            }
+            // heavy bodies: impact squash, quake
+            if (wt > 1.2f) {
+                float imp = kf(t, Math.max(0, hit - 1), 0, hit, 1, hit + 8, 0);
+                crouch += imp * (wt - 1) * 1.6f; chestX += imp * 0.12f * (wt - 1); bodyX += Mth.sin(t * 4.5f) * imp * 0.05f * (wt - 1);
+            }
+        }
+        // temper: twitchy, hunched idle
+        headY += Mth.sin(age * 0.8f) * 0.07f * fer * (1 - aw); jawOpen += fer * 0.25f * (1 - aw); crouch += 0.5f * fer * (1 - aw);
+        if (false) {
+            switch (at) {
                 default -> {}
             }
         }
@@ -572,7 +774,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float hAct = H - crouch;
         hips.y = 24 - hAct + bob;
         hips.z = 1 + hipZ + (1 - b) * -1.5f;
-        hips.zRot = walkRoll;
+        hips.zRot = walkRoll + hRoll; hips.xRot = flip;
         // quad body is long: shorten "bipedal" crouch effect on hips height etc handled by IK
         body.xRot = P + bodyX; body.yRot = bodyY; body.zRot = walkRoll * -1.5f;
         float aim = P - Mth.lerp(b, 0.15f, 0.55f);                    // how much the head must tilt back up
@@ -591,7 +793,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         // extra Queen arms flutter
         for (int s = 0; s < 2; s++) {
             float sg = s == 0 ? 1 : -1;
-            arm2[s].xRot = -0.9f + Mth.sin(age * 0.07f + s * 2) * 0.12f + (at == Attack.NONE ? 0 : -0.6f * aw);
+            arm2[s].xRot = Mth.lerp(a2w, -0.9f + Mth.sin(age * 0.07f + s * 2) * 0.12f + (at == Attack.NONE ? 0 : -0.6f * aw), a2p[s]);
             arm2[s].zRot = sg * -0.25f; fore2[s].xRot = -1.0f + Mth.sin(age * 0.09f + s) * 0.15f;
         }
 

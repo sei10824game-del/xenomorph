@@ -38,6 +38,7 @@ public class FacehuggerEntity extends Monster {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 8).add(Attributes.MOVEMENT_SPEED, 0.36).add(Attributes.ATTACK_DAMAGE, 1).add(Attributes.FOLLOW_RANGE, 24);
     }
     @Override protected void defineSynchedData() { super.defineSynchedData(); entityData.define(ATTACHED, false); entityData.define(LEAP, 0); }
+    public void leapNow() { entityData.set(LEAP, 1); }
     public boolean isAttached() { return entityData.get(ATTACHED); }
     /** >0 while airborne in a leap (ticks since launch) */
     public int leapTick() { return entityData.get(LEAP); }

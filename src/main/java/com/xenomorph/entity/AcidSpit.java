@@ -14,6 +14,7 @@ import net.minecraft.world.phys.HitResult;
 
 public class AcidSpit extends ThrowableProjectile {
     private float dmg = 4;
+    public boolean splash;
 
     public AcidSpit(EntityType<? extends AcidSpit> t, Level l) { super(t, l); }
     public AcidSpit(Level l, LivingEntity owner, float dmg) { super(XenomorphMod.SPIT.get(), owner, l); this.dmg = dmg; }
@@ -41,6 +42,15 @@ public class AcidSpit extends ThrowableProjectile {
         if (!level().isClientSide) {
             ((net.minecraft.server.level.ServerLevel) level()).sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), 14, 0.2, 0.2, 0.2, 0.1);
             playSound(net.minecraft.sounds.SoundEvents.LAVA_EXTINGUISH, 0.8f, 1.5f);
+            if (splash) {
+                for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(3, 1.5, 3), e -> !(getOwner() instanceof XenoEntity o ? o.friendly(e) : XenoEntity.isXeno(e)))) {
+                    e.hurt(damageSources().indirectMagic(this, getOwner()), dmg * 0.7f);
+                    e.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 0));
+                }
+                net.minecraft.world.entity.AreaEffectCloud c = new net.minecraft.world.entity.AreaEffectCloud(level(), getX(), getY(), getZ());
+                c.setRadius(2.2f); c.setDuration(80); c.setParticle(ParticleTypes.ITEM_SLIME); c.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
+                level().addFreshEntity(c);
+            }
             discard();
         }
     }
