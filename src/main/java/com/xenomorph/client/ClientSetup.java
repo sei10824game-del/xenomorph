@@ -39,11 +39,12 @@ public final class ClientSetup {
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         XenomorphMod.XENOS.forEach((c, t) -> e.registerEntityRenderer(t.get(), ctx -> new XenoRenderer(ctx, c)));
         e.registerEntityRenderer(XenomorphMod.FACEHUGGER.get(), ctx -> new MobRenderer<FacehuggerEntity, SmallModels.Hugger>(ctx, new SmallModels.Hugger(ctx.bakeLayer(HUGGER)), 0.3f) {
-            @Override public ResourceLocation getTextureLocation(FacehuggerEntity x) { return tex("facehugger"); }
+            @Override public ResourceLocation getTextureLocation(FacehuggerEntity x) { return tex(x.variant() > 0 ? "red_facehugger" : "facehugger"); }
+            @Override protected void scale(FacehuggerEntity x, PoseStack ps, float pt) { if (x.variant() == 2) ps.scale(1.8f, 1.8f, 1.8f); }
             @Override protected void setupRotations(FacehuggerEntity x, PoseStack ps, float a, float b, float pt) { super.setupRotations(x, ps, a, b, pt); }
         });
         e.registerEntityRenderer(XenomorphMod.BURSTER.get(), ctx -> new MobRenderer<ChestbursterEntity, SmallModels.Burster>(ctx, new SmallModels.Burster(ctx.bakeLayer(BURSTER)), 0.25f) {
-            @Override public ResourceLocation getTextureLocation(ChestbursterEntity x) { return tex("chestburster"); }
+            @Override public ResourceLocation getTextureLocation(ChestbursterEntity x) { return tex(x.form.red() ? "red_chestburster" : "chestburster"); }
         });
         XenomorphMod.HUNTERS.forEach((k, t) -> e.registerEntityRenderer(t.get(), ctx -> new net.minecraft.client.renderer.entity.HumanoidMobRenderer<HunterEntity, HunterModel>(ctx, new HunterModel(ctx.bakeLayer(hunterLayer(k))), 0.6f) {
             @Override public ResourceLocation getTextureLocation(HunterEntity x) { return tex(k.name().toLowerCase()); }
@@ -67,7 +68,7 @@ public final class ClientSetup {
     static class EggRenderer extends EntityRenderer<XenoEggEntity> {
         private final SmallModels.Egg model;
         EggRenderer(EntityRendererProvider.Context ctx) { super(ctx); model = new SmallModels.Egg(ctx.bakeLayer(EGG)); shadowRadius = 0.5f; }
-        @Override public ResourceLocation getTextureLocation(XenoEggEntity e) { return tex("egg"); }
+        @Override public ResourceLocation getTextureLocation(XenoEggEntity e) { return tex(e.red() ? "red_egg" : "egg"); }
         @Override public void render(XenoEggEntity e, float yaw, float pt, PoseStack ps, MultiBufferSource buf, int light) {
             ps.pushPose();
             ps.scale(-1, -1, 1); ps.translate(0, -1.501, 0);

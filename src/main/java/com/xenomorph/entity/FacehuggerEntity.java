@@ -26,6 +26,7 @@ import net.minecraft.world.phys.Vec3;
 
 /** Scuttles, leaps, clamps onto the face and implants an embryo. */
 public class FacehuggerEntity extends Monster {
+    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(FacehuggerEntity.class, EntityDataSerializers.INT);   // 0 black, 1 red, 2 royal red
     private static final EntityDataAccessor<Boolean> ATTACHED = SynchedEntityData.defineId(FacehuggerEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> LEAP = SynchedEntityData.defineId(FacehuggerEntity.class, EntityDataSerializers.INT);
     private LivingEntity host;
@@ -37,7 +38,13 @@ public class FacehuggerEntity extends Monster {
     public static AttributeSupplier.Builder attributes() {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 8).add(Attributes.MOVEMENT_SPEED, 0.36).add(Attributes.ATTACK_DAMAGE, 1).add(Attributes.FOLLOW_RANGE, 24);
     }
-    @Override protected void defineSynchedData() { super.defineSynchedData(); entityData.define(ATTACHED, false); entityData.define(LEAP, 0); }
+    @Override protected void defineSynchedData() { super.defineSynchedData(); entityData.define(ATTACHED, false); entityData.define(LEAP, 0); entityData.define(VARIANT, 0); }
+    public int variant() { return entityData.get(VARIANT); }
+    public void setVariant(int v) { entityData.set(VARIANT, v); refreshDimensions(); if (v == 2) { getAttribute(Attributes.MAX_HEALTH).setBaseValue(20); setHealth(20); } }
+    @Override public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose p) { return super.getDimensions(p).scale(variant() == 2 ? 1.8f : 1f); }
+    @Override public void onSyncedDataUpdated(EntityDataAccessor<?> k) { super.onSyncedDataUpdated(k); if (k == VARIANT) refreshDimensions(); }
+    @Override public void addAdditionalSaveData(CompoundTag t) { super.addAdditionalSaveData(t); t.putInt("Variant", variant()); }
+    @Override public void readAdditionalSaveData(CompoundTag t) { super.readAdditionalSaveData(t); setVariant(t.getInt("Variant")); }
     public void leapNow() { entityData.set(LEAP, 1); }
     public boolean isAttached() { return entityData.get(ATTACHED); }
     /** >0 while airborne in a leap (ticks since launch) */
@@ -69,15 +76,15 @@ public class FacehuggerEntity extends Monster {
     }
 
     /** Valid host: not a xeno and not already implanted. */
-    private boolean free(LivingEntity e) { return !XenoEntity.isXeno(e) && !e.hasEffect(XenomorphMod.EMBRYO.get()); }
+    private boolean free(LivingEntity e) { return !XenoEntity.isXeno(e) && !e.hasEffect(XenomorphMod.EMBRYO.get()) && !e.hasEffect(XenomorphMod.RED_EMBRYO.get()); }
 
     private void attach(LivingEntity t) {
-        if (t.hasEffect(XenomorphMod.EMBRYO.get())) return;
+        if (t.hasEffect(XenomorphMod.EMBRYO.get()) || t.hasEffect(XenomorphMod.RED_EMBRYO.get())) return;
         net.minecraft.world.item.ItemStack helm = t.getItemBySlot(EquipmentSlot.HEAD);
         if (!helm.isEmpty()) { helm.hurtAndBreak(40, t, e -> e.broadcastBreakEvent(EquipmentSlot.HEAD)); t.hurt(damageSources().magic(), 2); if (!t.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) { setDeltaMovement(0, 0.3, 0); return; } }
         host = t; hostId = t.getId(); attachTicks = 0;
         entityData.set(ATTACHED, true);
-        t.addEffect(new MobEffectInstance(XenomorphMod.EMBRYO.get(), 2400, 0, false, true, true));
+        t.addEffect(new MobEffectInstance((variant() > 0 ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get(), 2400, 0, false, true, true));
         playSound(SoundEvents.SLIME_SQUISH, 1.2f, 0.6f);
     }
     private void tickAttached() {

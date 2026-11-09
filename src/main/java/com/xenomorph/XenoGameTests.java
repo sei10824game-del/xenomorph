@@ -155,4 +155,19 @@ public class XenoGameTests {
         h.runAfterDelay(5, () -> { if (!d.isHanging()) throw new AssertionError("fell immediately"); });
         h.succeedWhen(() -> { if (d.isHanging() || d.getY() > y0 - 1.0) throw new net.minecraft.gametest.framework.GameTestAssertException("still hanging; hang=" + d.isHanging()); });
     }
+
+    /** Red strain: own faction, hostile to black xenos, red embryo in a large host births a Red Queen Mother. */
+    @GameTest(template = "empty", timeoutTicks = 200, batch = "b_red")
+    public static void redStrain(GameTestHelper h) {
+        floor(h);
+        var rw = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.RED_WARRIOR).get(), new BlockPos(1, 2, 1));
+        var bd = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(6, 2, 1));
+        if (rw.friendly(bd)) throw new AssertionError("red and black must be hostile");
+        var pred = (HunterEntity) h.spawnWithNoFreeWill(XenomorphMod.HUNTERS.get(HunterEntity.Kind.PREDATOR).get(), new BlockPos(2, 2, 6));
+        pred.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.RED_EMBRYO.get(), 4, 0));
+        h.succeedWhen(() -> {
+            boolean q = h.getLevel().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(ChestbursterEntity.class), b -> b.form == Caste.RED_QUEEN_MOTHER).size() > 0;
+            if (!q) throw new net.minecraft.gametest.framework.GameTestAssertException("no red queen burster");
+        });
+    }
 }

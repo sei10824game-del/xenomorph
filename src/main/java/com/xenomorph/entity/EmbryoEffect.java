@@ -11,7 +11,8 @@ import net.minecraft.world.entity.animal.Wolf;
 
 /** Implanted embryo: when the timer ends, a chestburster erupts and the host dies. */
 public class EmbryoEffect extends MobEffect {
-    public EmbryoEffect() { super(MobEffectCategory.HARMFUL, 0x8a1f1f); }
+    private final boolean red;
+    public EmbryoEffect(boolean red) { super(MobEffectCategory.HARMFUL, red ? 0xd01010 : 0x8a1f1f); this.red = red; }
 
     @Override public boolean isDurationEffectTick(int duration, int amp) { return duration == 1; }
 
@@ -19,7 +20,7 @@ public class EmbryoEffect extends MobEffect {
         if (!(host.level() instanceof ServerLevel sl)) return;
         ChestbursterEntity b = XenomorphMod.BURSTER.get().create(sl);
         if (b != null) {
-            b.form = host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : Caste.DEACON) : host instanceof Wolf ? Caste.RUNNER : Caste.DRONE;
+            b.form = red ? (host.getMaxHealth() >= 40 ? Caste.RED_QUEEN_MOTHER : host.getRandom().nextBoolean() ? Caste.RED_WARRIOR : Caste.RED_DRONE) : host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : Caste.DEACON) : host instanceof Wolf ? Caste.RUNNER : Caste.DRONE;
             b.moveTo(host.getX(), host.getY() + host.getBbHeight() * 0.6, host.getZ(), host.getYRot(), 0);
             sl.addFreshEntity(b);
         }

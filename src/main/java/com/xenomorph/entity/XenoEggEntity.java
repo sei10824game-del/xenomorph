@@ -19,12 +19,21 @@ import net.minecraftforge.network.NetworkHooks;
 /** Ovomorph: opens when prey approaches and releases a facehugger. */
 public class XenoEggEntity extends Entity {
     private static final EntityDataAccessor<Integer> OPEN = SynchedEntityData.defineId(XenoEggEntity.class, EntityDataSerializers.INT); // 0 closed .. 40 fully open
+    private static final EntityDataAccessor<Boolean> RED = SynchedEntityData.defineId(XenoEggEntity.class, EntityDataSerializers.BOOLEAN);
     private boolean hugger = true;
     private int idle;
     public int openO;
 
     public XenoEggEntity(EntityType<?> t, Level l) { super(t, l); }
-    @Override protected void defineSynchedData() { entityData.define(OPEN, 0); }
+    @Override protected void defineSynchedData() { entityData.define(OPEN, 0); entityData.define(RED, false); }
+    public boolean red() { return entityData.get(RED); }
+    public void setRed(boolean r) { entityData.set(RED, r); }
+    private void spawnHugger(ServerLevel sl, double y) {
+        FacehuggerEntity f = XenomorphMod.FACEHUGGER.get().create(sl);
+        if (f == null) return;
+        if (red()) f.setVariant(random.nextInt(4) == 0 ? 2 : 1);
+        f.moveTo(getX(), getY() + y, getZ(), random.nextFloat() * 360, 0); f.setDeltaMovement(0, 0.35, 0); sl.addFreshEntity(f);
+    }
     public int open() { return entityData.get(OPEN); }
 
     @Override public void tick() {
@@ -38,8 +47,7 @@ public class XenoEggEntity extends Entity {
         if (prey) { idle = 0; if (o < 40) entityData.set(OPEN, o + 2); }
         else if (++idle > 100 && o > 0 && hugger) entityData.set(OPEN, o - 1);
         if (o >= 40 && hugger && prey && level() instanceof ServerLevel sl) {
-            FacehuggerEntity f = XenomorphMod.FACEHUGGER.get().create(sl);
-            if (f != null) { f.moveTo(getX(), getY() + 1.0, getZ(), random.nextFloat() * 360, 0); f.setDeltaMovement(0, 0.35, 0); sl.addFreshEntity(f); }
+            spawnHugger(sl, 1.0);
             hugger = false; playSound(SoundEvents.SLIME_SQUISH, 1f, 0.5f);
         }
     }
@@ -48,13 +56,12 @@ public class XenoEggEntity extends Entity {
         if (level().isClientSide || isRemoved()) return false;
         playSound(SoundEvents.SLIME_SQUISH, 1f, 0.7f);
         if (hugger && level() instanceof ServerLevel sl) {
-            FacehuggerEntity f = XenomorphMod.FACEHUGGER.get().create(sl);
-            if (f != null) { f.moveTo(getX(), getY() + 0.8, getZ(), 0, 0); sl.addFreshEntity(f); }
+            spawnHugger(sl, 0.8);
         }
         discard();
         return true;
     }
-    @Override protected void readAdditionalSaveData(CompoundTag t) { hugger = !t.contains("Hugger") || t.getBoolean("Hugger"); }
-    @Override protected void addAdditionalSaveData(CompoundTag t) { t.putBoolean("Hugger", hugger); }
+    @Override protected void readAdditionalSaveData(CompoundTag t) { hugger = !t.contains("Hugger") || t.getBoolean("Hugger"); setRed(t.getBoolean("Red")); }
+    @Override protected void addAdditionalSaveData(CompoundTag t) { t.putBoolean("Hugger", hugger); t.putBoolean("Red", red()); }
     @Override public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 }

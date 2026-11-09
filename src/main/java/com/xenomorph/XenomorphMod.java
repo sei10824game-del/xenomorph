@@ -45,7 +45,8 @@ public class XenomorphMod {
             () -> EntityType.Builder.<XenoEggEntity>of(XenoEggEntity::new, MobCategory.MISC).sized(0.8f, 1.2f).clientTrackingRange(8).build("egg"));
     public static final RegistryObject<EntityType<AcidSpit>> SPIT = ENTITIES.register("acid_spit",
             () -> EntityType.Builder.<AcidSpit>of(AcidSpit::new, MobCategory.MISC).sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).build("acid_spit"));
-    public static final RegistryObject<MobEffect> EMBRYO = EFFECTS.register("embryo", EmbryoEffect::new);
+    public static final RegistryObject<MobEffect> EMBRYO = EFFECTS.register("embryo", () -> new EmbryoEffect(false));
+    public static final RegistryObject<MobEffect> RED_EMBRYO = EFFECTS.register("red_embryo", () -> new EmbryoEffect(true));
     static final List<RegistryObject<Item>> EGGS = new ArrayList<>();
 
     static {
@@ -60,6 +61,29 @@ public class XenomorphMod {
                     .sized(0.7f, k == HunterEntity.Kind.PREDATOR ? 2.5f : 2.8f).clientTrackingRange(10).build(id)));
             EGGS.add(ITEMS.register(id + "_spawn_egg", () -> new ForgeSpawnEggItem(HUNTERS.get(k), k == HunterEntity.Kind.PREDATOR ? 0x6b7a3a : 0xd8d8d0, k == HunterEntity.Kind.PREDATOR ? 0x2a2e30 : 0x8a8f9a, new Item.Properties())));
         }
+        for (int v = 1; v <= 2; v++) {
+            int vv = v;
+            EGGS.add(ITEMS.register((v == 1 ? "red_facehugger" : "royal_facehugger") + "_spawn_egg", () -> new Item(new Item.Properties()) {
+                @Override public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext c) {
+                    if (c.getLevel() instanceof net.minecraft.server.level.ServerLevel sl) {
+                        FacehuggerEntity f = FACEHUGGER.get().create(sl); net.minecraft.core.BlockPos p = c.getClickedPos().relative(c.getClickedFace());
+                        f.setVariant(vv); f.moveTo(p.getX() + .5, p.getY(), p.getZ() + .5, 0, 0); sl.addFreshEntity(f);
+                        if (c.getPlayer() == null || !c.getPlayer().getAbilities().instabuild) c.getItemInHand().shrink(1);
+                    }
+                    return net.minecraft.world.InteractionResult.sidedSuccess(c.getLevel().isClientSide);
+                }
+            }));
+        }
+        EGGS.add(ITEMS.register("red_egg_spawn_egg", () -> new Item(new Item.Properties()) {
+            @Override public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext c) {
+                if (c.getLevel() instanceof net.minecraft.server.level.ServerLevel sl) {
+                    XenoEggEntity e = EGG.get().create(sl); net.minecraft.core.BlockPos p = c.getClickedPos().relative(c.getClickedFace());
+                    e.setRed(true); e.moveTo(p.getX() + .5, p.getY(), p.getZ() + .5, 0, 0); sl.addFreshEntity(e);
+                    if (c.getPlayer() == null || !c.getPlayer().getAbilities().instabuild) c.getItemInHand().shrink(1);
+                }
+                return net.minecraft.world.InteractionResult.sidedSuccess(c.getLevel().isClientSide);
+            }
+        }));
         EGGS.add(ITEMS.register("facehugger_spawn_egg", () -> new ForgeSpawnEggItem(FACEHUGGER, 0xb59c7a, 0x6a5a40, new Item.Properties())));
         EGGS.add(ITEMS.register("chestburster_spawn_egg", () -> new ForgeSpawnEggItem(BURSTER, 0xd9a9a0, 0x7a2a2a, new Item.Properties())));
         EGGS.add(ITEMS.register("egg_spawn_egg", () -> new Item(new Item.Properties()) {

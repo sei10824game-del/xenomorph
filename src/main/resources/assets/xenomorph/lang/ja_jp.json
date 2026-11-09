@@ -78,5 +78,15 @@
  "entity.xenomorph.engineer": "エンジニア",
  "item.xenomorph.engineer_spawn_egg": "エンジニア スポーンエッグ",
  "entity.xenomorph.berserker": "バーサーカー",
- "item.xenomorph.berserker_spawn_egg": "バーサーカー スポーンエッグ"
+ "item.xenomorph.berserker_spawn_egg": "バーサーカー スポーンエッグ",
+ "item.xenomorph.red_drone_spawn_egg": "レッド・ドローン スポーンエッグ",
+ "entity.xenomorph.red_drone": "レッド・ドローン",
+ "item.xenomorph.red_warrior_spawn_egg": "レッド・ウォリアー スポーンエッグ",
+ "entity.xenomorph.red_warrior": "レッド・ウォリアー",
+ "item.xenomorph.red_queen_mother_spawn_egg": "レッド・クイーン スポーンエッグ",
+ "entity.xenomorph.red_queen_mother": "レッド・クイーン",
+ "item.xenomorph.red_facehugger_spawn_egg": "レッド・フェイスハガー スポーンエッグ",
+ "item.xenomorph.royal_facehugger_spawn_egg": "ロイヤル・レッド・フェイスハガー スポーンエッグ",
+ "item.xenomorph.red_egg_spawn_egg": "赤いエッグ スポーンエッグ",
+ "effect.xenomorph.red_embryo": "赤い胚"
 }

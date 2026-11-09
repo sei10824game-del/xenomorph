@@ -153,6 +153,10 @@ public class XenoEntity extends Monster {
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this, FacehuggerEntity.class, ChestbursterEntity.class).setAlertOthers());
+        if (caste.red()) {                   // the red strain hunts the black hive first, queens above all
+            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> e instanceof XenoEntity x && faction(x) == 1 && x.caste.attacks.contains(Attack.LAY)));
+            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> faction(e) == 1));
+        }
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
         targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
@@ -161,14 +165,16 @@ public class XenoEntity extends Monster {
                 e -> !friendly(e) && (faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy)));
     }
 
-    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
+    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
-        if (e instanceof XenoEntity x) return x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
+        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
         if (e instanceof HunterEntity) return 3;
+        if (e instanceof FacehuggerEntity f && f.variant() > 0) return 7;
+        if (e instanceof ChestbursterEntity b && b.form.red()) return 7;
         return isXeno(e) ? 1 : 0;
     }
     /** Same hive, or a host carrying an embryo (the hive needs it alive until the chestburster emerges). */
-    public boolean friendly(Entity e) { return faction(e) == faction(this) || (e instanceof LivingEntity l && l.hasEffect(XenomorphMod.EMBRYO.get())); }
+    public boolean friendly(Entity e) { return faction(e) == faction(this) || (e instanceof LivingEntity l && l.hasEffect((caste.red() ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get())); }
 
     public static boolean isXeno(Entity e) {
         return e instanceof XenoEntity || e instanceof FacehuggerEntity || e instanceof ChestbursterEntity || e instanceof XenoEggEntity;
@@ -220,6 +226,10 @@ public class XenoEntity extends Monster {
             hangTimer = 120 + random.nextInt(240);
             if (random.nextInt(3) == 0 && level().getMaxLocalRawBrightness(blockPosition()) < 8) tryHang();
         }
+        if (caste == Caste.RED_QUEEN_MOTHER && tickCount % 20 == 0)            // red pheromone: whole red colony fights at its limit
+            for (XenoEntity x : level().getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(28), x -> x.caste.red())) {
+                x.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 60, 1, false, false)); x.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, false));
+            }
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
@@ -520,6 +530,7 @@ public class XenoEntity extends Monster {
     }
     private Caste[] brood() {
         return switch (caste) {
+            case RED_QUEEN_MOTHER -> new Caste[]{Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE};
             case QUEEN -> new Caste[]{Caste.DRONE, Caste.DRONE, Caste.WARRIOR};
             case MATRIARCH -> new Caste[]{Caste.WARRIOR, Caste.WARRIOR, Caste.PRAETORIAN};
             case EMPRESS -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.RAVAGER};
@@ -649,7 +660,7 @@ public class XenoEntity extends Monster {
     // ---------- acid blood ----------
     @Override public boolean hurt(DamageSource src, float amount) {
         boolean r = super.hurt(src, amount);
-        if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !friendly(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, 1 + random.nextInt(2));
+        if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !friendly(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, caste.red() && faction(att) == 1 ? 6 : 1 + random.nextInt(2));
         return r;
     }
     private void acidBurn(LivingEntity e, float dmg) {
@@ -667,7 +678,7 @@ public class XenoEntity extends Monster {
         releaseHeld(false);
         if (!level().isClientSide) {
             boolean big = caste == Caste.BOILER || caste == Caste.BURSTER;
-            for (LivingEntity e : around(big ? 5.0 : 2.6)) acidBurn(e, big ? 6 : 3);
+            for (LivingEntity e : around(big ? 5.0 : 2.6)) acidBurn(e, big ? 6 : caste.red() && faction(e) == 1 ? 9 : 3);
             if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.5, getZ(), 40, 0.8, 0.4, 0.8, 0.1);
         }
     }

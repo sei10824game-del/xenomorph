@@ -78,5 +78,15 @@
  "entity.xenomorph.engineer": "Engineer",
  "item.xenomorph.engineer_spawn_egg": "Engineer Spawn Egg",
  "entity.xenomorph.berserker": "Berserker",
- "item.xenomorph.berserker_spawn_egg": "Berserker Spawn Egg"
+ "item.xenomorph.berserker_spawn_egg": "Berserker Spawn Egg",
+ "item.xenomorph.red_drone_spawn_egg": "Red Drone Spawn Egg",
+ "entity.xenomorph.red_drone": "Red Drone",
+ "item.xenomorph.red_warrior_spawn_egg": "Red Warrior Spawn Egg",
+ "entity.xenomorph.red_warrior": "Red Warrior",
+ "item.xenomorph.red_queen_mother_spawn_egg": "Red Queen Mother Spawn Egg",
+ "entity.xenomorph.red_queen_mother": "Red Queen Mother",
+ "item.xenomorph.red_facehugger_spawn_egg": "Red Facehugger Spawn Egg",
+ "item.xenomorph.royal_facehugger_spawn_egg": "Royal Red Facehugger Spawn Egg",
+ "item.xenomorph.red_egg_spawn_egg": "Red Egg Spawn Egg",
+ "effect.xenomorph.red_embryo": "Red Embryo"
 }

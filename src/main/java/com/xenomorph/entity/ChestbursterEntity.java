@@ -37,7 +37,7 @@ public class ChestbursterEntity extends Monster {
         super.tick();
         age++;
         if (age < BURST) { setDeltaMovement(getDeltaMovement().multiply(0.2, 1, 0.2)); if (age == 2) playSound(SoundEvents.RAVAGER_ROAR, 1.2f, 2.0f); }
-        if (!level().isClientSide && age >= GROW && level() instanceof ServerLevel sl) {
+        if (!level().isClientSide && age >= (form == Caste.RED_QUEEN_MOTHER ? 1500 : GROW) && level() instanceof ServerLevel sl) {
             XenoEntity x = XenomorphMod.XENOS.get(form).get().create(sl);
             if (x != null) { x.moveTo(getX(), getY(), getZ(), getYRot(), 0); sl.addFreshEntity(x); }
             discard();
