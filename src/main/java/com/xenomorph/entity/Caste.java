@@ -20,7 +20,10 @@ public enum Caste {
     PREDALIEN  ("predalien",150, 14,.36f, 1.55f, 1, 5, true,  false, true,  EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, SCREECH, POUNCE)),
     NEOMORPH   ("neomorph",  36, 7, .42f, 1.00f, 2, 6, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, POUNCE)),
     NEWBORN    ("newborn",   80, 9, .34f, 1.50f, 2, 6, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, GRAB, SLAM, BITE, SCREECH)),
-    DEACON     ("deacon",    38, 6, .40f, 1.00f, 1, 7, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, POUNCE));
+    DEACON     ("deacon",    38, 6, .40f, 1.00f, 1, 7, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, POUNCE)),
+    BOILER     ("boiler",    50, 6, .28f, 1.25f, 1, 0, true,  false, false, EnumSet.of(CLAW_L, CLAW_R, TAIL_SWEEP, BITE, SPIT)),
+    PROTOMORPH ("protomorph",55, 9, .38f, 1.15f, 1, 1, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, POUNCE)),
+    STALKER    ("stalker",   45, 8, .46f, 1.05f, 1, 4, true,  false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, POUNCE));
 
     public final String id;
     public final float hp, dmg, speed, scale;

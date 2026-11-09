@@ -101,9 +101,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder jawB = box(-2, 0, -6, 4, 1.5f, 8);
         for (int i = 0; i < 4; i++) { tooth(jawB, -1.8f, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); tooth(jawB, 1.3f, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); }
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
-        CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 4.5f);
+        CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 14);
         tooth(inB, -0.7f, -0.5f, -5.2f, 1.4f, 1.0f, 1.2f); tooth(inB, -0.5f, -1.2f, -4.8f, 1, 0.6f, 0.6f); tooth(inB, -0.5f, 0.6f, -4.6f, 1, 0.6f, 0.6f);
-        head.addOrReplaceChild("inner", inB, PartPose.offset(0, 0.4f, -3.5f));
+        head.addOrReplaceChild("inner", inB, PartPose.offset(0, 0.4f, -1.5f));
         CubeListBuilder upT = CubeListBuilder.create();
         for (int i = 0; i < 4; i++) { tooth(upT, -2, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); tooth(upT, 1.5f, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); }
         head.addOrReplaceChild("upperTeeth", upT, PartPose.ZERO);
@@ -150,13 +150,15 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
     @Override
     public void setupAnim(XenoEntity e, float limbSwing, float amt, float age, float headYaw, float headPitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
-        for (ModelPart p : root.getAllParts().toList()) { p.xScale = p.yScale = p.zScale = 1; }
         float pt = Minecraft.getInstance().getFrameTime();
-        Caste c = e.caste;
-        float b = smooth(Mth.lerp(pt, e.bipedAmtO, e.bipedAmt));
-        Attack at = e.attack();
-        float t = e.attackTick + pt;
+        pose(e.caste, Mth.lerp(pt, e.bipedAmtO, e.bipedAmt), e.attack(), e.attackTick + pt, limbSwing, amt, age, headYaw, headPitch);
+    }
+
+    /** Pure pose function (also used by the offline preview tool). b = biped blend, t = ticks into attack. */
+    public void pose(Caste c, float bipedBlend, Attack at, float t, float limbSwing, float amt, float age, float headYaw, float headPitch) {
+        root.getAllParts().forEach(ModelPart::resetPose);
+        for (ModelPart p : root.getAllParts().toList()) { p.xScale = p.yScale = p.zScale = 1; p.visible = true; }
+        float b = smooth(bipedBlend);
         float aw = 0;                                   // attack weight 0..1
         if (at != Attack.NONE) aw = smooth(t / 3f) * smooth((at.duration - t) / 4f);
 
@@ -202,9 +204,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 0; i < TAIL; i++) {
             float w = (0.14f + 0.12f * spd) * (0.6f + i * 0.14f);
             tailYaw[i] = Mth.sin(age * 0.05f - i * 0.55f + ph * 0.0f) * 0.08f * (0.6f + i * 0.1f) + Mth.sin(ph * 1.0f - i * 0.7f) * w * spd;
-            tailPitch[i] = -0.035f * i + Mth.sin(ph * 2 - i * 0.6f) * 0.05f * spd;
+            tailPitch[i] = 0.012f * i + Mth.sin(ph * 2 - i * 0.6f) * 0.05f * spd;
         }
-        tailBaseX = Mth.lerp(b, -0.15f, -0.55f);   // biped: tail arches higher for balance, quad: trails
+        tailBaseX = Mth.lerp(b, -0.08f, -0.2f);   // biped: tail arches higher for balance, quad: trails
 
         // arms loco
         for (int s = 0; s < 2; s++) {
@@ -262,16 +264,17 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     tailYaw[0] += kf(t, 0, 0, 7, 0.6f, 15, -0.6f, 24, 0);
                 }
                 case TAIL_STAB -> {
-                    float coil = kf(t, 0, 0, 3, 0.04f, 8, 0.2f, 10, 0.16f, 11f, 0.04f, 15, 0.1f, 22, 0);
+                    // wind-up: tail rises and arches over the back, draws back, then snaps forward over the shoulder
+                    float curl = kf(t, 0, 0.25f, 6, 0.6f, 9, 0.5f, 11, 1.12f, 13, 1.05f, 17, 0.9f, 22, 0);
                     for (int i = 0; i < TAIL; i++) {
-                        tailPitch[i] = -coil * (0.5f + i * 0.12f) * (1 + 0.6f * kf(t, 0, 0, 8, 0, 11, 1, 16, 0.4f, 22, 0)) - 0.02f;
-                        tailYaw[i] = tailYaw[i] * (1 - aw) + (i == 0 ? 0 : 0.03f);
+                        tailPitch[i] = -curl * 0.31f;
+                        tailYaw[i] = tailYaw[i] * (1 - aw);
                     }
-                    tailBaseX = -0.35f - 0.5f * kf(t, 0, 0, 7, 1, 10, 0.55f, 14, 0.7f, 22, 0);
+                    tailBaseX = -0.3f - 0.3f * curl;
                     hipZ += kf(t, 0, 0, 7, 1.5f, 11, -1.5f, 22, 0);
                     crouch += kf(t, 0, 0, 7, 1.5f, 11, 0, 22, 0);
-                    chestX += kf(t, 0, 0, 7, -0.25f, 11, 0.35f, 22, 0);
-                    headX += kf(t, 0, 0, 7, -0.2f, 11, 0.25f, 22, 0);
+                    chestX += kf(t, 0, 0, 7, -0.25f, 11, 0.3f, 22, 0);
+                    headX += kf(t, 0, 0, 7, -0.2f, 11, 0.2f, 22, 0);
                     jawOpen += kf(t, 0, 0, 7, 0.7f, 22, 0.2f);
                     for (int s = 0; s < 2; s++) { A[s][0] = kf(t, 0, -0.6f, 8, -1.3f, 22, -0.6f); A[s][3] = 1.3f; A[s][1] = (s == 0 ? 1 : -1) * 0.5f; A[s][5] = aw * 0.8f; }
                 }
@@ -291,9 +294,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     headX += kf(t, 0, 0, 10, -0.2f, 20, -0.2f, 28, 0);
                 }
                 case BITE -> {
-                    headX += kf(t, 0, 0, 5, -0.6f, 8, 0.55f, 11, 0.5f, 18, 0);
-                    neckX += kf(t, 0, 0, 5, -0.35f, 8, 0.4f, 11, 0.3f, 18, 0);
-                    chestX += kf(t, 0, 0, 5, -0.3f, 8, 0.45f, 18, 0);
+                    headX += kf(t, 0, 0, 5, -0.6f, 8, 0.2f, 11, 0.2f, 18, 0);
+                    neckX += kf(t, 0, 0, 5, -0.3f, 8, 0.15f, 11, 0.1f, 18, 0);
+                    chestX += kf(t, 0, 0, 5, -0.25f, 8, 0.3f, 18, 0);
                     jawOpen += kf(t, 0, 0.1f, 4, 1.1f, 8, 1.3f, 9.5f, 0.1f, 18, 0.1f);
                     innerExt += kf(t, 0, 0, 5, 0, 8, 7.5f, 10, 7.5f, 13, 0, 18, 0);
                     hipZ -= kf(t, 0, 0, 5, -0.5f, 8, 2.0f, 18, 0);
@@ -474,10 +477,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float aim = P - Mth.lerp(b, 0.15f, 0.55f);                    // how much the head must tilt back up
         chest.xRot = chestX - aim * 0.22f; chest.yRot = chestY; chest.zRot = chestZ;
         neck.xRot = neckX - aim * 0.42f; neck.yRot = neckY + Mth.clamp(headYaw, -60, 60) * Mth.DEG_TO_RAD * 0.35f;
-        head.xRot = headX - aim * 0.34f + Mth.clamp(headPitch, -45, 45) * Mth.DEG_TO_RAD * 0.7f;
+        head.xRot = headX - aim * 0.34f - 0.22f * b + Mth.clamp(headPitch, -45, 45) * Mth.DEG_TO_RAD * 0.7f;
         head.yRot = headY + Mth.clamp(headYaw, -60, 60) * Mth.DEG_TO_RAD * 0.3f; head.zRot = headZ;
         jaw.xRot = Mth.clamp(jawOpen, 0, 1.5f);
-        inner.z = -3.5f - innerExt; inner.xRot = jaw.xRot * 0.15f;
+        inner.z = -1.5f - innerExt; inner.xRot = jaw.xRot * 0.15f;
         chest.xScale = chestScale; chest.yScale = chestScale; chest.zScale = chestScale;
         neck.xScale = neck.zScale = neckScale;
         root.yRot = rootSpin;
@@ -492,9 +495,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
 
         // tail
-        tail0.xRot = tailBaseX; tail0.yRot = tailYaw[0];
-        for (int i = 1; i < TAIL; i++) { tail[i].xRot = tailPitch[i]; tail[i].yRot = tailYaw[i]; }
-        tail0.xRot += tailPitch[0];
+        // authored with negative = raise; model +xRot lifts the tip, so flip here
+        tail0.xRot = -(tailBaseX + tailPitch[0]); tail0.yRot = tailYaw[0];
+        for (int i = 1; i < TAIL; i++) { tail[i].xRot = -tailPitch[i]; tail[i].yRot = tailYaw[i]; }
 
         // ---------- legs via IK
         float footH = hAct - 1.6f;

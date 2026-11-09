@@ -37,5 +37,11 @@
  "item.xenomorph.chestburster_spawn_egg": "Chestburster Spawn Egg",
  "entity.xenomorph.egg": "Xenomorph Egg",
  "item.xenomorph.egg_spawn_egg": "Xenomorph Egg Spawn Egg",
- "entity.xenomorph.acid_spit": "Acid Spit"
+ "entity.xenomorph.acid_spit": "Acid Spit",
+ "entity.xenomorph.boiler": "Boiler",
+ "item.xenomorph.boiler_spawn_egg": "Boiler Spawn Egg",
+ "entity.xenomorph.protomorph": "Protomorph",
+ "item.xenomorph.protomorph_spawn_egg": "Protomorph Spawn Egg",
+ "entity.xenomorph.stalker": "Stalker",
+ "item.xenomorph.stalker_spawn_egg": "Stalker Spawn Egg"
 }

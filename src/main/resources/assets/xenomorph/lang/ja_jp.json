@@ -37,5 +37,11 @@
  "item.xenomorph.chestburster_spawn_egg": "チェストバスター スポーンエッグ",
  "entity.xenomorph.egg": "ゼノモーフの卵",
  "item.xenomorph.egg_spawn_egg": "ゼノモーフの卵 スポーンエッグ",
- "entity.xenomorph.acid_spit": "酸の唾"
+ "entity.xenomorph.acid_spit": "酸の唾",
+ "entity.xenomorph.boiler": "ボイラー",
+ "item.xenomorph.boiler_spawn_egg": "ボイラー スポーンエッグ",
+ "entity.xenomorph.protomorph": "プロトモーフ",
+ "item.xenomorph.protomorph_spawn_egg": "プロトモーフ スポーンエッグ",
+ "entity.xenomorph.stalker": "ストーカー",
+ "item.xenomorph.stalker_spawn_egg": "ストーカー スポーンエッグ"
 }

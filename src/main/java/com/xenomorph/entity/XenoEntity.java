@@ -337,7 +337,7 @@ public class XenoEntity extends Monster {
         super.die(src);
         releaseHeld(false);
         if (!level().isClientSide) {
-            for (LivingEntity e : around(2.6)) acidBurn(e, 3);
+            for (LivingEntity e : around(caste == Caste.BOILER ? 5.0 : 2.6)) acidBurn(e, caste == Caste.BOILER ? 6 : 3);
             if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.5, getZ(), 40, 0.8, 0.4, 0.8, 0.1);
         }
     }
