@@ -323,11 +323,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float sign = s == 0 ? 1 : -1;
             float swing = Mth.sin(ph + (s == 0 ? Mth.PI : 0));
             // biped: relaxed hang with ready claws, counter swing
-            A[s][0] = -0.55f + swing * 0.55f * spd * b - breathe * 0.04f;
+            A[s][0] = -0.4f + swing * 0.55f * spd * b - breathe * 0.04f;
             A[s][1] = sign * (-0.25f - 0.1f * b);                 // splay outward (yaw)
             A[s][2] = 0;
-            A[s][3] = 0.9f + 0.5f * (1 - spd) - swing * 0.25f * spd;
-            A[s][4] = 0.3f;
+            A[s][3] = 0.3f + 0.12f * (1 - spd) - swing * 0.2f * spd;   // arms hang nearly straight, no folded elbows
+            A[s][4] = 0.12f;
             A[s][5] = 0;
         }
 

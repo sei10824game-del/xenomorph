@@ -87,6 +87,8 @@ public class XenoGameTests {
             if (hug.getTarget() == host) throw new AssertionError("hugger still targets implanted host");
             if (drone.getTarget() == host) throw new AssertionError("xeno still targets implanted host");
             if (drone.friendly(neo)) throw new AssertionError("drone and neomorph are friends");
+            var proto = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.PROTOMORPH).get(), new BlockPos(7, 2, 6));
+            if (drone.friendly(proto) || neo.friendly(proto)) throw new AssertionError("protomorph must be its own faction");
             h.succeed();
         });
     }
