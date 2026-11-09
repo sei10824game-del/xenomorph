@@ -52,9 +52,9 @@ public class FacehuggerEntity extends Monster {
         goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.5, true) { @Override public boolean canUse() { return !isAttached() && super.canUse(); } });
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.9));
         goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
-        targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, 10, true, false, e -> !(e instanceof net.minecraft.world.entity.animal.Wolf) || true));
+        targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::free));
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, 10, true, false, this::free));
+        targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, 10, true, false, this::free));
     }
 
     @Override public void tick() {
@@ -64,8 +64,12 @@ public class FacehuggerEntity extends Monster {
         if (leapTick() > 0) { int l = leapTick() + 1; entityData.set(LEAP, onGround() && l > 6 ? 0 : Math.min(l, 60)); }
         if (isAttached()) { tickAttached(); return; }
         LivingEntity t = getTarget();
+        if (t != null && !free(t)) { setTarget(null); t = null; }   // already carrying an embryo / is a xeno: leave it alone
         if (t != null && !XenoEntity.isXeno(t) && getBoundingBox().inflate(0.15).intersects(t.getBoundingBox()) && leapTick() > 0) attach(t);
     }
+
+    /** Valid host: not a xeno and not already implanted. */
+    private boolean free(LivingEntity e) { return !XenoEntity.isXeno(e) && !e.hasEffect(XenomorphMod.EMBRYO.get()); }
 
     private void attach(LivingEntity t) {
         if (t.hasEffect(XenomorphMod.EMBRYO.get())) return;

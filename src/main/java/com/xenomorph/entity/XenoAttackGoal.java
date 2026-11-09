@@ -10,7 +10,8 @@ import java.util.List;
 /** Chases the target and picks a fitting attack by distance, caste and cooldown. */
 public class XenoAttackGoal extends Goal {
     private final XenoEntity x;
-    private int repath;
+    private int repath, stuck;
+    private net.minecraft.world.phys.Vec3 lastPos = net.minecraft.world.phys.Vec3.ZERO;
 
     public XenoAttackGoal(XenoEntity x) { this.x = x; setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK)); }
 
@@ -26,7 +27,14 @@ public class XenoAttackGoal extends Goal {
         if (--repath <= 0) {
             repath = 4 + x.getRandom().nextInt(4);
             double sp = d > 6 && !x.isBiped() ? 1.5 : 1.15;
-            x.getNavigation().moveTo(t, sp);
+            // no path (big body, odd terrain, unreachable): steer straight at the target instead of standing still
+            if (!x.getNavigation().moveTo(t, sp) || x.getNavigation().isDone() && d > x.reach())
+                x.getMoveControl().setWantedPosition(t.getX(), t.getY(), t.getZ(), sp);
+        }
+        if (++stuck >= 20) {                                  // watchdog: barely moved for a second while chasing
+            stuck = 0;
+            if (x.position().distanceToSqr(lastPos) < 0.25 && d > 3) { x.getJumpControl().jump(); x.getMoveControl().setWantedPosition(t.getX(), t.getY(), t.getZ(), 1.3); x.getNavigation().stop(); repath = 0; }
+            lastPos = x.position();
         }
         if (x.cooldown > 0 || !x.hasLineOfSight(t)) return;
         double sc = Math.max(1, x.caste.scale * 0.9);

@@ -43,7 +43,8 @@ public class XenoEntity extends Monster {
     public int cooldown, stanceTimer, layTimer = 600;
     private LivingEntity held;
     private boolean impaled;
-    private double vx, vz;                      // frozen lunge direction
+    private double vx, vz, chargeMax;
+    private Vec3 chargeFrom = Vec3.ZERO;                      // frozen lunge direction
 
     public XenoEntity(EntityType<? extends XenoEntity> type, Level level, Caste caste) {
         super(type, level);
@@ -99,10 +100,11 @@ public class XenoEntity extends Monster {
 
     /** 0 = not a xeno, 1 = classic hive, 2 = pathogen. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
-        if (e instanceof XenoEntity x) return x.caste.id.startsWith("pathogen") ? 2 : 1;
+        if (e instanceof XenoEntity x) return x.caste.id.startsWith("pathogen") || x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN || x.caste == Caste.DEACON ? 2 : 1;   // black-goo lineage vs classic hive
         return isXeno(e) ? 1 : 0;
     }
-    public boolean friendly(Entity e) { return faction(e) == faction(this); }
+    /** Same hive, or a host carrying an embryo (the hive needs it alive until the chestburster emerges). */
+    public boolean friendly(Entity e) { return faction(e) == faction(this) || (e instanceof LivingEntity l && l.hasEffect(XenomorphMod.EMBRYO.get())); }
 
     public static boolean isXeno(Entity e) {
         return e instanceof XenoEntity || e instanceof FacehuggerEntity || e instanceof ChestbursterEntity || e instanceof XenoEggEntity;
@@ -143,6 +145,7 @@ public class XenoEntity extends Monster {
         if (cooldown > 0) cooldown--;
         lockout.replaceAll((k, v) -> v - 1);
         lockout.values().removeIf(v -> v <= 0);
+        if (getTarget() != null && friendly(getTarget())) setTarget(null);
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
@@ -256,10 +259,20 @@ public class XenoEntity extends Monster {
                 }
             }
             case CHARGE -> {
+                if (t == a.hit) {
+                    if (target != null) { double dx = target.getX() - getX(), dz = target.getZ() - getZ(), l = Math.sqrt(dx * dx + dz * dz); if (l > 1e-3) { vx = dx / l; vz = dz / l; } else { vx = fwd().x; vz = fwd().z; } }
+                    else { vx = fwd().x; vz = fwd().z; }
+                    chargeFrom = position(); chargeMax = (target != null ? distanceTo(target) : 10) + 6;
+                }
                 if (t > a.hit) {
-                    setDeltaMovement(vx * 0.9, getDeltaMovement().y, vz * 0.9);
-                    for (LivingEntity e : around(1.6 * caste.scale)) if (strike(e, 1.4f, 3, 1.8)) { e.hurtMarked = true; }
-                    if (horizontalCollision && t > a.hit + 4) { attackTick = a.duration - 8; playSound(SoundEvents.GENERIC_EXPLODE, 1f, 0.7f); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 3)); }
+                    setDeltaMovement(vx * 0.8, getDeltaMovement().y, vz * 0.8);
+                    boolean hitSomething = false;
+                    for (LivingEntity e : around(1.6 * caste.scale)) if (strike(e, 1.4f, 3, 1.8)) { e.hurtMarked = true; hitSomething = true; }
+                    double trav = position().distanceTo(chargeFrom);
+                    boolean stalled = t > a.hit + 8 && trav < 1.0;                       // not actually moving: give up and resume the chase
+                    if (hitSomething) { setDeltaMovement(getDeltaMovement().multiply(0.3, 1, 0.3)); attackTick = Math.max(attackTick, a.duration - 10); }
+                    else if (trav > chargeMax || stalled) attackTick = Math.max(attackTick, a.duration - 6);       // reached the spot (or stalled): stop rushing
+                    else if (horizontalCollision && t > a.hit + 4) { attackTick = Math.max(attackTick, a.duration - 8); playSound(SoundEvents.GENERIC_EXPLODE, 1f, 0.7f); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 3)); }
                 }
             }
             case SLAM -> {

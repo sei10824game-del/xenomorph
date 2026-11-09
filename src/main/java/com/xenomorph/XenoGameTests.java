@@ -41,10 +41,12 @@ public class XenoGameTests {
     public static void hive(GameTestHelper h) {
         var sl = h.getLevel();
         BlockPos o = h.absolutePos(new BlockPos(4, 2, 4));
+        int cy = o.getY() + 8; int cx = (o.getX() >> 4) * 16 + 8, cz = (o.getZ() >> 4) * 16 + 8;
+        for (int dx = -8; dx <= 8; dx++) for (int dy = -8; dy <= 8; dy++) for (int dz = -8; dz <= 8; dz++) sl.setBlock(new BlockPos(cx + dx, cy + dy, cz + dz), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
         Hive.build(sl, o.getX() >> 4, o.getZ() >> 4, o.getY() + 8);
         long xenos = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEntity.class), x -> true).size();
         long eggs = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEggEntity.class), x -> true).size();
-        h.runAfterDelay(2, () -> { if (xenos < 3 || eggs < 1) throw new AssertionError("hive empty x=" + xenos + " e=" + eggs); h.succeed(); });
+        h.runAfterDelay(2, () -> { if (xenos < 3 || eggs < 3) throw new AssertionError("hive empty x=" + xenos + " e=" + eggs); h.succeed(); });
     }
 
     @GameTest(template = "empty", timeoutTicks = 200)
@@ -55,6 +57,37 @@ public class XenoGameTests {
         h.succeedWhen(() -> {
             if (!(husk.getTarget() instanceof XenoEntity)) throw new net.minecraft.gametest.framework.GameTestAssertException("husk not hostile to xeno");
             if (drone.getTarget() == null || drone.friendly(pb)) throw new net.minecraft.gametest.framework.GameTestAssertException("drone not hostile");
+        });
+    }
+
+    private static void floor(GameTestHelper h) { for (int x = -6; x < 24; x++) for (int z = -2; z < 12; z++) h.setBlock(new BlockPos(x, 1, z), net.minecraft.world.level.block.Blocks.STONE); }
+
+    /** A brute told to charge must cover ground, on open floor. */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void charge(GameTestHelper h) {
+        floor(h);
+        var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(16, 2, 4)); vill.setInvulnerable(true);
+        var b = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.BRUTE).get(), new BlockPos(0, 2, 4));
+        h.runAfterDelay(10, () -> { b.setTarget(vill); b.startAttack(Attack.CHARGE); });
+        net.minecraft.world.phys.Vec3[] st = new net.minecraft.world.phys.Vec3[1];
+        h.runAfterDelay(11, () -> st[0] = b.position());
+        h.runAfterDelay(50, () -> { if (b.position().distanceTo(st[0]) < 6) throw new AssertionError("brute did not charge: moved " + b.position().distanceTo(st[0])); h.succeed(); });
+    }
+
+    /** A hugger ignores an already-implanted host; xenos do not hurt that host; neomorph vs xeno fight. */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void embryoAndNeomorph(GameTestHelper h) {
+        floor(h);
+        var host = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(4, 2, 4));
+        host.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 2400, 0));
+        var hug = (FacehuggerEntity) h.spawn(XenomorphMod.FACEHUGGER.get(), new BlockPos(2, 2, 4));
+        var drone = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(6, 2, 4));
+        var neo = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.NEOMORPH).get(), new BlockPos(6, 2, 8));
+        h.runAfterDelay(80, () -> {
+            if (hug.getTarget() == host) throw new AssertionError("hugger still targets implanted host");
+            if (drone.getTarget() == host) throw new AssertionError("xeno still targets implanted host");
+            if (drone.friendly(neo)) throw new AssertionError("drone and neomorph are friends");
+            h.succeed();
         });
     }
 }
