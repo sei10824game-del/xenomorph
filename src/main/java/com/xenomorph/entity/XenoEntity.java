@@ -55,6 +55,10 @@ public class XenoEntity extends Monster {
         this.xpReward = (int) (caste.hp / 4);
         this.setMaxUpStep(1.1f);
         if (caste.stance == 2) entityData.set(BIPED, true);
+        if (caste.red()) {                   // (added here: registerGoals runs inside super() before `caste` exists) the red strain hunts the black hive first, queens above all
+            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> e instanceof XenoEntity x && faction(x) == 1 && x.caste.attacks.contains(Attack.LAY)));
+            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> faction(e) == 1));
+        }
     }
 
     public static AttributeSupplier.Builder attributes(Caste c) {
@@ -153,10 +157,6 @@ public class XenoEntity extends Monster {
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this, FacehuggerEntity.class, ChestbursterEntity.class).setAlertOthers());
-        if (caste.red()) {                   // the red strain hunts the black hive first, queens above all
-            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> e instanceof XenoEntity x && faction(x) == 1 && x.caste.attacks.contains(Attack.LAY)));
-            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> faction(e) == 1));
-        }
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
         targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
