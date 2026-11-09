@@ -37,6 +37,7 @@ public enum Attack {
     WEB(26, 11, 4, 14),             // sticky strand, reel prey in
     MULTI_STAB(34, 8, 0, 4.2),      // all legs piston-stab
     CREST_RAM(26, 11, 0, 4),        // crest headbutt, stun
+    FIREARM(36, 12, 5, 18),         // intelligent hybrids fire plasma weapons
     DROP_STRIKE(30, 10, 0, 0);      // ceiling ambush: drop onto prey (only chosen from the hanging state)
 
     public final int duration, hit;

@@ -167,9 +167,9 @@ public class XenoEntity extends Monster {
                 e -> !friendly(e) && (faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy)));
     }
 
-    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 8 = rogue king, 9 = clone, 10 = white hybrid, 11 = K-series, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
+    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 8 = rogue king, 9 = clone (+ its Newborn), 10 = white hybrid, 11 = K-series, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
-        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.KING ? 8 : x.caste == Caste.CLONE_XENOMORPH ? 9 : x.caste == Caste.WHITE_HYBRID ? 10 : x.caste.kSeries() ? 11 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
+        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.KING ? 8 : x.caste == Caste.CLONE_XENOMORPH ? 9 : x.caste == Caste.WHITE_HYBRID || x.caste == Caste.WHITE_KING ? 10 : x.caste == Caste.NEWBORN ? 9 : x.caste.kSeries() ? 11 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
         if (e instanceof HunterEntity) return 3;
         if (e instanceof FacehuggerEntity f && f.variant() > 0) return 7;
         if (e instanceof ChestbursterEntity b && b.form.red()) return 7;
@@ -197,7 +197,7 @@ public class XenoEntity extends Monster {
         int lock = switch (a) { case POUNCE -> 80; case SPIT -> 50; case SCREECH -> 260; case GRAB -> 120; case CHARGE -> 140; case IMPALE -> 120; case SLAM -> 60; case TAIL_SWEEP -> 50;
             case STOMP -> 100; case GRAB_SLAM -> 160; case SHADOW_STRIKE -> 90; case IMPREGNATE -> 220; case DEATH_ROLL -> 140; case LEAP_SLASH -> 70; case SPORE -> 200;
             case LOB -> 60; case VOLLEY -> 80; case VOMIT -> 100; case SUMMON -> 500; case FACE_TOSS -> 120; case WEB -> 140; case HORN_TOSS -> 80; case CREST_RAM -> 70;
-            case FLAIL -> 90; case DROP_STRIKE -> 120; case FRENZY -> 120; case BLADE_FLURRY -> 100; case MULTI_STAB -> 80; default -> 0; };
+            case FLAIL -> 90; case FIREARM -> 70; case DROP_STRIKE -> 120; case FRENZY -> 120; case BLADE_FLURRY -> 100; case MULTI_STAB -> 80; default -> 0; };
         if (lock > 0) lockout.put(a, lock);
         entityData.set(ATTACK, 0);
         cooldown = (int) ((8 + random.nextInt(14)) * (1 - 0.7f * caste.ferocity()) * (0.7f + 0.3f * caste.weight()));
@@ -232,6 +232,7 @@ public class XenoEntity extends Monster {
             for (XenoEntity x : level().getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(28), x -> caste == Caste.TRUE_KING ? faction(x) == 1 : x.caste.red())) {
                 x.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 60, 1, false, false)); x.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, false));
             }
+        if (caste == Caste.TRUE_KING && tickCount % 20 == 0 && getHealth() < getMaxHealth()) heal(4f);       // the King repairs itself almost at once
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
@@ -269,6 +270,7 @@ public class XenoEntity extends Monster {
         if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
         boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * mult);
         float wt = caste.weight();
+        if (ok && caste == Caste.TRUE_KING) heal(3f);                                  // feeding speeds its regeneration
         if (ok && kb > 0) { kb *= wt; Vec3 d = t.position().subtract(position()).multiply(1, 0, 1).normalize(); t.push(d.x * kb, 0.25 * kb, d.z * kb); t.hurtMarked = true; }
         if (ok && wt >= 1.4f && level() instanceof ServerLevel sl) {          // heavy hitters crack the ground and thud
             sl.sendParticles(ParticleTypes.POOF, t.getX(), t.getY() + 0.1, t.getZ(), 6, 0.4, 0.1, 0.4, 0.05);
@@ -457,6 +459,7 @@ public class XenoEntity extends Monster {
                 }
             }
             case LOB -> { if (t == a.hit && target != null) { spitAt(target, 1.15f, 1f, true); playSound(SoundEvents.LLAMA_SPIT, 1.5f, 0.4f); } }
+            case FIREARM -> { if ((t == a.hit || t == a.hit + 6 || t == a.hit + 12) && target != null) { spitAt(target, 2.0f, 2f, false, true); playSound(SoundEvents.BLAZE_SHOOT, 1.2f, 0.7f); } }
             case VOLLEY -> { if ((t == a.hit || t == a.hit + 5 || t == a.hit + 10) && target != null) { spitAt(target, 1.6f, 6f, false); playSound(SoundEvents.LLAMA_SPIT, 1.2f, 0.7f); } }
             case VOMIT -> {
                 if (t >= a.hit && t <= a.hit + 24 && level() instanceof ServerLevel sl) {
@@ -544,8 +547,9 @@ public class XenoEntity extends Monster {
     }
     private void launch(LivingEntity e, double up, double fw) { Vec3 f = fwd(); e.setDeltaMovement(f.x * fw, up, f.z * fw); e.hurtMarked = true; }
     private void dust(double x, double y, double z, int n) { if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.POOF, x, y + 0.5, z, n, 0.5, 0.3, 0.5, 0.05); }
-    private void spitAt(LivingEntity t, float speed, float inacc, boolean splash) {
-        AcidSpit s = new AcidSpit(level(), this, caste.dmg * 0.8f); s.splash = splash;
+    private void spitAt(LivingEntity t, float speed, float inacc, boolean splash) { spitAt(t, speed, inacc, splash, false); }
+    private void spitAt(LivingEntity t, float speed, float inacc, boolean splash, boolean plasma) {
+        AcidSpit s = new AcidSpit(level(), this, caste.dmg * 0.8f); s.splash = splash; s.plasma = plasma;
         Vec3 e = position().add(0, getEyeHeight(), 0).add(fwd().scale(0.8 * caste.scale)); s.setPos(e);
         double dx = t.getX() - e.x, dy = t.getEyeY() - e.y - 0.1, dz = t.getZ() - e.z, h = Math.sqrt(dx * dx + dz * dz);
         s.shoot(dx, dy + h * (splash ? 0.22 : 0.05), dz, speed, inacc); level().addFreshEntity(s);

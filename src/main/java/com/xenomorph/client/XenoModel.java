@@ -70,7 +70,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     static final class Sp {
         float domeL = 12, domeH = 4.5f, domeW = 4.4f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
         int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 11;
-        boolean bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
+        boolean fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
     // tailEnd: 0 blade, 1 spear, 2 club, 3 twin-blade, 4 bare tip
@@ -82,42 +82,42 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case PRAETORIAN -> { p.style = 2; p.fan = 13; p.limb = 1.2f; p.torso = 1.2f; p.plates = 1; p.spines = 4; p.horns = 2; p.elbow = true; p.tailEnd = 1; }
             case QUEEN -> { p.style = 2; p.fan = 17; p.domeL = 14; p.torso = 1.15f; p.carapace = true; p.spines = 5; p.ribs = 4; p.plates = 1; p.horns = 3; p.limb = 1.1f; }
             case MATRIARCH -> { p.style = 2; p.fan = 14; p.domeL = 16; p.domeH = 5; p.limb = 0.9f; p.spines = 7; p.sac = true; p.horns = 2; p.tailEnd = 3; p.clawL = 1.3f; p.belly = true; }
-            case EMPRESS -> { p.style = 2; p.fan = 20; p.domeL = 13; p.carapace = true; p.plates = 2; p.horns = 5; p.tailEnd = 1; p.torso = 1.25f; p.elbow = true; p.knee = true; p.ribs = 5; }
-            case QUEEN_MOTHER -> { p.style = 2; p.fan = 24; p.domeL = 18; p.domeH = 6; p.domeW = 5.6f; p.carapace = true; p.plates = 2; p.horns = 7; p.spines = 9; p.belly = true; p.elbow = true; p.knee = true; p.torso = 1.35f; p.limb = 1.25f; p.tailEnd = 3; p.cheek = true; p.mand = true; }
+            case EMPRESS -> { p.fan2 = true; p.style = 2; p.fan = 20; p.domeL = 13; p.carapace = true; p.plates = 2; p.horns = 5; p.tailEnd = 1; p.torso = 1.25f; p.elbow = true; p.knee = true; p.ribs = 5; }
+            case QUEEN_MOTHER -> { p.style = 2; p.fan = 13; p.domeL = 18; p.domeH = 6; p.domeW = 5.6f; p.carapace = true; p.plates = 2; p.horns = 7; p.spines = 9; p.belly = true; p.elbow = true; p.knee = true; p.torso = 1.35f; p.limb = 1.25f; p.tailEnd = 3; p.cheek = true; p.mand = true; }
             case RUNNER -> { p.domeL = 9; p.domeH = 3.6f; p.domeW = 3.6f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 7; p.cheek = true; p.clawL = 1.2f; p.ribs = 2; p.tailEnd = 4; }
             case CRUSHER -> { p.style = 3; p.horns = 3; p.carapace = true; p.limb = 1.35f; p.torso = 1.3f; p.tailSegs = 6; p.tailEnd = 2; p.plates = 2; p.knee = true; p.domeL = 7; p.domeH = 5; p.domeW = 5; p.ribs = 1; }
-            case SPITTER -> { p.domeL = 11; p.domeH = 4; p.sac = true; p.cheek = true; p.spines = 2; p.tailEnd = 1; }
+            case SPITTER -> { p.domeL = 13; p.domeH = 4; p.sac = true; p.spines = 0; p.tailEnd = 4; p.tubeLen = 9; p.ribs = 3; }
             case RAVAGER -> { p.style = 1; p.blade = true; p.elbow = true; p.spines = 7; p.cheek = true; p.clawL = 1.2f; p.tailEnd = 3; p.ribs = 4; p.brow = true; }
             case LURKER -> { p.domeL = 14; p.domeH = 4.2f; p.limb = 0.9f; p.clawL = 1.6f; p.torso = 0.95f; p.tubeLen = 0; p.ribs = 5; }
-            case SENTINEL -> { p.style = 5; p.spines = 4; p.horns = 2; p.domeL = 10; p.limb = 0.95f; p.cheek = true; p.tailEnd = 1; }
-            case CARRIER -> { p.belly = true; p.domeL = 12; p.limb = 1.1f; p.torso = 1.15f; p.ribs = 2; p.plates = 1; }
+            case SENTINEL -> { p.style = 1; p.spines = 5; p.limb = 0.95f; p.clawL = 1.3f; p.tubeLen = 0; p.ribs = 4; p.plates = 1; p.tailEnd = 0; }
+            case CARRIER -> { p.domeL = 12; p.limb = 1.1f; p.torso = 1.1f; p.ribs = 2; p.tubeLen = 16; p.spines = 0; }
             case PREDALIEN -> { p.dreads = true; p.domeL = 8; p.domeW = 5.4f; p.domeH = 5; p.mand = true; p.torso = 1.25f; p.plates = 1; p.spines = 3; p.ribs = 4; p.limb = 1.15f; p.cheek = true; p.brow = true; }
-            case BERSERKER -> { p.dreads = true; p.domeL = 10; p.domeW = 6.2f; p.domeH = 5.6f; p.mand = true; p.cheek = true; p.brow = true; p.torso = 1.4f; p.limb = 1.35f; p.plates = 2; p.carapace = true; p.spines = 8; p.ribs = 5;
-                p.elbow = true; p.knee = true; p.blade = true; p.clawL = 1.4f; p.tailEnd = 3; p.horns = 3; p.armK = 1.12f; }
+            case BERSERKER -> { p.style = 0; p.domeL = 7; p.domeW = 6.2f; p.domeH = 5.4f; p.brow = true; p.cheek = true; p.torso = 1.2f; p.limb = 1.15f; p.plates = 1; p.spines = 5; p.ribs = 4; p.elbow = true; p.tailEnd = 1; p.armK = 1.1f; p.clawL = 1.3f; }
             case RED_QUEEN_MOTHER -> { p.style = 2; p.fan = 21; p.domeL = 15; p.domeH = 5.2f; p.carapace = true; p.plates = 1; p.horns = 4; p.spines = 7; p.ribs = 4; p.torso = 1.25f; p.limb = 1.15f; p.cheek = true; p.tailEnd = 3; }
-            case TRUE_KING -> { p.style = 3; p.horns = 8; p.domeL = 10; p.domeH = 6; p.domeW = 6.4f; p.carapace = true; p.plates = 2; p.spines = 10; p.ribs = 6; p.elbow = true; p.knee = true; p.torso = 1.5f; p.limb = 1.4f; p.tailEnd = 2; p.blade = true; p.clawL = 1.5f; p.cheek = true; p.brow = true; p.mand = true; p.tailT = 1.15f; }
+            case TRUE_KING -> { p.style = 3; p.horns = 8; p.domeL = 10; p.domeH = 6; p.domeW = 6.4f; p.carapace = true; p.plates = 2; p.spines = 10; p.ribs = 6; p.elbow = true; p.knee = true; p.torso = 1.5f; p.limb = 1.4f; p.tailEnd = 3; p.blade = true; p.clawL = 1.5f; p.cheek = true; p.brow = true; p.mand = true; p.tailT = 1.15f; }
             case CLONE_XENOMORPH -> { p.style = 1; p.domeL = 11; p.limb = 0.95f; p.spines = 2; p.ribs = 3; p.brow = true; }
-            case WHITE_HYBRID -> { p.domeL = 11; p.domeW = 4f; p.limb = 0.9f; p.armK = 1.15f; p.upright = 0.15f; p.spines = 4; p.ribs = 5; p.cheek = true; p.tailEnd = 1; p.tubeLen = 0; p.clawL = 1.25f; }
+            case WHITE_HYBRID -> { p.domeL = 11; p.domeW = 4f; p.limb = 0.9f; p.armK = 1.15f; p.upright = 0.15f; p.spines = 4; p.ribs = 5; p.cheek = true; p.mand = true; p.dreads = true; p.tailEnd = 1; p.tubeLen = 0; p.clawL = 1.25f; }
             case K_WARRIOR -> { p.style = 1; p.plates = 1; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.25f; p.ribs = 4; p.spines = 3; p.clawL = 1.2f; p.brow = true; }
             case K_FATALIS -> { p.style = 5; p.horns = 4; p.plates = 2; p.carapace = true; p.blade = true; p.elbow = true; p.knee = true; p.torso = 1.3f; p.limb = 1.3f; p.spines = 7; p.ribs = 5; p.clawL = 1.5f; p.tailEnd = 3; p.mand = true; p.cheek = true; }
+            case WHITE_KING -> { p.style = 2; p.fan = 14; p.domeL = 10; p.dreads = true; p.mand = true; p.cheek = true; p.carapace = true; p.plates = 2; p.torso = 1.35f; p.limb = 1.3f; p.armK = 1.15f; p.spines = 7; p.ribs = 5; p.tailEnd = 3; p.tubeLen = 0; p.elbow = true; p.knee = true; }
             case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.upright = 0.15f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
             case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }
             case DEACON -> { p.domeL = 7; p.domeH = 4; p.limb = 0.9f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 1; p.tubeLen = 0; }
-            case BOILER -> { p.belly = true; p.sac = true; p.domeL = 10; p.torso = 1.35f; p.spines = 8; p.limb = 1.1f; p.tailEnd = 4; p.ribs = 2; }
+            case BOILER -> { p.belly = true; p.sac = true; p.domeL = 10; p.torso = 1.3f; p.spines = 9; p.limb = 1.05f; p.tailEnd = 4; p.ribs = 2; }
             case PROTOMORPH -> { p.style = 4; p.domeW = 4.4f; p.ribs = 1; p.spines = 5; p.limb = 0.95f; p.tailEnd = 1; p.cheek = true; p.tubeLen = 0; }
             case STALKER -> { p.style = 5; p.clawL = 1.45f; p.spines = 6; p.cheek = true; p.domeL = 13; p.limb = 0.95f; p.tailEnd = 1; p.blade = true; }
             case KING -> { p.style = 3; p.horns = 2; p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.2f; p.domeL = 9; p.domeH = 5; p.ribs = 4; p.spines = 5; p.tubeLen = 0; }
             case CHARGER -> { p.style = 3; p.horns = 4; p.carapace = true; p.limb = 1.3f; p.tailSegs = 5; p.tailEnd = 2; p.domeL = 6; p.domeH = 5; p.domeW = 5; p.torso = 1.1f; p.tubeLen = 0; p.ribs = 0; }
-            case BRUTE -> { p.style = 3; p.horns = 1; p.plates = 2; p.limb = 1.4f; p.torso = 1.35f; p.knee = true; p.elbow = true; p.tailEnd = 2; p.tailSegs = 6; p.domeL = 8; p.domeH = 5.5f; p.domeW = 5.2f; p.carapace = true; }
-            case BULL_ALIEN -> { p.style = 3; p.horns = 6; p.torso = 1.25f; p.limb = 1.2f; p.cheek = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 1; p.tailEnd = 0; p.ribs = 4; }
-            case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; }
-            case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.belly = true; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; }
-            case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.45f; p.limb = 1.3f; p.spines = 7; p.knee = true; p.tailSegs = 5; p.tailEnd = 2; p.domeW = 5.8f; p.ribs = 0; p.tubeLen = 0; p.plates = 1; }
-            case PATHOGEN_QUEEN -> { p.style = 4; p.domeW = 6f; p.horns = 5; p.carapace = true; p.sac = true; p.torso = 1.2f; p.spines = 6; p.tubeLen = 0; p.ribs = 0; p.belly = true; p.tailEnd = 1; }
-            case BURSTER -> { p.domeL = 7; p.domeH = 4; p.sac = true; p.spines = 5; p.limb = 1.1f; p.tailSegs = 4; p.tailEnd = 4; p.ribs = 0; p.belly = true; p.tubeLen = 0; }
-            case PROWLER -> { p.style = 1; p.domeL = 13; p.limb = 0.9f; p.clawL = 1.35f; p.tailEnd = 1; p.spines = 3; p.blade = true; p.ribs = 5; p.tubeLen = 8; p.torso = 0.95f; }
-            case ARACHNID -> { p.domeL = 6; p.domeH = 3.2f; p.domeW = 5.6f; p.mand = true; p.cheek = true; p.spines = 8; p.tailEnd = 3; p.ribs = 2; p.tubeLen = 0; p.elbow = true; p.headW = 1.15f; }
+            case BRUTE -> { p.style = 0; p.domeL = 8; p.domeW = 6.6f; p.domeH = 6; p.plates = 2; p.spines = 4; p.armK = 1.3f; p.torso = 1.4f; p.limb = 1.4f; p.knee = true; p.elbow = true; p.tailEnd = 0; p.tailT = 1.2f; p.ribs = 3; p.clawL = 1.3f; }
+            case BULL_ALIEN -> { p.style = 3; p.horns = 2; p.torso = 1.25f; p.limb = 1.25f; p.cheek = true; p.mand = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 1; p.tailEnd = 1; p.ribs = 4; p.spines = 4; }
+            case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; p.mand = true; }
+            case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; p.limb = 1.1f; }
+            case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.3f; p.limb = 1.2f; p.spines = 4; p.tailSegs = 0; p.domeW = 5f; p.ribs = 0; p.tubeLen = 0; }
+            case PATHOGEN_QUEEN -> { p.style = 4; p.domeW = 6f; p.horns = 6; p.carapace = true; p.mand = true; p.torso = 1.2f; p.spines = 9; p.tubeLen = 0; p.ribs = 0; p.tailEnd = 1; }
+            case BURSTER -> { p.domeL = 9; p.domeH = 3.6f; p.domeW = 3.6f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 0; p.cheek = true; p.spines = 6; p.clawL = 1.2f; p.ribs = 2; p.tailEnd = 0; }
+            case PROWLER -> { p.style = 1; p.domeL = 9; p.brow = true; p.limb = 0.95f; p.tubeLen = 0; p.spines = 2; p.ribs = 3; p.tailT = 1.1f; p.tailEnd = 0; p.clawL = 1.2f; }
+            case ARACHNID -> { p.style = 2; p.fan = 9; p.domeL = 9; p.domeH = 3.6f; p.mand = true; p.spines = 4; p.limb = 1.1f; p.tubeLen = 0; p.clawL = 1.3f; p.ribs = 2; p.tailEnd = 0; }
             default -> {}
         }
         return p;
@@ -167,6 +167,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.style == 2) {
             float fw = sp.fan;
             box2(fanB, -fw / 2, -11, 4.5f, fw, 9, 1); box2(fanB, -fw / 3, -13.5f, 4.5f, fw * 0.66f, 3, 1);
+            if (sp.fan2) box2(fanB, -fw * 0.62f, -10f, 5.8f, fw * 1.24f, 8.5f, 1);      // second, duller and wider under-layer (Empress)
             for (int i = 0; i < sp.horns; i++) { float x = -fw / 2 + 0.5f + i * ((fw - 1) / Math.max(1, sp.horns - 1)); box2(fanB, x - 0.4f, -14.5f - (i % 2), 4.6f, 0.8f, 4, 0.8f); }
         }
         head.addOrReplaceChild("fan", fanB, PartPose.rotation(0.25f, 0, 0));
@@ -736,7 +737,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     A[0][0] = kf(t, 0, -0.6f, 9, -2.8f, 14, -0.4f, 30, -0.6f); A[0][1] = 0.4f; A[0][3] = 0.5f; A[0][5] = aw;
                     A[1][0] = -1.0f; A[1][1] = -0.4f; A[1][3] = 1.2f; A[1][5] = aw * 0.8f;
                 }
-                case VOLLEY -> {
+                case VOLLEY, FIREARM -> {
                     float v = Math.max(0, Mth.sin((t - 8f) * 1.25f)) * kf(t, 8, 0, 9, 1, 25, 1, 27, 0);
                     headX += -0.5f * v - 0.2f * aw; jawOpen += 0.1f + 1.3f * v; neckScale = 1 + 0.35f * v; chestScale = 1 + 0.07f * v; chestX += -0.2f * v; crouch += 1.2f * aw;
                     for (int s = 0; s < 2; s++) { A[s][0] = -1.0f; A[s][1] = (s == 0 ? 1 : -1) * 0.4f; A[s][3] = 1.2f; A[s][5] = aw * 0.8f; }
@@ -890,7 +891,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 pitch = Mth.lerp(w, pitch, A[s][0]); el = Mth.lerp(w, el, A[s][3]); hnd = Mth.lerp(w, hnd, A[s][4]);
                 yaw = Mth.lerp(w, yaw, A[s][1]); roll = Mth.lerp(w, roll, A[s][2]);
             }
-            if (c == Caste.PATHOGEN_BRUTE) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 1.9f; fore[s].xScale = fore[s].zScale = 1.25f; }
+            if (c == Caste.PATHOGEN_BRUTE || (c == Caste.PATHOGEN_QUEEN && s == 1)) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 1.9f; fore[s].xScale = fore[s].zScale = 1.25f; }
             arm[s].yScale = sp.armK;
             arm[s].xRot = pitch - body.xRot - chest.xRot; arm[s].yRot = yaw; arm[s].zRot = roll;
             fore[s].xRot = el; hand[s].xRot = hnd;

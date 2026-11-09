@@ -98,5 +98,7 @@
  "entity.xenomorph.k_warrior": "Kシリーズ・ウォリアー",
  "item.xenomorph.k_warrior_spawn_egg": "Kシリーズ・ウォリアー スポーンエッグ",
  "entity.xenomorph.k_fatalis": "Kシリーズ・フェイタリス",
- "item.xenomorph.k_fatalis_spawn_egg": "Kシリーズ・フェイタリス スポーンエッグ"
+ "item.xenomorph.k_fatalis_spawn_egg": "Kシリーズ・フェイタリス スポーンエッグ",
+ "entity.xenomorph.white_king": "ホワイト・ハイブリッド・キング",
+ "item.xenomorph.white_king_spawn_egg": "ホワイト・ハイブリッド・キング スポーンエッグ"
 }

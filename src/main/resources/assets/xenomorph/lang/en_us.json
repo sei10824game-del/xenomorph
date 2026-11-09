@@ -98,5 +98,7 @@
  "entity.xenomorph.k_warrior": "K-Series Warrior",
  "item.xenomorph.k_warrior_spawn_egg": "K-Series Warrior Spawn Egg",
  "entity.xenomorph.k_fatalis": "K-Series Fatalis",
- "item.xenomorph.k_fatalis_spawn_egg": "K-Series Fatalis Spawn Egg"
+ "item.xenomorph.k_fatalis_spawn_egg": "K-Series Fatalis Spawn Egg",
+ "entity.xenomorph.white_king": "White Hybrid King",
+ "item.xenomorph.white_king_spawn_egg": "White Hybrid King Spawn Egg"
 }
