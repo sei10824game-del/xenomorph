@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = XenomorphMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ClientSetup {
-    static final ModelLayerLocation XENO = new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, "xeno"), "main");
+    static ModelLayerLocation layer(Caste c) { return new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, c.id), "main"); }
     static final ModelLayerLocation HUGGER = new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, "facehugger"), "main");
     static final ModelLayerLocation BURSTER = new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, "chestburster"), "main");
     static final ModelLayerLocation EGG = new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, "egg"), "main");
@@ -27,7 +27,7 @@ public final class ClientSetup {
 
     @SubscribeEvent
     public static void layers(EntityRenderersEvent.RegisterLayerDefinitions e) {
-        e.registerLayerDefinition(XENO, XenoModel::create);
+        for (Caste c : Caste.values()) e.registerLayerDefinition(layer(c), () -> XenoModel.create(c));
         e.registerLayerDefinition(HUGGER, SmallModels.Hugger::create);
         e.registerLayerDefinition(BURSTER, SmallModels.Burster::create);
         e.registerLayerDefinition(EGG, SmallModels.Egg::create);
@@ -50,7 +50,7 @@ public final class ClientSetup {
     static class XenoRenderer extends MobRenderer<XenoEntity, XenoModel> {
         private final ResourceLocation texture;
         XenoRenderer(EntityRendererProvider.Context ctx, Caste c) {
-            super(ctx, new XenoModel(ctx.bakeLayer(XENO)), 0.6f * c.scale);
+            super(ctx, new XenoModel(ctx.bakeLayer(layer(c))), 0.6f * c.scale);
             texture = tex(c.id);
         }
         @Override public ResourceLocation getTextureLocation(XenoEntity e) { return texture; }

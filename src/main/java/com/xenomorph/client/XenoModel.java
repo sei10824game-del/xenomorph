@@ -66,83 +66,187 @@ public class XenoModel extends EntityModel<XenoEntity> {
         return CubeListBuilder.create().texOffs(0, 96).addBox(x, y, z, w, h, d);
     }
 
-    public static LayerDefinition create() {
+    /** Per-caste silhouette parameters. Limb LENGTHS are fixed (IK depends on them); everything else varies. */
+    static final class Sp {
+        float domeL = 12, domeH = 4.5f, domeW = 4.4f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12;
+        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 11;
+        boolean cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
+    }
+    // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
+    // tailEnd: 0 blade, 1 spear, 2 club, 3 twin-blade, 4 bare tip
+    static Sp spec(Caste c) {
+        Sp p = new Sp();
+        switch (c) {
+            case DRONE -> { p.spines = 1; }
+            case WARRIOR -> { p.style = 1; p.ribs = 4; p.spines = 3; p.clawL = 1.15f; p.brow = true; }
+            case PRAETORIAN -> { p.style = 2; p.fan = 13; p.limb = 1.2f; p.torso = 1.2f; p.plates = 1; p.spines = 4; p.horns = 2; p.elbow = true; p.tailEnd = 1; }
+            case QUEEN -> { p.style = 2; p.fan = 17; p.domeL = 14; p.torso = 1.15f; p.carapace = true; p.spines = 5; p.ribs = 4; p.plates = 1; p.horns = 3; p.limb = 1.1f; }
+            case MATRIARCH -> { p.style = 2; p.fan = 14; p.domeL = 16; p.domeH = 5; p.limb = 0.9f; p.spines = 7; p.sac = true; p.horns = 2; p.tailEnd = 3; p.clawL = 1.3f; p.belly = true; }
+            case EMPRESS -> { p.style = 2; p.fan = 20; p.domeL = 13; p.carapace = true; p.plates = 2; p.horns = 5; p.tailEnd = 1; p.torso = 1.25f; p.elbow = true; p.knee = true; p.ribs = 5; }
+            case QUEEN_MOTHER -> { p.style = 2; p.fan = 24; p.domeL = 18; p.domeH = 6; p.domeW = 5.6f; p.carapace = true; p.plates = 2; p.horns = 7; p.spines = 9; p.belly = true; p.elbow = true; p.knee = true; p.torso = 1.35f; p.limb = 1.25f; p.tailEnd = 3; p.cheek = true; p.mand = true; }
+            case RUNNER -> { p.domeL = 9; p.domeH = 3.6f; p.domeW = 3.6f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 7; p.cheek = true; p.clawL = 1.2f; p.ribs = 2; p.tailEnd = 4; }
+            case CRUSHER -> { p.style = 3; p.horns = 3; p.carapace = true; p.limb = 1.35f; p.torso = 1.3f; p.tailSegs = 6; p.tailEnd = 2; p.plates = 2; p.knee = true; p.domeL = 7; p.domeH = 5; p.domeW = 5; p.ribs = 1; }
+            case SPITTER -> { p.domeL = 11; p.domeH = 4; p.sac = true; p.cheek = true; p.spines = 2; p.tailEnd = 1; }
+            case RAVAGER -> { p.style = 1; p.blade = true; p.elbow = true; p.spines = 7; p.cheek = true; p.clawL = 1.2f; p.tailEnd = 3; p.ribs = 4; p.brow = true; }
+            case LURKER -> { p.domeL = 14; p.domeH = 4.2f; p.limb = 0.9f; p.clawL = 1.6f; p.torso = 0.95f; p.tubeLen = 0; p.ribs = 5; }
+            case SENTINEL -> { p.style = 5; p.spines = 4; p.horns = 2; p.domeL = 10; p.limb = 0.95f; p.cheek = true; p.tailEnd = 1; }
+            case CARRIER -> { p.belly = true; p.domeL = 12; p.limb = 1.1f; p.torso = 1.15f; p.ribs = 2; p.plates = 1; }
+            case PREDALIEN -> { p.dreads = true; p.domeL = 8; p.domeW = 5.4f; p.domeH = 5; p.mand = true; p.torso = 1.25f; p.plates = 1; p.spines = 3; p.ribs = 4; p.limb = 1.15f; p.cheek = true; p.brow = true; }
+            case NEOMORPH -> { p.style = 4; p.domeW = 5f; p.limb = 0.85f; p.torso = 0.85f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
+            case NEWBORN -> { p.style = 4; p.domeW = 6.4f; p.limb = 1.25f; p.torso = 1.1f; p.tailSegs = 0; p.cheek = true; p.ribs = 0; p.spines = 0; p.brow = true; p.tubeLen = 0; }
+            case DEACON -> { p.domeL = 7; p.domeH = 4; p.limb = 0.9f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 1; p.tubeLen = 0; }
+            case BOILER -> { p.belly = true; p.sac = true; p.domeL = 10; p.torso = 1.35f; p.spines = 8; p.limb = 1.1f; p.tailEnd = 4; p.ribs = 2; }
+            case PROTOMORPH -> { p.style = 4; p.domeW = 4.4f; p.ribs = 1; p.spines = 5; p.limb = 0.95f; p.tailEnd = 1; p.cheek = true; p.tubeLen = 0; }
+            case STALKER -> { p.style = 5; p.clawL = 1.45f; p.spines = 6; p.cheek = true; p.domeL = 13; p.limb = 0.95f; p.tailEnd = 1; p.blade = true; }
+            case KING -> { p.style = 3; p.horns = 2; p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.2f; p.domeL = 9; p.domeH = 5; p.ribs = 4; p.spines = 5; p.tubeLen = 0; }
+            case CHARGER -> { p.style = 3; p.horns = 4; p.carapace = true; p.limb = 1.3f; p.tailSegs = 5; p.tailEnd = 2; p.domeL = 6; p.domeH = 5; p.domeW = 5; p.torso = 1.1f; p.tubeLen = 0; p.ribs = 0; }
+            case BRUTE -> { p.style = 3; p.horns = 1; p.plates = 2; p.limb = 1.4f; p.torso = 1.35f; p.knee = true; p.elbow = true; p.tailEnd = 2; p.tailSegs = 6; p.domeL = 8; p.domeH = 5.5f; p.domeW = 5.2f; p.carapace = true; }
+            case BULL_ALIEN -> { p.style = 3; p.horns = 6; p.torso = 1.25f; p.limb = 1.2f; p.cheek = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 1; p.tailEnd = 0; p.ribs = 4; }
+            case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; }
+            case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.belly = true; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; }
+            case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.45f; p.limb = 1.3f; p.spines = 7; p.knee = true; p.tailSegs = 5; p.tailEnd = 2; p.domeW = 5.8f; p.ribs = 0; p.tubeLen = 0; p.plates = 1; }
+            case PATHOGEN_QUEEN -> { p.style = 4; p.domeW = 6f; p.horns = 5; p.carapace = true; p.sac = true; p.torso = 1.2f; p.spines = 6; p.tubeLen = 0; p.ribs = 0; p.belly = true; p.tailEnd = 1; }
+            case BURSTER -> { p.domeL = 7; p.domeH = 4; p.sac = true; p.spines = 5; p.limb = 1.1f; p.tailSegs = 4; p.tailEnd = 4; p.ribs = 0; p.belly = true; p.tubeLen = 0; }
+            case PROWLER -> { p.style = 1; p.domeL = 13; p.limb = 0.9f; p.clawL = 1.35f; p.tailEnd = 1; p.spines = 3; p.blade = true; p.ribs = 5; p.tubeLen = 8; p.torso = 0.95f; }
+            case ARACHNID -> { p.domeL = 6; p.domeH = 3.2f; p.domeW = 5.6f; p.mand = true; p.cheek = true; p.spines = 8; p.tailEnd = 3; p.ribs = 2; p.tubeLen = 0; p.elbow = true; p.headW = 1.15f; }
+            default -> {}
+        }
+        return p;
+    }
+
+    public static LayerDefinition create(Caste c) {
+        Sp sp = spec(c);
         cu = cv = rowH = 0;
+        float T = sp.torso, L = sp.limb;
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        PartDefinition hips = root.addOrReplaceChild("hips", add(box(-3.5f, -3f, -4f, 7, 6, 9), -2.5f, -4, -1, 5, 1.5f, 5), PartPose.offset(0, 11, 1));
+        PartDefinition hips = root.addOrReplaceChild("hips", add(box(-3.5f * T, -3f, -4f, 7 * T, 6, 9), -2.5f, -4, -1, 5, 1.5f, 5), PartPose.offset(0, 11, 1));
 
-        // torso: segmented, ribbed
-        CubeListBuilder bodyB = box(-3, -9, -3, 6, 10, 6);
-        add(bodyB, -1, -9, 2.8f, 2, 9, 1.5f);                     // dorsal ridge
+        // torso
+        CubeListBuilder bodyB = box(-3 * T, -9, -3, 6 * T, 10, 6);
+        add(bodyB, -1, -9, 2.8f, 2, 9, 1.5f);
+        if (sp.belly) add(bodyB, -3.8f * T, -7, -5, 7.6f * T, 8, 2.4f);               // distended belly
         PartDefinition body = hips.addOrReplaceChild("body", bodyB, PartPose.offset(0, -1, -1));
-        CubeListBuilder chestB = box(-3.8f, -8.5f, -3.8f, 7.6f, 9, 7.6f);
-        for (int i = 0; i < 3; i++) { add(chestB, -4.3f, -7 + i * 2.6f, -3, 0.8f, 1.2f, 6); add(chestB, 3.5f, -7 + i * 2.6f, -3, 0.8f, 1.2f, 6); }
+        CubeListBuilder chestB = box(-3.8f * T, -8.5f, -3.8f, 7.6f * T, 9, 7.6f);
+        for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.4f * T, y, -3, 0.9f, 1.1f, 6); add(chestB, 3.5f * T, y, -3, 0.9f, 1.1f, 6); }
         add(chestB, -1, -8.5f, 3.7f, 2, 8, 1.5f);
+        for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
+        for (int i = 0; i < sp.plates; i++) {
+            add(chestB, -5.6f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f); add(chestB, 2.4f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f);   // pauldrons
+            if (i == 1) { add(chestB, -6.2f * T, -9.8f, -2.2f, 1.2f, 3f, 1.2f); add(chestB, 5f * T, -9.8f, -2.2f, 1.2f, 3f, 1.2f); }          // shoulder spikes
+        }
+        if (sp.carapace) { add(chestB, -4.4f * T, -9.2f, 3.6f, 8.8f * T, 10.5f, 2.2f); add(chestB, -5f * T, -9.8f, 3.2f, 10f * T, 1.6f, 3f); }
+        if (sp.belly) add(chestB, -4.4f * T, -2.5f, -4.8f, 8.8f * T, 3.5f, 2f);
         PartDefinition chest = body.addOrReplaceChild("chest", chestB, PartPose.offset(0, -8.5f, 0));
-        PartDefinition neck = chest.addOrReplaceChild("neck", box(-2, -5, -2, 4, 6, 4), PartPose.offset(0, -7.5f, 0));
+        PartDefinition neck = chest.addOrReplaceChild("neck", box(-2 * L, -5, -2 * L, 4 * L, 6, 4 * L), PartPose.offset(0, -7.5f, 0));
 
         // head
-        PartDefinition head = neck.addOrReplaceChild("head", add(box(-2.4f, -3.5f, -6, 4.8f, 4.5f, 6), -1.5f, -4.5f, -4, 3, 1, 4), PartPose.offset(0, -4.5f, 0));
-        head.addOrReplaceChild("dome", add(box(-2.2f, -5.5f, -1, 4.4f, 4.5f, 12), -1.4f, -6.2f, 2, 2.8f, 1, 8), PartPose.ZERO);
-        CubeListBuilder rid = box(-0.7f, -7, 0, 1.4f, 1.4f, 3);
-        add(rid, -0.7f, -6.8f, 4, 1.4f, 1.4f, 3); add(rid, -0.7f, -6.5f, 8, 1.4f, 1.4f, 3);
+        float hw = sp.headW;
+        CubeListBuilder headB = box(-2.4f * hw, -3.5f, -6, 4.8f * hw, 4.5f, 6);
+        add(headB, -1.5f, -4.5f, -4, 3, 1, 4);
+        if (sp.brow) add(headB, -2.7f * hw, -4.6f, -5.8f, 5.4f * hw, 1.1f, 2.5f);
+        PartDefinition head = neck.addOrReplaceChild("head", headB, PartPose.offset(0, -4.5f, 0));
+        CubeListBuilder domeB = CubeListBuilder.create();
+        if (sp.style != 4) { box2(domeB, -sp.domeW / 2, -1 - sp.domeH, -1, sp.domeW, sp.domeH, sp.domeL); add(domeB, -sp.domeW * 0.32f, -sp.domeH - 1.7f, 2, sp.domeW * 0.64f, 1, sp.domeL * 0.66f); }
+        head.addOrReplaceChild("dome", domeB, PartPose.ZERO);
+        CubeListBuilder rid = CubeListBuilder.create();
+        if (sp.style == 1) for (int i = 0; i < 3; i++) box2(rid, -0.7f, -sp.domeH - 2.6f, 0.5f + i * 3.6f, 1.4f, 1.4f, 3);
+        if (sp.style == 5) for (int i = 0; i < 5; i++) box2(rid, -0.5f, -sp.domeH - 4f + (i % 2) * 0.8f, 0.5f + i * 2.2f, 1, 3.2f - (i % 2) * 0.8f, 1);
+        if (sp.cheek) { box2(rid, -3.6f * hw, -2.4f, -4.5f, 1, 1, 3.5f); box2(rid, 2.6f * hw, -2.4f, -4.5f, 1, 1, 3.5f); box2(rid, -3.2f * hw, -1.2f, -2.5f, 0.8f, 0.8f, 2.5f); box2(rid, 2.4f * hw, -1.2f, -2.5f, 0.8f, 0.8f, 2.5f); }
         head.addOrReplaceChild("ridges", rid, PartPose.ZERO);
-        head.addOrReplaceChild("fan", add(box(-6, -11, 4.5f, 12, 9, 1), -4, -13, 4.5f, 8, 3, 1), PartPose.rotation(0.25f, 0, 0));
-        CubeListBuilder hornB = box(-6.5f, -9, 0, 13, 9, 1.5f);   // crusher frill
-        add(hornB, -7.5f, -3.5f, -3, 2, 2, 7); add(hornB, 5.5f, -3.5f, -3, 2, 2, 7);
-        add(hornB, -1, -8, -6, 2, 3, 3);
+        CubeListBuilder fanB = CubeListBuilder.create();
+        if (sp.style == 2) {
+            float fw = sp.fan;
+            box2(fanB, -fw / 2, -11, 4.5f, fw, 9, 1); box2(fanB, -fw / 3, -13.5f, 4.5f, fw * 0.66f, 3, 1);
+            for (int i = 0; i < sp.horns; i++) { float x = -fw / 2 + 0.5f + i * ((fw - 1) / Math.max(1, sp.horns - 1)); box2(fanB, x - 0.4f, -14.5f - (i % 2), 4.6f, 0.8f, 4, 0.8f); }
+        }
+        head.addOrReplaceChild("fan", fanB, PartPose.rotation(0.25f, 0, 0));
+        CubeListBuilder hornB = CubeListBuilder.create();
+        if (sp.style == 3) {
+            box2(hornB, -6.5f, -9, 0, 13, 9, 1.5f); box2(hornB, -7.5f, -3.5f, -3, 2, 2, 7); box2(hornB, 5.5f, -3.5f, -3, 2, 2, 7);
+            for (int i = 0; i < sp.horns; i++) { float x = sp.horns == 1 ? -1 : -4 + i * (8f / Math.max(1, sp.horns - 1)); box2(hornB, x, -10.5f, 0.2f, 2, 1.8f + (i % 2) * 1.5f, 1.2f); box2(hornB, x * 1.1f, -4.5f, -7.5f + (i % 2), 1.2f, 1.2f, 3.5f); }
+        }
         head.addOrReplaceChild("horns", hornB, PartPose.offsetAndRotation(0, -1, -1.5f, -0.1f, 0, 0));
-        CubeListBuilder dr = box(-3, -1, 0, 1, 9, 1);
-        add(dr, -1, -1, 0, 1, 11, 1); add(dr, 1, -1, 0, 1, 10, 1); add(dr, 3, -1, 0, 1, 8, 1);
-        head.addOrReplaceChild("dreads", dr, PartPose.offsetAndRotation(0, -3.5f, 9, 0.5f, 0, 0));
-        head.addOrReplaceChild("bulb", add(box(-3.2f, -7, -4, 6.4f, 7.5f, 7), -2, -3, -6, 4, 3, 2), PartPose.ZERO);
+        CubeListBuilder dr = CubeListBuilder.create();
+        if (sp.dreads) for (int i = -3; i <= 3; i++) box2(dr, i * 1.1f, -1, 0, 0.9f, 8 + (i & 1) * 3 + 2, 0.9f);
+        head.addOrReplaceChild("dreads", dr, PartPose.offsetAndRotation(0, -3.5f, 8, 0.5f, 0, 0));
+        CubeListBuilder bulbB = CubeListBuilder.create();
+        if (sp.style == 4) {
+            float bw = sp.domeW + 1.6f; box2(bulbB, -bw / 2, -7.5f, -4, bw, 8, 8); box2(bulbB, -bw * 0.35f, -9.2f, -1, bw * 0.7f, 2, 5.5f);
+            box2(bulbB, -2, -3.4f, -6.5f, 4, 3, 2.5f);
+            for (int i = 0; i < sp.horns; i++) { float x = -4 + i * (8f / Math.max(1, sp.horns - 1)); box2(bulbB, x, -11f - (i % 2), 0.5f, 0.9f, 3f, 0.9f); }
+        }
+        head.addOrReplaceChild("bulb", bulbB, PartPose.ZERO);
 
-        CubeListBuilder jawB = box(-2, 0, -6, 4, 1.5f, 8);
-        for (int i = 0; i < 4; i++) { tooth(jawB, -1.8f, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); tooth(jawB, 1.3f, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); }
+        CubeListBuilder jawB = box(-2 * hw, 0, -6, 4 * hw, 1.5f, 8);
+        for (int i = 0; i < 4; i++) { tooth(jawB, -1.8f * hw, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); tooth(jawB, 1.3f * hw, -1, -5.5f + i * 1.6f, 0.5f, 1.1f, 0.5f); }
+        if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
         CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 14);
         tooth(inB, -0.7f, -0.5f, -5.2f, 1.4f, 1.0f, 1.2f); tooth(inB, -0.5f, -1.2f, -4.8f, 1, 0.6f, 0.6f); tooth(inB, -0.5f, 0.6f, -4.6f, 1, 0.6f, 0.6f);
         head.addOrReplaceChild("inner", inB, PartPose.offset(0, 0.4f, -1.5f));
         CubeListBuilder upT = CubeListBuilder.create();
-        for (int i = 0; i < 4; i++) { tooth(upT, -2, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); tooth(upT, 1.5f, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); }
+        for (int i = 0; i < 4; i++) { tooth(upT, -2 * hw, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); tooth(upT, 1.5f * hw, 0.9f, -5.7f + i * 1.5f, 0.5f, 1.2f, 0.5f); }
+        if (sp.mand) { box2(upT, -4f * hw, -0.5f, -8f, 1.3f, 1.3f, 6); box2(upT, 2.7f * hw, -0.5f, -8f, 1.3f, 1.3f, 6); box2(upT, -3.2f * hw, -0.4f, -9.5f, 0.8f, 0.8f, 2); box2(upT, 2.4f * hw, -0.4f, -9.5f, 0.8f, 0.8f, 2); }
         head.addOrReplaceChild("upperTeeth", upT, PartPose.ZERO);
 
         // back pipes
-        chest.addOrReplaceChild("tubeL", pipe(-0.9f, -1, 0, 1.8f, 1.8f, 11), PartPose.offsetAndRotation(2, -6.5f, 3.6f, 0.25f, 0.1f, 0));
-        chest.addOrReplaceChild("tubeR", pipe(-0.9f, -1, 0, 1.8f, 1.8f, 11), PartPose.offsetAndRotation(-2, -6.5f, 3.6f, 0.25f, -0.1f, 0));
+        float tl = Math.max(0.1f, sp.tubeLen);
+        chest.addOrReplaceChild("tubeL", pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl), PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
+        chest.addOrReplaceChild("tubeR", pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl), PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
 
         // arms (index 0 = left / +x)
         for (int s = 0; s < 2; s++) {
             float sx = s == 0 ? 1 : -1;
             String n = s == 0 ? "L" : "R";
-            PartDefinition a = chest.addOrReplaceChild("arm" + n, box(-1.6f, -1, -1.6f, 3.2f, 7, 3.2f), PartPose.offset(sx * 5, -6.5f, 0));
-            PartDefinition f = a.addOrReplaceChild("fore", box(-1.3f, 0, -1.3f, 2.6f, 7.5f, 2.6f), PartPose.offset(0, 6, 0));
-            CubeListBuilder h = box(-1.6f, 0, -2.5f, 3.2f, 1.6f, 4.5f);
-            for (int k = -1; k <= 1; k++) add(h, k * 1.0f - 0.35f, 0.3f, -6.2f, 0.7f, 0.9f, 3.8f);
+            CubeListBuilder ab = box(-1.6f * L, -1, -1.6f * L, 3.2f * L, 7, 3.2f * L);
+            if (sp.elbow) add(ab, -0.5f, 4.5f, 1.4f * L, 1, 1, 3.4f);
+            PartDefinition a = chest.addOrReplaceChild("arm" + n, ab, PartPose.offset(sx * 5 * T, -6.5f, 0));
+            CubeListBuilder fb = box(-1.3f * L, 0, -1.3f * L, 2.6f * L, 7.5f, 2.6f * L);
+            if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 8f, 1.6f);
+            PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 6, 0));
+            float fl = 3.8f * sp.clawL;
+            CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
+            for (int k = -1; k <= 1; k++) add(h, k * 1.0f * L - 0.35f, 0.3f, -2.4f - fl, 0.7f, 0.9f, fl);
             f.addOrReplaceChild("hand", h, PartPose.offset(0, 7.5f, 0));
-            PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f, -3.5f, -2.5f));
+            PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
         }
         // legs
         for (int s = 0; s < 2; s++) {
             float sx = s == 0 ? 1 : -1;
             String n = s == 0 ? "L" : "R";
-            PartDefinition t = hips.addOrReplaceChild("thigh" + n, box(-2.2f, -1, -2.3f, 4.4f, 9.5f, 4.6f), PartPose.offset(sx * 4.2f, 0, 1));
-            PartDefinition sh = t.addOrReplaceChild("shin", box(-1.5f, -0.5f, -1.5f, 3, 8.5f, 3), PartPose.offset(0, 8, 0));
-            CubeListBuilder ft = box(-1.8f, 0, -5, 3.6f, 1.6f, 6.5f);
-            for (int k = -1; k <= 1; k++) add(ft, k * 1.1f - 0.4f, 0.4f, -7.5f, 0.8f, 1, 3);
+            CubeListBuilder tb = box(-2.2f * L, -1, -2.3f * L, 4.4f * L, 9.5f, 4.6f * L);
+            if (sp.knee) add(tb, -0.5f, 7f, -3.2f * L - 2, 1, 1.4f, 2.4f);
+            PartDefinition t = hips.addOrReplaceChild("thigh" + n, tb, PartPose.offset(sx * 4.2f * T, 0, 1));
+            PartDefinition sh = t.addOrReplaceChild("shin", box(-1.5f * L, -0.5f, -1.5f * L, 3 * L, 8.5f, 3 * L), PartPose.offset(0, 8, 0));
+            CubeListBuilder ft = box(-1.8f * L, 0, -5, 3.6f * L, 1.6f, 6.5f);
+            for (int k = -1; k <= 1; k++) add(ft, k * 1.1f * L - 0.4f, 0.4f, -7.5f, 0.8f, 1, 3);
             sh.addOrReplaceChild("foot", ft, PartPose.offset(0, 8, 0));
         }
         // tail
-        PartDefinition tp = hips.addOrReplaceChild("tail0", box(-2.4f, -2.4f, 0, 4.8f, 4.8f, 7), PartPose.offset(0, -0.5f, 4.5f));
+        int N = Math.max(1, sp.tailSegs);
+        float taper = 0.42f * 8f / N;
+        PartDefinition tp = hips.addOrReplaceChild("tail0", box(-2.4f * sp.tailT, -2.4f * sp.tailT, 0, 4.8f * sp.tailT, 4.8f * sp.tailT, 7), PartPose.offset(0, -0.5f, 4.5f));
         for (int i = 1; i < TAIL; i++) {
-            float w = 4.4f - i * 0.42f;
+            float w = Math.max(1.2f, (4.4f - i * taper) * sp.tailT);
             CubeListBuilder cb = box(-w / 2, -w / 2, 0, w, w, 7);
-            if (i == TAIL - 1) { add(cb, -0.4f, -3.4f, 3, 0.8f, 6.8f, 6); add(cb, -0.4f, -2.2f, 8, 0.8f, 4.4f, 4); }
+            if (i == N - 1) tailEnd(cb, sp.tailEnd, w);
             tp = tp.addOrReplaceChild("tail" + i, cb, PartPose.offset(0, 0, 7));
         }
         return LayerDefinition.create(mesh, 256, 128);
+    }
+
+    private static CubeListBuilder box2(CubeListBuilder b, float x, float y, float z, float w, float h, float d) { return add(b, x, y, z, w, h, d); }
+
+    private static void tailEnd(CubeListBuilder cb, int kind, float w) {
+        switch (kind) {
+            case 0 -> { add(cb, -0.4f, -3.4f, 3, 0.8f, 6.8f, 6); add(cb, -0.4f, -2.2f, 8, 0.8f, 4.4f, 4); }                       // leaf blade
+            case 1 -> { add(cb, -0.5f, -0.5f, 5, 1, 1, 10); add(cb, -0.4f, -1.6f, 8, 0.8f, 3.2f, 1.2f); add(cb, -0.4f, -1.2f, 11.5f, 0.8f, 2.4f, 1.2f); } // spear + barbs
+            case 2 -> { add(cb, -3f, -3f, 1, 6, 6, 6); add(cb, -0.6f, -4.6f, 2, 1.2f, 1.6f, 1.2f); add(cb, -0.6f, 3f, 2, 1.2f, 1.6f, 1.2f); add(cb, -4.6f, -0.6f, 2, 1.6f, 1.2f, 1.2f); add(cb, 3f, -0.6f, 2, 1.6f, 1.2f, 1.2f); } // spiked club
+            case 3 -> { add(cb, -2.2f, -2.8f, 3, 0.8f, 5.6f, 6); add(cb, 1.4f, -2.8f, 3, 0.8f, 5.6f, 6); add(cb, -0.4f, -1.2f, 6, 0.8f, 2.4f, 5); }  // twin blade
+            default -> { }
+        }
     }
 
     // ------------------------------------------------------------------ animation
@@ -162,14 +266,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float aw = 0;                                   // attack weight 0..1
         if (at != Attack.NONE) aw = smooth(t / 3f) * smooth((at.duration - t) / 4f);
 
-        // ---- visibility per caste
-        dome.visible = c.crest != 6; ridges.visible = c.crest == 1 || c.crest == 4 || c.crest == 5; fan.visible = c.crest == 2;
-        horns.visible = c.crest == 3; dreads.visible = c.dreads; bulb.visible = c.crest == 6;
-        tubeL.visible = tubeR.visible = c.tubes; tail0.visible = c.crest != 6;
+        Sp sp = spec(c);
+        tubeL.visible = tubeR.visible = c.tubes && sp.tubeLen > 0;
         arm2[0].visible = arm2[1].visible = c.extraArms;
-        float domeLen = switch (c.crest) { case 3 -> 0.55f; case 7 -> 0.7f; case 4 -> 0.85f; case 2 -> 1.2f; default -> 1f; };
-        dome.zScale = domeLen; dome.yScale = c.crest == 5 ? 1.2f : 1f;
-        if (c.crest == 6) { jaw.zScale = 0.7f; head.yScale = 1.05f; }
+        for (int i = 0; i < TAIL; i++) tail[i].visible = i < Math.max(1, sp.tailSegs);
+        tail0.visible = sp.tailSegs > 0;
 
         // ---- stance
         P = Mth.lerp(b, 1.38f, 0.5f);
@@ -540,7 +641,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 pitch = Mth.lerp(w, pitch, A[s][0]); el = Mth.lerp(w, el, A[s][3]); hnd = Mth.lerp(w, hnd, A[s][4]);
                 yaw = Mth.lerp(w, yaw, A[s][1]); roll = Mth.lerp(w, roll, A[s][2]);
             }
-            if (c == Caste.PATHOGEN_BRUTE) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 2.6f; fore[s].xScale = fore[s].zScale = 1.5f; }
+            if (c == Caste.PATHOGEN_BRUTE) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 1.9f; fore[s].xScale = fore[s].zScale = 1.25f; }
             arm[s].xRot = pitch - body.xRot - chest.xRot; arm[s].yRot = yaw; arm[s].zRot = roll;
             fore[s].xRot = el; hand[s].xRot = hnd;
         }
