@@ -540,6 +540,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 pitch = Mth.lerp(w, pitch, A[s][0]); el = Mth.lerp(w, el, A[s][3]); hnd = Mth.lerp(w, hnd, A[s][4]);
                 yaw = Mth.lerp(w, yaw, A[s][1]); roll = Mth.lerp(w, roll, A[s][2]);
             }
+            if (c == Caste.PATHOGEN_BRUTE) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 2.6f; fore[s].xScale = fore[s].zScale = 1.5f; }
             arm[s].xRot = pitch - body.xRot - chest.xRot; arm[s].yRot = yaw; arm[s].zRot = roll;
             fore[s].xRot = el; hand[s].xRot = hnd;
         }

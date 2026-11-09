@@ -135,7 +135,7 @@ public class XenoEntity extends Monster {
         if (a != Attack.NONE) {
             runAttack(a);
             if (attackTick >= a.duration) endAttack();
-        } else if (caste == Caste.QUEEN && getTarget() == null && --layTimer <= 0 && getNavigation().isDone()) {
+        } else if (caste.attacks.contains(Attack.LAY) && getTarget() == null && --layTimer <= 0 && getNavigation().isDone()) {
             layTimer = 900 + random.nextInt(600);
             if (level().getEntitiesOfClass(XenoEggEntity.class, getBoundingBox().inflate(16)).size() < 5) startAttack(Attack.LAY);
         }
@@ -195,7 +195,7 @@ public class XenoEntity extends Monster {
             case TAIL_SWEEP -> {
                 if (t >= a.hit - 1 && t <= a.hit + 5 && t % 2 == 0) {
                     double rad = 3.6 * Math.max(1, caste.scale * 0.85);
-                    for (LivingEntity e : around(rad)) if (!sweptAlready(e)) { strike(e, 0.9f, rad, 1.3); e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 0)); markSwept(e); }
+            for (LivingEntity e : around(rad)) if (!sweptAlready(e)) { strike(e, 0.9f, rad, 1.3); e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 0)); markSwept(e); }
                 }
                 if (t == a.hit) playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.5f, 0.5f);
             }
@@ -337,7 +337,8 @@ public class XenoEntity extends Monster {
         super.die(src);
         releaseHeld(false);
         if (!level().isClientSide) {
-            for (LivingEntity e : around(caste == Caste.BOILER ? 5.0 : 2.6)) acidBurn(e, caste == Caste.BOILER ? 6 : 3);
+            boolean big = caste == Caste.BOILER || caste == Caste.BURSTER;
+            for (LivingEntity e : around(big ? 5.0 : 2.6)) acidBurn(e, big ? 6 : 3);
             if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.5, getZ(), 40, 0.8, 0.4, 0.8, 0.1);
         }
     }

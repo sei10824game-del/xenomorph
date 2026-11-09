@@ -1,6 +1,7 @@
 package com.xenomorph;
 
 import com.xenomorph.entity.*;
+import com.xenomorph.Hive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -34,5 +35,15 @@ public class XenoGameTests {
         }
         var f = h.spawnWithNoFreeWill(XenomorphMod.FACEHUGGER.get(), new BlockPos(1, 2, 1));
         h.runAfterDelay(1195, h::succeed);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void hive(GameTestHelper h) {
+        var sl = h.getLevel();
+        BlockPos o = h.absolutePos(new BlockPos(4, 2, 4));
+        Hive.build(sl, o.getX() >> 4, o.getZ() >> 4, o.getY() + 8);
+        long xenos = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEntity.class), x -> true).size();
+        long eggs = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEggEntity.class), x -> true).size();
+        h.runAfterDelay(2, () -> { if (xenos < 3 || eggs < 3) throw new AssertionError("hive empty x=" + xenos + " e=" + eggs); h.succeed(); });
     }
 }

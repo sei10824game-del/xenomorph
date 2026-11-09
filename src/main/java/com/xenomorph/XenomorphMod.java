@@ -26,8 +26,12 @@ import java.util.Map;
 @Mod(XenomorphMod.ID)
 public class XenomorphMod {
     public static final String ID = "xenomorph";
+    public static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
     static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ID);
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
+    static final DeferredRegister<net.minecraft.world.level.block.Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ID);
+    public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN = BLOCKS.register("resin", () -> new net.minecraft.world.level.block.Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BROWN).strength(3f, 6f).requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.HONEY_BLOCK)));
+    static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
     static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ID);
     static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ID);
 
@@ -65,12 +69,12 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> EGGS.forEach(e -> out.accept(e.get()))).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); }).build());
     }
 
     public XenomorphMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        ENTITIES.register(bus); ITEMS.register(bus); EFFECTS.register(bus); TABS.register(bus);
+        BLOCKS.register(bus); ENTITIES.register(bus); ITEMS.register(bus); EFFECTS.register(bus); TABS.register(bus);
         bus.addListener((EntityAttributeCreationEvent e) -> {
             XENOS.forEach((c, t) -> e.put(t.get(), XenoEntity.attributes(c).build()));
             e.put(FACEHUGGER.get(), FacehuggerEntity.attributes().build());
