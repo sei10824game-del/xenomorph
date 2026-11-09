@@ -29,11 +29,12 @@ public final class Hive {
     private static final Caste[] NORMAL = {Caste.DRONE, Caste.DRONE, Caste.WARRIOR, Caste.WARRIOR, Caste.RUNNER, Caste.SPITTER, Caste.LURKER, Caste.PROWLER,
             Caste.SENTINEL, Caste.RAVAGER, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER};
     private static final Caste[] PROTO = {Caste.PROTOMORPH};   // own faction: never shares a hive with classic xenos
-    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.NEOMORPH, Caste.NEOMORPH, Caste.NEWBORN};
+    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE};
+    private static final Caste[] NEO = {Caste.NEOMORPH, Caste.NEOMORPH, Caste.NEOMORPH, Caste.NEWBORN};   // own faction
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
         java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);
-        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, PATHOGEN, PROTO, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON}}) r.addAll(java.util.Arrays.asList(a));
+        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, PATHOGEN, PROTO, NEO, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON}}) r.addAll(java.util.Arrays.asList(a));
         return r;
     }
 
@@ -72,13 +73,13 @@ public final class Hive {
         }
         // floor: resin patches inside
         for (int i = 0; i < 40; i++) { BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5); if (f != null) sl.setBlock(f.below(), resin, 2); }
-        boolean pathogen = r.nextInt(6) == 0, proto = !pathogen && r.nextInt(7) == 0;
-        Caste q = proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(3)];
+        boolean pathogen = r.nextInt(6) == 0, proto = !pathogen && r.nextInt(7) == 0, neo = !pathogen && !proto && r.nextInt(7) == 0;
+        Caste q = neo ? Caste.NEWBORN : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(3)];
         spawn(sl, q, x0 + 0.5, y0 - 3, z0 + 0.5, r);
-        if (!proto && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);
+        if (!proto && !neo && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);
         int n = 5 + r.nextInt(5);
         for (int i = 0; i < n; i++) {
-            Caste[] pool = proto ? PROTO : pathogen ? PATHOGEN : NORMAL;
+            Caste[] pool = neo ? NEO : proto ? PROTO : pathogen ? PATHOGEN : NORMAL;
             BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5);
             if (f != null) spawn(sl, pool[r.nextInt(pool.length)], f.getX() + .5, f.getY(), f.getZ() + .5, r);
         }

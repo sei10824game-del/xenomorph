@@ -161,9 +161,9 @@ public class XenoEntity extends Monster {
                 e -> !friendly(e) && (faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy)));
     }
 
-    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen/neomorph, 4 = protomorph, 5 = deacon. Different non-zero factions fight each other. */
+    /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
-        if (e instanceof XenoEntity x) return x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste.id.startsWith("pathogen") || x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 2 : 1;   // black-goo lineage vs classic hive
+        if (e instanceof XenoEntity x) return x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN ? 6 : x.caste.id.startsWith("pathogen") ? 2 : 1;   // black-goo lineage vs classic hive
         if (e instanceof HunterEntity) return 3;
         return isXeno(e) ? 1 : 0;
     }

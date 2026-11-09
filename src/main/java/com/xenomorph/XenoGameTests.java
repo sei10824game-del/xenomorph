@@ -88,6 +88,8 @@ public class XenoGameTests {
             if (drone.getTarget() == host) throw new AssertionError("xeno still targets implanted host");
             if (drone.friendly(neo)) throw new AssertionError("drone and neomorph are friends");
             var proto = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.PROTOMORPH).get(), new BlockPos(7, 2, 6));
+            var pb2 = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.PATHOGEN_RUNNER).get(), new BlockPos(7, 2, 5));
+            if (pb2.friendly(neo)) throw new AssertionError("pathogen and neomorph must be hostile");
             var deacon = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.DEACON).get(), new BlockPos(7, 2, 7));
             if (deacon.friendly(neo) || deacon.friendly(drone) || deacon.friendly(proto)) throw new AssertionError("deacon must be its own faction");
             if (drone.friendly(proto) || neo.friendly(proto)) throw new AssertionError("protomorph must be its own faction");
