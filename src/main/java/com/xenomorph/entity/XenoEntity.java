@@ -101,6 +101,7 @@ public class XenoEntity extends Monster {
     /** 0 = not a xeno, 1 = classic hive, 2 = pathogen. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
         if (e instanceof XenoEntity x) return x.caste.id.startsWith("pathogen") || x.caste == Caste.NEOMORPH || x.caste == Caste.NEWBORN || x.caste == Caste.DEACON ? 2 : 1;   // black-goo lineage vs classic hive
+        if (e instanceof HunterEntity) return 3;
         return isXeno(e) ? 1 : 0;
     }
     /** Same hive, or a host carrying an embryo (the hive needs it alive until the chestburster emerges). */

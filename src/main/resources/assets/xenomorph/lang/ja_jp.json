@@ -72,5 +72,9 @@
  "item.xenomorph.bull_alien_spawn_egg": "ブル・エイリアン スポーンエッグ",
  "entity.xenomorph.arachnid": "アラクニッド・ゼノモーフ",
  "item.xenomorph.arachnid_spawn_egg": "アラクニッド・ゼノモーフ スポーンエッグ",
- "block.xenomorph.resin": "ハイブ樹脂"
+ "block.xenomorph.resin": "ハイブ樹脂",
+ "entity.xenomorph.predator": "プレデター",
+ "item.xenomorph.predator_spawn_egg": "プレデター スポーンエッグ",
+ "entity.xenomorph.engineer": "エンジニア",
+ "item.xenomorph.engineer_spawn_egg": "エンジニア スポーンエッグ"
 }

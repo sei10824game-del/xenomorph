@@ -14,7 +14,7 @@ import net.minecraft.world.phys.HitResult;
 
 public class AcidSpit extends ThrowableProjectile {
     private float dmg = 4;
-    public boolean splash;
+    public boolean splash, plasma;
 
     public AcidSpit(EntityType<? extends AcidSpit> t, Level l) { super(t, l); }
     public AcidSpit(Level l, LivingEntity owner, float dmg) { super(XenomorphMod.SPIT.get(), owner, l); this.dmg = dmg; }
@@ -24,11 +24,12 @@ public class AcidSpit extends ThrowableProjectile {
 
     @Override public void tick() {
         super.tick();
-        if (level().isClientSide) level().addParticle(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), 0, 0, 0);
+        if (level().isClientSide) level().addParticle(plasma ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), 0, 0, 0);
         if (tickCount > 80) discard();
     }
     @Override protected void onHitEntity(EntityHitResult r) {
-        if (r.getEntity() instanceof LivingEntity e && (getOwner() instanceof XenoEntity o ? !o.friendly(e) : !XenoEntity.isXeno(e))) {
+        if (r.getEntity() instanceof LivingEntity e && (getOwner() instanceof XenoEntity o ? !o.friendly(e) : getOwner() instanceof HunterEntity ? !(e instanceof HunterEntity) : !XenoEntity.isXeno(e))) {
+            if (plasma) { e.hurt(damageSources().indirectMagic(this, getOwner()), dmg); return; }
             e.hurt(damageSources().indirectMagic(this, getOwner()), dmg);
             e.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
             for (EquipmentSlot s : EquipmentSlot.values()) {

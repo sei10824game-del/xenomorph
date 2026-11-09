@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 
 /** Slithering newborn; grows into a drone (or a dog-runner when born from a wolf). */
 public class ChestbursterEntity extends Monster {
-    public boolean runnerForm;
+    public Caste form = Caste.DRONE;   // what it grows into: depends on the host species
     private int age;
     public static final int GROW = 6000, BURST = 36;
 
@@ -38,7 +38,7 @@ public class ChestbursterEntity extends Monster {
         age++;
         if (age < BURST) { setDeltaMovement(getDeltaMovement().multiply(0.2, 1, 0.2)); if (age == 2) playSound(SoundEvents.RAVAGER_ROAR, 1.2f, 2.0f); }
         if (!level().isClientSide && age >= GROW && level() instanceof ServerLevel sl) {
-            XenoEntity x = (runnerForm ? XenomorphMod.XENOS.get(Caste.RUNNER) : XenomorphMod.XENOS.get(Caste.DRONE)).get().create(sl);
+            XenoEntity x = XenomorphMod.XENOS.get(form).get().create(sl);
             if (x != null) { x.moveTo(getX(), getY(), getZ(), getYRot(), 0); sl.addFreshEntity(x); }
             discard();
         }
@@ -48,6 +48,6 @@ public class ChestbursterEntity extends Monster {
     @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.SPIDER_HURT; }
     @Override protected SoundEvent getDeathSound() { return SoundEvents.SPIDER_DEATH; }
     @Override public float getVoicePitch() { return 1.8f; }
-    @Override public void addAdditionalSaveData(CompoundTag t) { super.addAdditionalSaveData(t); t.putInt("Age", age); t.putBoolean("Runner", runnerForm); }
-    @Override public void readAdditionalSaveData(CompoundTag t) { super.readAdditionalSaveData(t); age = t.getInt("Age"); runnerForm = t.getBoolean("Runner"); }
+    @Override public void addAdditionalSaveData(CompoundTag t) { super.addAdditionalSaveData(t); t.putInt("Age", age); t.putString("Form", form.name()); }
+    @Override public void readAdditionalSaveData(CompoundTag t) { super.readAdditionalSaveData(t); age = t.getInt("Age"); if (t.contains("Form")) try { form = Caste.valueOf(t.getString("Form")); } catch (IllegalArgumentException ignored) { } }
 }

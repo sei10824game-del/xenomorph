@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = XenomorphMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ClientSetup {
+    static ModelLayerLocation hunterLayer(HunterEntity.Kind k) { return new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, k.name().toLowerCase()), "main"); }
     static ModelLayerLocation layer(Caste c) { return new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, c.id), "main"); }
     static final ModelLayerLocation HUGGER = new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, "facehugger"), "main");
     static final ModelLayerLocation BURSTER = new ModelLayerLocation(new ResourceLocation(XenomorphMod.ID, "chestburster"), "main");
@@ -28,6 +29,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void layers(EntityRenderersEvent.RegisterLayerDefinitions e) {
         for (Caste c : Caste.values()) e.registerLayerDefinition(layer(c), () -> XenoModel.create(c));
+        for (HunterEntity.Kind k : HunterEntity.Kind.values()) e.registerLayerDefinition(hunterLayer(k), () -> HunterModel.create(k));
         e.registerLayerDefinition(HUGGER, SmallModels.Hugger::create);
         e.registerLayerDefinition(BURSTER, SmallModels.Burster::create);
         e.registerLayerDefinition(EGG, SmallModels.Egg::create);
@@ -43,6 +45,10 @@ public final class ClientSetup {
         e.registerEntityRenderer(XenomorphMod.BURSTER.get(), ctx -> new MobRenderer<ChestbursterEntity, SmallModels.Burster>(ctx, new SmallModels.Burster(ctx.bakeLayer(BURSTER)), 0.25f) {
             @Override public ResourceLocation getTextureLocation(ChestbursterEntity x) { return tex("chestburster"); }
         });
+        XenomorphMod.HUNTERS.forEach((k, t) -> e.registerEntityRenderer(t.get(), ctx -> new net.minecraft.client.renderer.entity.HumanoidMobRenderer<HunterEntity, HunterModel>(ctx, new HunterModel(ctx.bakeLayer(hunterLayer(k))), 0.6f) {
+            @Override public ResourceLocation getTextureLocation(HunterEntity x) { return tex(k.name().toLowerCase()); }
+            @Override protected void scale(HunterEntity x, PoseStack ps, float pt) { float s = k == HunterEntity.Kind.PREDATOR ? 1.25f : 1.4f; ps.scale(s, s, s); }
+        }));
         e.registerEntityRenderer(XenomorphMod.EGG.get(), EggRenderer::new);
         e.registerEntityRenderer(XenomorphMod.SPIT.get(), NoopRenderer::new);
     }

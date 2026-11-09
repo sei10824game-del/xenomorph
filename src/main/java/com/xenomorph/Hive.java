@@ -27,8 +27,14 @@ public final class Hive {
     private static final Queue<Job> JOBS = new ArrayDeque<>();
     private static final Caste[] QUEENS = {Caste.QUEEN, Caste.MATRIARCH, Caste.EMPRESS, Caste.QUEEN_MOTHER};
     private static final Caste[] NORMAL = {Caste.DRONE, Caste.DRONE, Caste.WARRIOR, Caste.WARRIOR, Caste.RUNNER, Caste.SPITTER, Caste.LURKER, Caste.PROWLER,
-            Caste.SENTINEL, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER};
-    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE};
+            Caste.SENTINEL, Caste.RAVAGER, Caste.PROTOMORPH, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER};
+    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.NEOMORPH, Caste.NEOMORPH, Caste.NEWBORN};
+    /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
+    public static java.util.Set<Caste> reachable() {
+        java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);
+        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, PATHOGEN, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.DEACON}}) r.addAll(java.util.Arrays.asList(a));
+        return r;
+    }
 
     @SubscribeEvent
     public static void onChunk(ChunkEvent.Load e) {
@@ -75,11 +81,25 @@ public final class Hive {
             BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5);
             if (f != null) spawn(sl, pool[r.nextInt(pool.length)], f.getX() + .5, f.getY(), f.getZ() + .5, r);
         }
+        // cocooned hosts: embryo already inside, born (after the timer) as Predalien / Deacon
+        cocoon(sl, HunterEntity.Kind.PREDATOR, r.nextInt(3) == 0, x0, y0, z0, r);
+        cocoon(sl, HunterEntity.Kind.ENGINEER, r.nextInt(6) == 0, x0, y0, z0, r);
         for (int i = 0; i < 7; i++) {
             BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5);
             XenoEggEntity egg = XenomorphMod.EGG.get().create(sl);
             if (f != null && egg != null) { egg.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0); sl.addFreshEntity(egg); }
         }
+    }
+
+    private static void cocoon(ServerLevel sl, HunterEntity.Kind k, boolean yes, int x0, int y0, int z0, Random r) {
+        if (!yes) return;
+        BlockPos f = floor(sl, x0 + r.nextInt(9) - 4, y0, z0 + r.nextInt(9) - 4);
+        HunterEntity h = XenomorphMod.HUNTERS.get(k).get().create(sl);
+        if (f == null || h == null) return;
+        h.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0);
+        h.setNoAi(true); h.setPersistenceRequired();
+        h.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 1800 + r.nextInt(1200), 0, false, false));
+        sl.addFreshEntity(h);
     }
 
     private static BlockPos floor(ServerLevel sl, int x, int yc, int z) {

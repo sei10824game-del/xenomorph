@@ -36,6 +36,7 @@ public class XenomorphMod {
     static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ID);
 
     public static final Map<Caste, RegistryObject<EntityType<XenoEntity>>> XENOS = new EnumMap<>(Caste.class);
+    public static final Map<HunterEntity.Kind, RegistryObject<EntityType<HunterEntity>>> HUNTERS = new EnumMap<>(HunterEntity.Kind.class);
     public static final RegistryObject<EntityType<FacehuggerEntity>> FACEHUGGER = ENTITIES.register("facehugger",
             () -> EntityType.Builder.of(FacehuggerEntity::new, MobCategory.MONSTER).sized(0.7f, 0.4f).clientTrackingRange(8).build("facehugger"));
     public static final RegistryObject<EntityType<ChestbursterEntity>> BURSTER = ENTITIES.register("chestburster",
@@ -52,6 +53,12 @@ public class XenomorphMod {
             XENOS.put(c, ENTITIES.register(c.id, () -> EntityType.Builder.<XenoEntity>of((t, l) -> new XenoEntity(t, l, c), MobCategory.MONSTER)
                     .sized(0.8f * c.scale, 2.1f * c.scale).clientTrackingRange(10).fireImmune().build(c.id)));
             EGGS.add(ITEMS.register(c.id + "_spawn_egg", () -> new ForgeSpawnEggItem(XENOS.get(c), 0x14181c, 0x3a5a4a + c.ordinal() * 0x050301, new Item.Properties())));
+        }
+        for (HunterEntity.Kind k : HunterEntity.Kind.values()) {
+            String id = k.name().toLowerCase();
+            HUNTERS.put(k, ENTITIES.register(id, () -> EntityType.Builder.<HunterEntity>of((t, l) -> new HunterEntity(t, l, k), MobCategory.MONSTER)
+                    .sized(0.7f, k == HunterEntity.Kind.PREDATOR ? 2.5f : 2.8f).clientTrackingRange(10).build(id)));
+            EGGS.add(ITEMS.register(id + "_spawn_egg", () -> new ForgeSpawnEggItem(HUNTERS.get(k), k == HunterEntity.Kind.PREDATOR ? 0x6b7a3a : 0xd8d8d0, k == HunterEntity.Kind.PREDATOR ? 0x2a2e30 : 0x8a8f9a, new Item.Properties())));
         }
         EGGS.add(ITEMS.register("facehugger_spawn_egg", () -> new ForgeSpawnEggItem(FACEHUGGER, 0xb59c7a, 0x6a5a40, new Item.Properties())));
         EGGS.add(ITEMS.register("chestburster_spawn_egg", () -> new ForgeSpawnEggItem(BURSTER, 0xd9a9a0, 0x7a2a2a, new Item.Properties())));
@@ -74,9 +81,12 @@ public class XenomorphMod {
 
     public XenomorphMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener((net.minecraftforge.event.entity.SpawnPlacementRegisterEvent e) -> HUNTERS.values().forEach(t -> e.register(t.get(), net.minecraft.world.entity.SpawnPlacements.Type.ON_GROUND,
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (ty, lv, rs, ps, rn) -> net.minecraft.world.entity.Mob.checkMobSpawnRules(ty, lv, rs, ps, rn), net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.Operation.OR)));
         BLOCKS.register(bus); ENTITIES.register(bus); ITEMS.register(bus); EFFECTS.register(bus); TABS.register(bus);
         bus.addListener((EntityAttributeCreationEvent e) -> {
             XENOS.forEach((c, t) -> e.put(t.get(), XenoEntity.attributes(c).build()));
+            HUNTERS.forEach((k, t) -> e.put(t.get(), HunterEntity.attributes(k).build()));
             e.put(FACEHUGGER.get(), FacehuggerEntity.attributes().build());
             e.put(BURSTER.get(), ChestbursterEntity.attributes().build());
         });

@@ -103,4 +103,25 @@ public class XenoGameTests {
         h.runAfterDelay(5, () -> q.startAttack(Attack.GRAB));
         h.runAfterDelay(100, () -> { net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(l); h.succeed(); });
     }
+
+    @GameTest(template = "empty", timeoutTicks = 10)
+    public static void everyCasteSpawnsNaturally(GameTestHelper h) {
+        for (Caste c : Caste.values()) if (!Hive.reachable().contains(c)) throw new AssertionError(c + " cannot spawn naturally");
+        h.succeed();
+    }
+
+    /** Predator host -> Predalien form, Engineer host -> Deacon; predator hunts xenos. */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void hostForms(GameTestHelper h) {
+        floor(h);
+        var pred = (HunterEntity) h.spawnWithNoFreeWill(XenomorphMod.HUNTERS.get(HunterEntity.Kind.PREDATOR).get(), new BlockPos(2, 2, 2));
+        var eng = (HunterEntity) h.spawnWithNoFreeWill(XenomorphMod.HUNTERS.get(HunterEntity.Kind.ENGINEER).get(), new BlockPos(2, 2, 6));
+        pred.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 4, 0));
+        eng.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 4, 0));
+        h.succeedWhen(() -> {
+            var all = h.getLevel().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(ChestbursterEntity.class), b -> true);
+            boolean p = all.stream().anyMatch(b -> b.form == Caste.PREDALIEN), d = all.stream().anyMatch(b -> b.form == Caste.DEACON);
+            if (!p || !d) throw new net.minecraft.gametest.framework.GameTestAssertException("forms predalien=" + p + " deacon=" + d);
+        });
+    }
 }

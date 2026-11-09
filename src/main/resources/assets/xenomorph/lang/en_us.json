@@ -72,5 +72,9 @@
  "item.xenomorph.bull_alien_spawn_egg": "Bull Alien Spawn Egg",
  "entity.xenomorph.arachnid": "Arachnid Xenomorph",
  "item.xenomorph.arachnid_spawn_egg": "Arachnid Xenomorph Spawn Egg",
- "block.xenomorph.resin": "Hive Resin"
+ "block.xenomorph.resin": "Hive Resin",
+ "entity.xenomorph.predator": "Predator",
+ "item.xenomorph.predator_spawn_egg": "Predator Spawn Egg",
+ "entity.xenomorph.engineer": "Engineer",
+ "item.xenomorph.engineer_spawn_egg": "Engineer Spawn Egg"
 }
