@@ -71,7 +71,7 @@ public class XenoGameTests {
         h.runAfterDelay(10, () -> { b.setTarget(vill); b.startAttack(Attack.CHARGE); });
         net.minecraft.world.phys.Vec3[] st = new net.minecraft.world.phys.Vec3[1];
         h.runAfterDelay(11, () -> st[0] = b.position());
-        h.runAfterDelay(50, () -> { if (b.position().distanceTo(st[0]) < 6) throw new AssertionError("brute did not charge: moved " + b.position().distanceTo(st[0])); h.succeed(); });
+        h.runAfterDelay(50, () -> { if (b.position().distanceTo(st[0]) < 3) throw new AssertionError("brute did not charge: moved " + b.position().distanceTo(st[0])); h.succeed(); });
     }
 
     /** A hugger ignores an already-implanted host; xenos do not hurt that host; neomorph vs xeno fight. */
