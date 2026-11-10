@@ -126,19 +126,19 @@ public class XenoModel extends EntityModel<XenoEntity> {
     public static LayerDefinition create(Caste c) {
         Sp sp = spec(c);
         cu = cv = rowH = 0;
-        float T = sp.torso, L = sp.limb;
+        float T = sp.torso * 0.93f, L = sp.limb * 0.86f;       // slimmer frame, closer to the film suit / statue proportions
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         PartDefinition hips = root.addOrReplaceChild("hips", add(box(-3.5f * T, -3f, -4f, 7 * T, 6, 9), -2.5f, -4, -1, 5, 1.5f, 5), PartPose.offset(0, 11, 1));
 
         // torso
         CubeListBuilder bodyB = box(-3 * T, -9, -3, 6 * T, 10, 6);
-        add(bodyB, -1, -9, 2.8f, 2, 9, 1.5f);
+        for (int i = 0; i < 5; i++) add(bodyB, -0.9f - (i % 2) * 0.25f, -9f + i * 1.9f, 2.9f, 1.8f + (i % 2) * 0.5f, 1.3f, 1.5f + (i % 2) * 0.6f);   // vertebrae
         if (sp.belly) add(bodyB, -3.8f * T, -7, -5, 7.6f * T, 8, 2.4f);               // distended belly
         PartDefinition body = hips.addOrReplaceChild("body", bodyB, PartPose.offset(0, -1, -1));
         CubeListBuilder chestB = box(-3.8f * T, -8.5f, -3.8f, 7.6f * T, 9, 7.6f);
-        for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.4f * T, y, -3, 0.9f, 1.1f, 6); add(chestB, 3.5f * T, y, -3, 0.9f, 1.1f, 6); }
-        add(chestB, -1, -8.5f, 3.7f, 2, 8, 1.5f);
+        for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.3f * T, y, -3, 0.8f, 0.8f, 6); add(chestB, 3.5f * T, y, -3, 0.8f, 0.8f, 6); }
+        for (int i = 0; i < 6; i++) add(chestB, -0.9f - (i % 2) * 0.25f, -8.4f + i * 1.4f, 3.8f, 1.8f + (i % 2) * 0.5f, 1.1f, 1.5f + (i % 2) * 0.7f);   // vertebrae
         add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
         for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
         for (int i = 0; i < sp.plates; i++) {
@@ -224,7 +224,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
             PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
             float fl = 3.8f * sp.clawL;
             CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
-            for (int k = -1; k <= 1; k++) { add(h, k * 1.0f * L - 0.35f, 0.3f, -2.4f - fl, 0.7f, 0.9f, fl); add(h, k * 1.0f * L - 0.25f, 0.55f, -3.3f - fl, 0.5f, 0.5f, 1.0f); add(h, k * 1.0f * L - 0.4f, -0.5f, -2.8f, 0.8f, 0.7f, 0.9f); }   // finger, claw tip, knuckle
+            for (int k = 0; k < 4; k++) {   // four long, thin fingers + hooked tips + knuckles
+                float fx = (k - 1.5f) * 0.85f * L - 0.27f, f2 = fl * (k == 0 || k == 3 ? 1.05f : 1.3f);
+                add(h, fx, 0.3f, -2.4f - f2, 0.55f, 0.7f, f2); add(h, fx + 0.05f, 0.5f, -3.2f - f2, 0.4f, 0.4f, 1.1f); add(h, fx - 0.1f, -0.5f, -2.8f, 0.75f, 0.6f, 0.9f);
+            }
             f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
             PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
