@@ -69,7 +69,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     /** Per-caste silhouette parameters. Limb LENGTHS are fixed (IK depends on them); everything else varies. */
     static final class Sp {
         float domeL = 12, domeH = 4.5f, domeW = 4.4f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
-        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 11;
+        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 13;
         boolean fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
@@ -86,7 +86,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case QUEEN_MOTHER -> { p.style = 2; p.fan = 13; p.domeL = 18; p.domeH = 6; p.domeW = 5.6f; p.carapace = true; p.plates = 2; p.horns = 7; p.spines = 9; p.belly = true; p.elbow = true; p.knee = true; p.torso = 1.35f; p.limb = 1.25f; p.tailEnd = 3; p.cheek = true; p.mand = true; }
             case RUNNER -> { p.domeL = 9; p.domeH = 3.6f; p.domeW = 3.6f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 7; p.cheek = true; p.clawL = 1.2f; p.ribs = 2; p.tailEnd = 4; }
             case CRUSHER -> { p.style = 3; p.horns = 3; p.carapace = true; p.limb = 1.35f; p.torso = 1.3f; p.tailSegs = 6; p.tailEnd = 2; p.plates = 2; p.knee = true; p.domeL = 7; p.domeH = 5; p.domeW = 5; p.ribs = 1; }
-            case SPITTER -> { p.domeL = 13; p.domeH = 4; p.sac = true; p.spines = 0; p.tailEnd = 4; p.tubeLen = 9; p.ribs = 3; }
+            case SPITTER -> { p.domeL = 13; p.domeH = 4; p.sac = true; p.spines = 0; p.tailEnd = 4; p.tailT = 0.7f; p.limb = 0.85f; p.tubeLen = 9; p.ribs = 4; }
             case RAVAGER -> { p.style = 1; p.blade = true; p.elbow = true; p.spines = 7; p.cheek = true; p.clawL = 1.2f; p.tailEnd = 3; p.ribs = 4; p.brow = true; }
             case LURKER -> { p.domeL = 14; p.domeH = 4.2f; p.limb = 0.9f; p.clawL = 1.6f; p.torso = 0.95f; p.tubeLen = 0; p.ribs = 5; }
             case SENTINEL -> { p.style = 1; p.spines = 5; p.limb = 0.95f; p.clawL = 1.3f; p.tubeLen = 0; p.ribs = 4; p.plates = 1; p.tailEnd = 0; }
@@ -103,20 +103,20 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.upright = 0.15f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
             case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }
-            case DEACON -> { p.domeL = 7; p.domeH = 4; p.limb = 0.9f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 1; p.tubeLen = 0; }
-            case BOILER -> { p.belly = true; p.sac = true; p.domeL = 10; p.torso = 1.3f; p.spines = 9; p.limb = 1.05f; p.tailEnd = 4; p.ribs = 2; }
+            case DEACON -> { p.domeL = 15; p.domeH = 3.4f; p.domeW = 3.2f; p.limb = 0.8f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 3; p.tubeLen = 0; p.headW = 0.9f; }
+            case BOILER -> { p.sac = true; p.domeL = 12; p.torso = 0.95f; p.spines = 9; p.limb = 0.8f; p.tailEnd = 4; p.ribs = 8; p.neckK = 1.2f; }
             case PROTOMORPH -> { p.style = 4; p.domeW = 4.4f; p.ribs = 1; p.spines = 5; p.limb = 0.95f; p.tailEnd = 1; p.cheek = true; p.tubeLen = 0; }
             case STALKER -> { p.style = 5; p.clawL = 1.45f; p.spines = 6; p.cheek = true; p.domeL = 13; p.limb = 0.95f; p.tailEnd = 1; p.blade = true; }
             case KING -> { p.style = 3; p.horns = 2; p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.2f; p.domeL = 9; p.domeH = 5; p.ribs = 4; p.spines = 5; p.tubeLen = 0; }
             case CHARGER -> { p.style = 3; p.horns = 4; p.carapace = true; p.limb = 1.3f; p.tailSegs = 5; p.tailEnd = 2; p.domeL = 6; p.domeH = 5; p.domeW = 5; p.torso = 1.1f; p.tubeLen = 0; p.ribs = 0; }
-            case BRUTE -> { p.style = 0; p.domeL = 8; p.domeW = 6.6f; p.domeH = 6; p.plates = 2; p.spines = 4; p.armK = 1.3f; p.torso = 1.4f; p.limb = 1.4f; p.knee = true; p.elbow = true; p.tailEnd = 0; p.tailT = 1.2f; p.ribs = 3; p.clawL = 1.3f; }
+            case BRUTE -> { p.style = 5; p.domeL = 8; p.domeW = 6.6f; p.domeH = 6; p.plates = 2; p.spines = 4; p.armK = 1.3f; p.torso = 1.4f; p.limb = 1.4f; p.knee = true; p.elbow = true; p.tailEnd = 0; p.tailT = 1.2f; p.ribs = 3; p.clawL = 1.3f; }
             case BULL_ALIEN -> { p.style = 3; p.horns = 2; p.torso = 1.25f; p.limb = 1.25f; p.cheek = true; p.mand = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 1; p.tailEnd = 1; p.ribs = 4; p.spines = 4; }
             case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; p.mand = true; }
             case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; p.limb = 1.1f; }
             case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.3f; p.limb = 1.2f; p.spines = 4; p.tailSegs = 0; p.domeW = 5f; p.ribs = 0; p.tubeLen = 0; }
             case PATHOGEN_QUEEN -> { p.style = 4; p.domeW = 6f; p.horns = 6; p.carapace = true; p.mand = true; p.torso = 1.2f; p.spines = 9; p.tubeLen = 0; p.ribs = 0; p.tailEnd = 1; }
-            case BURSTER -> { p.domeL = 9; p.domeH = 3.6f; p.domeW = 3.6f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 0; p.cheek = true; p.spines = 6; p.clawL = 1.2f; p.ribs = 2; p.tailEnd = 0; }
-            case PROWLER -> { p.style = 1; p.domeL = 9; p.brow = true; p.limb = 0.95f; p.tubeLen = 0; p.spines = 2; p.ribs = 3; p.tailT = 1.1f; p.tailEnd = 0; p.clawL = 1.2f; }
+            case BURSTER -> { p.style = 4; p.domeW = 6.4f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 0; p.cheek = true; p.spines = 6; p.clawL = 1.3f; p.ribs = 3; p.tailEnd = 0; p.tailT = 0.8f; }
+            case PROWLER -> { p.style = 1; p.domeL = 9; p.brow = true; p.limb = 0.8f; p.tubeLen = 0; p.spines = 2; p.ribs = 6; p.tailT = 0.85f; p.tailEnd = 0; p.clawL = 1.4f; }
             case ARACHNID -> { p.style = 2; p.fan = 9; p.domeL = 9; p.domeH = 3.6f; p.mand = true; p.spines = 4; p.limb = 1.1f; p.tubeLen = 0; p.clawL = 1.3f; p.ribs = 2; p.tailEnd = 0; }
             default -> {}
         }
@@ -206,8 +206,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
         // back pipes
         float tl = Math.max(0.1f, sp.tubeLen);
-        CubeListBuilder pl = pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl), pr = pipe(-0.9f, -1, 0, 1.8f, 1.8f, tl);
-        for (int i = 0; i * 2.6f < tl - 1; i++) { pl.addBox(-1.2f, -1.3f, 0.8f + i * 2.6f, 2.4f, 2.4f, 0.5f); pr.addBox(-1.2f, -1.3f, 0.8f + i * 2.6f, 2.4f, 2.4f, 0.5f); }   // ribbed rings
+        CubeListBuilder pl = pipe(-1.15f, -1.2f, 0, 2.3f, 2.3f, tl), pr = pipe(-1.15f, -1.2f, 0, 2.3f, 2.3f, tl);
+        for (int i = 0; i * 2.6f < tl - 1; i++) { pl.addBox(-1.5f, -1.55f, 0.8f + i * 2.6f, 3.0f, 3.0f, 0.5f); pr.addBox(-1.5f, -1.55f, 0.8f + i * 2.6f, 3.0f, 3.0f, 0.5f); }   // ribbed rings
         chest.addOrReplaceChild("tubeL", pl, PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
         chest.addOrReplaceChild("tubeR", pr, PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
 
