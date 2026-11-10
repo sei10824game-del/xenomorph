@@ -173,13 +173,16 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.cheek) { box2(rid, -3.6f * hw, -2.4f, -4.5f, 1, 1, 3.5f); box2(rid, 2.6f * hw, -2.4f, -4.5f, 1, 1, 3.5f); box2(rid, -3.2f * hw, -1.2f, -2.5f, 0.8f, 0.8f, 2.5f); box2(rid, 2.4f * hw, -1.2f, -2.5f, 0.8f, 0.8f, 2.5f); }
         head.addOrReplaceChild("ridges", rid, PartPose.ZERO);
         CubeListBuilder fanB = CubeListBuilder.create();
-        if (sp.style == 2) {
+        if (sp.style == 2) {   // royal crest: a swept-back armoured hood (centre keel, broad wings, flared rear edge with spines), not a flat board
             float fw = sp.fan;
-            box2(fanB, -fw / 2, -11, 4.5f, fw, 9, 1); box2(fanB, -fw / 3, -13.5f, 4.5f, fw * 0.66f, 3, 1);
-            if (sp.fan2) box2(fanB, -fw * 0.62f, -10f, 5.8f, fw * 1.24f, 8.5f, 1);      // second, duller and wider under-layer (Empress)
-            for (int i = 0; i < sp.horns; i++) { float x = -fw / 2 + 0.5f + i * ((fw - 1) / Math.max(1, sp.horns - 1)); box2(fanB, x - 0.4f, -14.5f - (i % 2), 4.6f, 0.8f, 4, 0.8f); }
+            box2(fanB, -fw * 0.3f, -8.2f, -5, fw * 0.6f, 2.2f, 13);
+            box2(fanB, -fw / 2, -7f, 1, fw, 1.6f, 12);
+            box2(fanB, -fw * 0.42f, -9f, 11, fw * 0.84f, 2f, 7);
+            box2(fanB, -fw * 0.2f, -10.2f, 3, fw * 0.4f, 1.4f, 11);
+            if (sp.fan2) box2(fanB, -fw * 0.62f, -5.6f, 3, fw * 1.24f, 1.2f, 14);      // second, duller and wider under-layer (Empress)
+            for (int i = 0; i < sp.horns; i++) { float x = -fw * 0.42f + 0.4f + i * ((fw * 0.84f - 0.8f) / Math.max(1, sp.horns - 1)); box2(fanB, x - 0.4f, -8.6f - (i % 2) * 0.6f, 17.5f, 0.8f, 0.8f, 4 + (i % 2) * 1.5f); }
         }
-        head.addOrReplaceChild("fan", fanB, PartPose.rotation(0.25f, 0, 0));
+        head.addOrReplaceChild("fan", fanB, PartPose.rotation(-0.22f, 0, 0));
         CubeListBuilder hornB = CubeListBuilder.create();
         if (sp.style == 3) {
             box2(hornB, -6.5f, -9, 0, 13, 9, 1.5f); box2(hornB, -7.5f, -3.5f, -3, 2, 2, 7); box2(hornB, 5.5f, -3.5f, -3, 2, 2, 7);
