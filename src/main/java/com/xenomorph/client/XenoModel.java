@@ -68,8 +68,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
     /** Per-caste silhouette parameters. Limb LENGTHS are fixed (IK depends on them); everything else varies. */
     static final class Sp {
-        float domeL = 12, domeH = 4.5f, domeW = 4.4f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
-        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 13;
+        float domeL = 15, domeH = 3.6f, domeW = 4.0f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
+        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 10;
         boolean fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
@@ -313,8 +313,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         tail0.visible = sp.tailSegs > 0;
 
         // ---- stance
-        P = Mth.lerp(b, 1.38f, 0.5f - sp.upright * b);
-        float H = Mth.lerp(b, 10.5f, 13.6f) * Math.min(1.4f, 1 + (spec(c).legK - 1) * 1.45f);
+        P = Mth.lerp(b, 1.38f, 0.32f - sp.upright * 0.6f * b);          // film stance: torso close to upright, not a dinosaur lean
+        float H = Mth.lerp(b, 10.5f, 14.7f) * Math.min(1.4f, 1 + (spec(c).legK - 1) * 1.45f);
         float spd = Mth.clamp(amt * 1.6f, 0, 1);
         float wt = c.weight(), fer = c.ferocity();
         float ph = limbSwing * 0.82f / (float) Math.pow(Math.max(0.6f, wt), 0.35);
@@ -348,20 +348,20 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 0; i < TAIL; i++) {
             float w = (0.14f + 0.12f * spd) * (0.6f + i * 0.14f);
             tailYaw[i] = Mth.sin(age * 0.05f - i * 0.55f + ph * 0.0f) * 0.08f * (0.6f + i * 0.1f) + Mth.sin(ph * 1.0f - i * 0.7f) * w * spd;
-            tailPitch[i] = 0.012f * i + Mth.sin(ph * 2 - i * 0.6f) * 0.05f * spd;
+            tailPitch[i] = Mth.lerp(b, 0.012f * i, i == 0 ? 0 : -0.1f) + Mth.sin(ph * 2 - i * 0.6f) * 0.05f * spd;   // biped: tail hangs, then sweeps back up
         }
-        tailBaseX = Mth.lerp(b, -0.08f, -0.2f);   // biped: tail arches higher for balance, quad: trails
+        tailBaseX = Mth.lerp(b, -0.08f, 0.5f);   // biped: tail arches higher for balance, quad: trails
 
         // arms loco
         for (int s = 0; s < 2; s++) {
             float sign = s == 0 ? 1 : -1;
             float swing = Mth.sin(ph + (s == 0 ? Mth.PI : 0));
             // biped: relaxed hang with ready claws, counter swing
-            A[s][0] = -0.4f + swing * 0.55f * spd * b - breathe * 0.04f;
+            A[s][0] = -0.3f + swing * 0.55f * spd * b - breathe * 0.04f;
             A[s][1] = sign * (-0.25f - 0.1f * b);                 // splay outward (yaw)
             A[s][2] = 0;
-            A[s][3] = 0.3f + 0.12f * (1 - spd) - swing * 0.2f * spd;   // arms hang nearly straight, no folded elbows
-            A[s][4] = 0.12f;
+            A[s][3] = 0.45f + 0.1f * (1 - spd) - swing * 0.2f * spd;   // arms hang nearly straight, no folded elbows
+            A[s][4] = 0.75f;                       // long fingers hang, claws down
             A[s][5] = 0;
         }
 
@@ -850,7 +850,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         hips.zRot = walkRoll + hRoll; hips.xRot = flip;
         // quad body is long: shorten "bipedal" crouch effect on hips height etc handled by IK
         body.xRot = P + bodyX; body.yRot = bodyY; body.zRot = walkRoll * -1.5f;
-        float aim = P - Mth.lerp(b, 0.15f, 0.55f);                    // how much the head must tilt back up
+        float aim = P - Mth.lerp(b, 0.15f, 0.42f);                    // how much the head must tilt back up
         chest.xRot = chestX - aim * 0.22f; chest.yRot = chestY; chest.zRot = chestZ;
         neck.xRot = neckX - aim * 0.42f; neck.yRot = neckY + Mth.clamp(headYaw, -60, 60) * Mth.DEG_TO_RAD * 0.35f;
         head.xRot = headX - aim * 0.34f - 0.22f * b + Mth.clamp(headPitch, -45, 45) * Mth.DEG_TO_RAD * 0.7f;
