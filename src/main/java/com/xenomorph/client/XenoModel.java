@@ -154,17 +154,22 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
         // head
         float hw = sp.headW;
-        CubeListBuilder headB = box(-2.4f * hw, -3.5f, -6, 4.8f * hw, 4.5f, 6);
-        add(headB, -1.5f, -4.5f, -4, 3, 1, 4);
-        if (sp.brow) add(headB, -2.7f * hw, -4.6f, -5.8f, 5.4f * hw, 1.1f, 2.5f);
+        CubeListBuilder headB = box(-2.2f * hw, -2.4f, -6, 4.4f * hw, 3.4f, 6);                 // low eyeless face; the dome rides over it from the very front
+        if (!sp.bare) for (int i = 0; i < 4; i++) tooth(headB, (i - 1.5f) * 0.9f * hw - 0.2f, 0.8f, -6.25f, 0.45f, 1.0f + (i % 3 == 0 ? 0 : 0.4f), 0.4f);   // front fangs
+        if (sp.brow) add(headB, -2.5f * hw, -3.2f, -6.3f, 5.0f * hw, 1.0f, 2.5f);
         PartDefinition head = neck.addOrReplaceChild("head", headB, PartPose.offset(0, -4.5f, 0));
         CubeListBuilder domeB = CubeListBuilder.create();
-        if (sp.style != 4) { box2(domeB, -sp.domeW / 2, -1 - sp.domeH, -1, sp.domeW, sp.domeH, sp.domeL); add(domeB, -sp.domeW * 0.32f, -sp.domeH - 1.7f, 2, sp.domeW * 0.64f, 1, sp.domeL * 0.66f);
-            add(domeB, -sp.domeW / 2 - 0.35f, -sp.domeH * 0.55f - 1, 0.5f, 0.45f, 0.8f, sp.domeL * 0.8f); add(domeB, sp.domeW / 2 - 0.1f, -sp.domeH * 0.55f - 1, 0.5f, 0.45f, 0.8f, sp.domeL * 0.8f); }
+        if (sp.style != 4) {     // long "banana" cranium: four tapering sections whose top line slopes down toward the back
+            float W = sp.domeW, H = sp.domeH, Ln = sp.domeL;
+            box2(domeB, -W / 2, -2.2f - H * 0.8f, -6.5f, W, H * 0.8f, 7.5f);
+            box2(domeB, -W * 0.47f, -1.6f - H * 0.85f, 1, W * 0.94f, H * 0.85f, Ln * 0.5f);
+            box2(domeB, -W * 0.39f, -1.0f - H * 0.75f, 1 + Ln * 0.5f, W * 0.78f, H * 0.72f, Ln * 0.33f);
+            box2(domeB, -W * 0.27f, -0.5f - H * 0.6f, 1 + Ln * 0.83f, W * 0.54f, H * 0.5f, Ln * 0.2f);
+        }
         head.addOrReplaceChild("dome", domeB, PartPose.ZERO);
         CubeListBuilder rid = CubeListBuilder.create();
-        if (sp.style == 1) for (int i = 0; i < 3; i++) box2(rid, -0.7f, -sp.domeH - 2.6f, 0.5f + i * 3.6f, 1.4f, 1.4f, 3);
-        if (sp.style == 5) for (int i = 0; i < 5; i++) box2(rid, -0.5f, -sp.domeH - 4f + (i % 2) * 0.8f, 0.5f + i * 2.2f, 1, 3.2f - (i % 2) * 0.8f, 1);
+        if (sp.style == 1) for (int i = 0; i < 4; i++) box2(rid, -0.7f, -2.9f - sp.domeH * 0.8f + i * 0.25f, -5.5f + i * 3.4f, 1.4f, 1.2f, 2.8f);
+        if (sp.style == 5) for (int i = 0; i < 6; i++) box2(rid, -0.5f, -4.6f - sp.domeH * 0.8f + (i % 2) * 0.8f + i * 0.2f, -5f + i * 2.4f, 1, 3.2f - (i % 2) * 0.8f, 1);
         if (sp.cheek) { box2(rid, -3.6f * hw, -2.4f, -4.5f, 1, 1, 3.5f); box2(rid, 2.6f * hw, -2.4f, -4.5f, 1, 1, 3.5f); box2(rid, -3.2f * hw, -1.2f, -2.5f, 0.8f, 0.8f, 2.5f); box2(rid, 2.4f * hw, -1.2f, -2.5f, 0.8f, 0.8f, 2.5f); }
         head.addOrReplaceChild("ridges", rid, PartPose.ZERO);
         CubeListBuilder fanB = CubeListBuilder.create();
@@ -194,6 +199,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
         CubeListBuilder jawB = box(-2 * hw, 0, -6, 4 * hw, 1.5f, 8);
         for (int i = 0; i < (sp.bare ? 0 : 6); i++) { float th = 0.9f + (i % 2) * 0.6f; tooth(jawB, -1.8f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); tooth(jawB, 1.35f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); }
+        if (!sp.bare) for (int i = 0; i < 4; i++) tooth(jawB, (i - 1.5f) * 0.85f * hw - 0.2f, -0.9f, -6.15f, 0.4f, 0.9f, 0.4f);
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
         CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 14);
@@ -208,8 +214,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float tl = Math.max(0.1f, sp.tubeLen);
         CubeListBuilder pl = pipe(-1.15f, -1.2f, 0, 2.3f, 2.3f, tl), pr = pipe(-1.15f, -1.2f, 0, 2.3f, 2.3f, tl);
         for (int i = 0; i * 2.6f < tl - 1; i++) { pl.addBox(-1.5f, -1.55f, 0.8f + i * 2.6f, 3.0f, 3.0f, 0.5f); pr.addBox(-1.5f, -1.55f, 0.8f + i * 2.6f, 3.0f, 3.0f, 0.5f); }   // ribbed rings
-        chest.addOrReplaceChild("tubeL", pl, PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
-        chest.addOrReplaceChild("tubeR", pr, PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
+        PartDefinition tubL = chest.addOrReplaceChild("tubeL", pl, PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
+        PartDefinition tubR = chest.addOrReplaceChild("tubeR", pr, PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
+        if (tl > 4) {   // second, lower pair of dorsal tubes like the film creature (four in all)
+            tubL.addOrReplaceChild("low", pipe(-0.8f, -0.8f, 0, 1.6f, 1.6f, tl * 0.7f), PartPose.offsetAndRotation(0.7f, 4.4f, -0.6f, -0.22f, 0.14f, 0));
+            tubR.addOrReplaceChild("low", pipe(-0.8f, -0.8f, 0, 1.6f, 1.6f, tl * 0.7f), PartPose.offsetAndRotation(-0.7f, 4.4f, -0.6f, -0.22f, -0.14f, 0));
+        }
 
         // arms (index 0 = left / +x)
         for (int s = 0; s < 2; s++) {
