@@ -52,7 +52,15 @@ public enum Caste {
     WHITE_KING ("white_king", 420, 24, 0.34f, 2.4f, 2, 3, false, false, true, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, SCREECH, STOMP, GRAB_SLAM, FIREARM, FRENZY)),
     // K-Series: acid-immune, tougher and harder-hitting versions of each rank
     K_WARRIOR  ("k_warrior",  96, 14, .38f, 1.2f, 1, 1, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, POUNCE, FRENZY, CREST_RAM, STOMP, DROP_STRIKE)),
-    K_FATALIS  ("k_fatalis", 170, 20, .40f, 1.5f, 1, 5, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, IMPALE, SLAM, SCREECH, STOMP, GRAB_SLAM, CHARGE, FRENZY, BLADE_FLURRY));
+    K_FATALIS  ("k_fatalis", 170, 20, .40f, 1.5f, 1, 5, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, IMPALE, SLAM, SCREECH, STOMP, GRAB_SLAM, CHARGE, FRENZY, BLADE_FLURRY)),
+    K_DRONE    ("k_drone", 64, 10, 0.38f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, POUNCE, FRENZY, DROP_STRIKE)),
+    K_PRAETORIAN ("k_praetorian", 150, 17, 0.32f, 1.55f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, SCREECH, CREST_RAM, STOMP, FRENZY)),
+    K_QUEEN    ("k_queen", 340, 22, 0.27f, 2.2f, 2, 2, true, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, IMPALE, SLAM, SCREECH, LAY, SUMMON, CREST_RAM, STOMP))
+    // Clone strain (Alien: Resurrection lab): full caste ladder, human DNA in the mix
+   ,
+    CLONE_WARRIOR ("clone_warrior", 58, 10, 0.39f, 1.1f, 1, 1, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, POUNCE, CREST_RAM, STOMP, FRENZY, DROP_STRIKE, SPIT)),
+    CLONE_PRAETORIAN ("clone_praetorian", 100, 12, 0.31f, 1.5f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, SCREECH, CREST_RAM, STOMP, FRENZY, SPIT)),
+    CLONE_QUEEN ("clone_queen", 280, 17, 0.27f, 2.1f, 2, 2, true, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, IMPALE, SLAM, SCREECH, LAY, SUMMON, CREST_RAM, STOMP));
 
     public final String id;
     public final float hp, dmg, speed, scale;
@@ -71,14 +79,14 @@ public enum Caste {
     /** Body mass feel: >1 = heavy (bigger knockback, slower gait, impact shake); <1 = light. */
     public float weight() {
         return switch (this) {
-            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
+            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
             case QUEEN, CHARGER -> 1.4f; case PRAETORIAN, MATRIARCH, PATHOGEN_QUEEN -> 1.3f; case BOILER -> 1.2f;
             case RUNNER, PATHOGEN_RUNNER -> 0.7f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
     }
     /** Temper 0..1: fast recovery, combo chaining, berserk below 40% hp (>=0.5), twitchy idle. */
     public float ferocity() {
         return switch (this) {
-            case PREDALIEN, BERSERKER, RED_QUEEN_MOTHER -> 1f; case TRUE_KING, K_FATALIS -> 0.9f; case K_WARRIOR, WHITE_HYBRID -> 0.65f; case RED_WARRIOR, RED_DRONE -> 0.85f; case RAVAGER, NEOMORPH -> 0.9f; case RUNNER, PATHOGEN_RUNNER, NEWBORN -> 0.8f; case BULL_ALIEN, CHARGER -> 0.7f;
+            case PREDALIEN, BERSERKER, RED_QUEEN_MOTHER -> 1f; case TRUE_KING, K_FATALIS -> 0.9f; case K_PRAETORIAN, K_QUEEN -> 0.6f; case K_DRONE -> 0.55f; case K_WARRIOR, WHITE_HYBRID -> 0.65f; case RED_WARRIOR, RED_DRONE -> 0.85f; case RAVAGER, NEOMORPH -> 0.9f; case RUNNER, PATHOGEN_RUNNER, NEWBORN -> 0.8f; case BULL_ALIEN, CHARGER -> 0.7f;
             case STALKER, PROWLER, DEACON, KING -> 0.6f; case BRUTE, QUEEN, PATHOGEN_BRUTE -> 0.5f; case QUEEN_MOTHER -> 0.45f; default -> 0.25f; };
     }
     public boolean red() { return id.startsWith("red_"); }
@@ -87,6 +95,7 @@ public enum Caste {
     public boolean wild() { return this == CLONE_XENOMORPH || this == WHITE_HYBRID || this == WHITE_KING || this == NEWBORN || kSeries(); }
     /** Has an emissive overlay texture <id>_glow.png (pustules, acid pouches, seams...). */
     public boolean glows() {
-        return switch (this) { case SPITTER, BOILER, BURSTER, K_WARRIOR, K_FATALIS, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
+        return switch (this) { case SPITTER, BOILER, BURSTER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
     }
+    public boolean cloneStrain() { return id.startsWith("clone_"); }
 }

@@ -100,5 +100,17 @@
  "entity.xenomorph.k_fatalis": "Kシリーズ・フェイタリス",
  "item.xenomorph.k_fatalis_spawn_egg": "Kシリーズ・フェイタリス スポーンエッグ",
  "entity.xenomorph.white_king": "ホワイト・ハイブリッド・キング",
- "item.xenomorph.white_king_spawn_egg": "ホワイト・ハイブリッド・キング スポーンエッグ"
+ "item.xenomorph.white_king_spawn_egg": "ホワイト・ハイブリッド・キング スポーンエッグ",
+ "entity.xenomorph.k_drone": "Kシリーズ・ドローン",
+ "item.xenomorph.k_drone_spawn_egg": "Kシリーズ・ドローン スポーンエッグ",
+ "entity.xenomorph.k_praetorian": "Kシリーズ・プレトリアン",
+ "item.xenomorph.k_praetorian_spawn_egg": "Kシリーズ・プレトリアン スポーンエッグ",
+ "entity.xenomorph.k_queen": "Kシリーズ・クイーン",
+ "item.xenomorph.k_queen_spawn_egg": "Kシリーズ・クイーン スポーンエッグ",
+ "entity.xenomorph.clone_warrior": "クローン・ウォリアー",
+ "item.xenomorph.clone_warrior_spawn_egg": "クローン・ウォリアー スポーンエッグ",
+ "entity.xenomorph.clone_praetorian": "クローン・プレトリアン",
+ "item.xenomorph.clone_praetorian_spawn_egg": "クローン・プレトリアン スポーンエッグ",
+ "entity.xenomorph.clone_queen": "クローン・クイーン",
+ "item.xenomorph.clone_queen_spawn_egg": "クローン・クイーン スポーンエッグ"
 }

@@ -193,4 +193,13 @@ public class XenoGameTests {
         });
         h.runAfterDelay(90, () -> { if (!(king.getTarget() == queen)) throw new AssertionError("rogue king not hunting the queen: " + king.getTarget()); h.succeed(); });
     }
+
+    /** K/Clone strains have a full ladder, with a queen that lays and a hive of their own. */
+    @GameTest(template = "empty", timeoutTicks = 10, batch = "b_ladders")
+    public static void strainLadders(GameTestHelper h) {
+        for (Caste c : new Caste[]{Caste.K_DRONE, Caste.K_PRAETORIAN, Caste.K_QUEEN, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN, Caste.CLONE_QUEEN})
+            if (!Hive.reachable().contains(c)) throw new AssertionError(c + " unreachable");
+        if (!Caste.K_QUEEN.attacks.contains(Attack.LAY) || !Caste.CLONE_QUEEN.attacks.contains(Attack.LAY)) throw new AssertionError("queens must lay");
+        h.succeed();
+    }
 }

@@ -77,10 +77,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
     static Sp spec(Caste c) {
         Sp p = new Sp();
         switch (c) {
-            case DRONE, RED_DRONE -> { p.spines = 1; }
-            case WARRIOR, RED_WARRIOR -> { p.style = 1; p.ribs = 4; p.spines = 3; p.clawL = 1.15f; p.brow = true; }
-            case PRAETORIAN -> { p.style = 2; p.fan = 13; p.limb = 1.2f; p.torso = 1.2f; p.plates = 1; p.spines = 4; p.horns = 2; p.elbow = true; p.tailEnd = 1; }
-            case QUEEN -> { p.style = 2; p.fan = 17; p.domeL = 14; p.torso = 1.15f; p.carapace = true; p.spines = 5; p.ribs = 4; p.plates = 1; p.horns = 3; p.limb = 1.1f; }
+            case DRONE, RED_DRONE, K_DRONE -> { p.spines = 1; }
+            case WARRIOR, RED_WARRIOR, CLONE_WARRIOR -> { p.style = 1; p.ribs = 4; p.spines = 3; p.clawL = 1.15f; p.brow = true; }
+            case PRAETORIAN, K_PRAETORIAN, CLONE_PRAETORIAN -> { p.style = 2; p.fan = 13; p.limb = 1.2f; p.torso = 1.2f; p.plates = 1; p.spines = 4; p.horns = 2; p.elbow = true; p.tailEnd = 1; }
+            case QUEEN, K_QUEEN, CLONE_QUEEN -> { p.style = 2; p.fan = 17; p.domeL = 14; p.torso = 1.15f; p.carapace = true; p.spines = 5; p.ribs = 4; p.plates = 1; p.horns = 3; p.limb = 1.1f; }
             case MATRIARCH -> { p.style = 2; p.fan = 14; p.domeL = 16; p.domeH = 5; p.limb = 0.9f; p.spines = 7; p.sac = true; p.horns = 2; p.tailEnd = 3; p.clawL = 1.3f; p.belly = true; }
             case EMPRESS -> { p.fan2 = true; p.style = 2; p.fan = 20; p.domeL = 13; p.carapace = true; p.plates = 2; p.horns = 5; p.tailEnd = 1; p.torso = 1.25f; p.elbow = true; p.knee = true; p.ribs = 5; }
             case QUEEN_MOTHER -> { p.style = 2; p.fan = 13; p.domeL = 18; p.domeH = 6; p.domeW = 5.6f; p.carapace = true; p.plates = 2; p.horns = 7; p.spines = 9; p.belly = true; p.elbow = true; p.knee = true; p.torso = 1.35f; p.limb = 1.25f; p.tailEnd = 3; p.cheek = true; p.mand = true; }
