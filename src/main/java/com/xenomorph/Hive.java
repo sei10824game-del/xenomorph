@@ -84,6 +84,7 @@ public final class Hive {
                 kser = !forceRed && !pathogen && !proto && !neo && !red && r.nextInt(9) == 0, clone = !forceRed && !pathogen && !proto && !neo && !red && !kser && r.nextInt(9) == 0;
         Caste q = kser ? Caste.K_QUEEN : clone ? Caste.CLONE_QUEEN : red ? Caste.RED_QUEEN_MOTHER : neo ? Caste.NEOMORPH : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(3)];
         spawn(sl, q, x0 + 0.5, y0 - 3, z0 + 0.5, r);
+        HiveData.get(sl).add(new BlockPos(x0, y0, z0), q.id);
         if (!proto && !neo && !red && !kser && !clone && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);
         if (!proto && !neo && !red && !kser && !clone && !pathogen && r.nextInt(20) == 0) spawn(sl, Caste.TRUE_KING, x0 - 2.5, y0 - 3, z0 + 2.5, r);   // the apex caste, very rare
         int n = 5 + r.nextInt(5);

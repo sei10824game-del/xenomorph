@@ -112,5 +112,6 @@
  "entity.xenomorph.clone_praetorian": "クローン・プレトリアン",
  "item.xenomorph.clone_praetorian_spawn_egg": "クローン・プレトリアン スポーンエッグ",
  "entity.xenomorph.clone_queen": "クローン・クイーン",
- "item.xenomorph.clone_queen_spawn_egg": "クローン・クイーン スポーンエッグ"
+ "item.xenomorph.clone_queen_spawn_egg": "クローン・クイーン スポーンエッグ",
+ "item.xenomorph.motion_tracker": "モーショントラッカー"
 }

@@ -112,5 +112,6 @@
  "entity.xenomorph.clone_praetorian": "Clone Praetorian",
  "item.xenomorph.clone_praetorian_spawn_egg": "Clone Praetorian Spawn Egg",
  "entity.xenomorph.clone_queen": "Cloned Queen",
- "item.xenomorph.clone_queen_spawn_egg": "Cloned Queen Spawn Egg"
+ "item.xenomorph.clone_queen_spawn_egg": "Cloned Queen Spawn Egg",
+ "item.xenomorph.motion_tracker": "Motion Tracker"
 }

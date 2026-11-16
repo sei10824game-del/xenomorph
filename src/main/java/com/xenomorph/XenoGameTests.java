@@ -2,6 +2,7 @@ package com.xenomorph;
 
 import com.xenomorph.entity.*;
 import com.xenomorph.Hive;
+import com.xenomorph.HiveData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -44,6 +45,7 @@ public class XenoGameTests {
         int cy = o.getY() + 8; int cx = (o.getX() >> 4) * 16 + 8, cz = (o.getZ() >> 4) * 16 + 8;
         for (int dx = -8; dx <= 8; dx++) for (int dy = -8; dy <= 8; dy++) for (int dz = -8; dz <= 8; dz++) sl.setBlock(new BlockPos(cx + dx, cy + dy, cz + dz), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
         Hive.build(sl, o.getX() >> 4, o.getZ() >> 4, o.getY() + 8);
+        if (HiveData.get(sl).hives.isEmpty()) throw new AssertionError("built hive was not recorded");
         long xenos = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEntity.class), x -> true).size();
         long eggs = sl.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(XenoEggEntity.class), x -> true).size();
         h.runAfterDelay(2, () -> { if (xenos < 3 || eggs < 3) throw new AssertionError("hive empty x=" + xenos + " e=" + eggs); h.succeed(); });
