@@ -1,5 +1,6 @@
 package com.xenomorph.entity;
 
+import com.xenomorph.XenoConfig;
 import com.xenomorph.XenomorphMod;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -82,7 +83,7 @@ public class XenoEntity extends Monster {
     }
     public boolean isClimbing() { return entityData.get(CLIMB); }
     public boolean isHanging() { return entityData.get(HANG); }
-    public boolean canHang() { return caste.attacks.contains(Attack.DROP_STRIKE); }
+    public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
     private boolean landed;
     @Override protected net.minecraft.world.entity.ai.navigation.PathNavigation createNavigation(Level l) { return new net.minecraft.world.entity.ai.navigation.WallClimberNavigation(this, l); }
@@ -188,8 +189,8 @@ public class XenoEntity extends Monster {
         attackTick = 0; held = null; impaled = false; landed = false;
         LivingEntity t = getTarget();
         if (t != null) { vx = t.getX() - getX(); vz = t.getZ() - getZ(); double l = Math.sqrt(vx * vx + vz * vz); if (l > 1e-4) { vx /= l; vz /= l; } }
-        if (a == Attack.SCREECH) playSound(SoundEvents.ENDER_DRAGON_GROWL, 3f, 1.7f);
-        else if (a != Attack.NONE && a != Attack.LAY) playSound(SoundEvents.SPIDER_AMBIENT, 1.2f, 0.55f + random.nextFloat() * 0.2f);
+        if (a == Attack.SCREECH) playSound(XenomorphMod.SCREECH.get(), 3f, 1.7f);
+        else if (a != Attack.NONE && a != Attack.LAY) playSound(XenomorphMod.ATTACK.get(), 1.2f, 0.9f + random.nextFloat() * 0.2f);
     }
     private void endAttack() {
         releaseHeld(false);
@@ -236,7 +237,7 @@ public class XenoEntity extends Monster {
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
-            playSound(SoundEvents.RAVAGER_ROAR, 2f, 0.6f);
+            playSound(XenomorphMod.ATTACK.get(), 2f, 0.6f);
         }
         Attack a = attack();
         if (a != Attack.NONE) {
@@ -268,7 +269,7 @@ public class XenoEntity extends Monster {
         if (t == null || !t.isAlive() || friendly(t)) return false;
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
         if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
-        boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * mult);
+        boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * (float) XenoConfig.DAMAGE_MULTIPLIER.get().doubleValue() * mult);
         float wt = caste.weight();
         if (ok && caste == Caste.TRUE_KING) heal(3f);                                  // feeding speeds its regeneration
         if (ok && kb > 0) { kb *= wt; Vec3 d = t.position().subtract(position()).multiply(1, 0, 1).normalize(); t.push(d.x * kb, 0.25 * kb, d.z * kb); t.hurtMarked = true; }
@@ -317,7 +318,7 @@ public class XenoEntity extends Monster {
             case GRAB -> tickGrab(a, target);
             case IMPALE -> tickImpale(a, target);
             case POUNCE -> {
-                if (t == a.hit) { setDeltaMovement(vx * 1.15, 0.55, vz * 1.15); hasImpulse = true; playSound(SoundEvents.RAVAGER_ROAR, 1.2f, 1.4f); }
+                if (t == a.hit) { setDeltaMovement(vx * 1.15, 0.55, vz * 1.15); hasImpulse = true; playSound(XenomorphMod.ATTACK.get(), 1.2f, 1.4f); }
                 else if (t > a.hit && t < a.hit + 14 && target != null && getBoundingBox().inflate(0.4).intersects(target.getBoundingBox())) {
                     if (strike(target, 1.3f, 4, 0.6)) { target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2)); attackTick = Math.max(attackTick, a.hit + 14); }
                 }
@@ -335,7 +336,7 @@ public class XenoEntity extends Monster {
             }
             case SCREECH -> {
                 if (t == a.hit) {
-                    playSound(SoundEvents.ENDER_DRAGON_GROWL, 4f, 1.9f);
+                    playSound(XenomorphMod.SCREECH.get(), 4f, 1.9f);
                     for (LivingEntity e : around(14)) if (e instanceof Player || e instanceof AbstractVillager) {
                         e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1));
                         e.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
@@ -425,7 +426,7 @@ public class XenoEntity extends Monster {
             case IMPREGNATE -> tickImpregnate(a, target);
             case DEATH_ROLL -> tickDeathRoll(a, target);
             case LEAP_SLASH -> {
-                if (t == 8) { setDeltaMovement(vx * 0.95, 0.5, vz * 0.95); hasImpulse = true; playSound(SoundEvents.RAVAGER_ROAR, 1f, 1.7f); }
+                if (t == 8) { setDeltaMovement(vx * 0.95, 0.5, vz * 0.95); hasImpulse = true; playSound(XenomorphMod.ATTACK.get(), 1f, 1.7f); }
                 if (t >= 9 && t <= 22) for (LivingEntity e : around(1.6)) if (!sweptAlready(e) && strike(e, 1.1f, 3.0, 0.5)) markSwept(e);
             }
             case DROP_STRIKE -> {
@@ -434,7 +435,7 @@ public class XenoEntity extends Monster {
                     Vec3 d = target != null ? target.position().subtract(position()).multiply(1, 0, 1) : Vec3.ZERO; double l = d.length();
                     Vec3 dir = l > 1e-3 ? d.scale(1 / l) : fwd();
                     setDeltaMovement(dir.x * Math.min(0.55, l * 0.13), hung ? -0.5 : 0.55, dir.z * Math.min(0.55, l * 0.13)); hasImpulse = true;
-                    playSound(SoundEvents.RAVAGER_ROAR, 1.5f, 1.8f);
+                    playSound(XenomorphMod.ATTACK.get(), 1.5f, 1.8f);
                 }
                 if (t > 3 && onGround() && !landed) {
                     landed = true; dust(getX(), getY(), getZ(), 14); playSound(SoundEvents.GENERIC_EXPLODE, 1.2f, 0.9f);
@@ -485,7 +486,7 @@ public class XenoEntity extends Monster {
             }
             case SUMMON -> {
                 if (t == a.hit) {
-                    playSound(SoundEvents.ENDER_DRAGON_GROWL, 4f, 1.3f);
+                    playSound(XenomorphMod.SCREECH.get(), 4f, 1.3f);
                     if (level() instanceof ServerLevel sl && level().getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(24)).size() < 16) {
                         for (Caste cc : brood()) {
                             XenoEntity m = XenomorphMod.XENOS.get(cc).get().create(sl);
@@ -676,9 +677,9 @@ public class XenoEntity extends Monster {
     private void acidBurn(LivingEntity e, float dmg) {
         if (e instanceof XenoEntity x && x.caste.kSeries()) return;                       // K-series: acid immunity
         e.hurt(damageSources().magic(), dmg);
-        playSound(SoundEvents.LAVA_EXTINGUISH, 0.7f, 1.6f);
+        playSound(XenomorphMod.SIZZLE.get(), 0.8f, 1f);
         if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, e.getX(), e.getY() + 1, e.getZ(), 8, 0.3, 0.4, 0.3, 0.05);
-        for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) {
+        if (XenoConfig.ACID_DAMAGES_ARMOR.get()) for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) {
             if (s.getType() != EquipmentSlot.Type.ARMOR) continue;
             ItemStack st = e.getItemBySlot(s);
             if (!st.isEmpty() && random.nextFloat() < 0.5f) st.hurtAndBreak(4, e, x -> x.broadcastBreakEvent(s));
@@ -694,10 +695,11 @@ public class XenoEntity extends Monster {
         }
     }
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SPIDER_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.RAVAGER_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.RAVAGER_DEATH; }
-    @Override public float getVoicePitch() { return 0.6f / Math.max(0.7f, caste.scale * 0.6f) + 0.2f; }
+    @Override public int getAmbientSoundInterval() { return 220; }
+    @Override protected SoundEvent getAmbientSound() { return XenomorphMod.HISS.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return XenomorphMod.HURT.get(); }
+    @Override protected SoundEvent getDeathSound() { return XenomorphMod.DEATH.get(); }
+    @Override public float getVoicePitch() { return Mth.clamp(1.25f / (float) Math.pow(Math.max(0.6f, caste.scale), 0.55) + (random.nextFloat() - 0.5f) * 0.12f, 0.6f, 1.5f); }
     @Override protected void playStepSound(net.minecraft.core.BlockPos p, net.minecraft.world.level.block.state.BlockState s) { { float w = caste.weight(); if (w >= 1.5f) { playSound(SoundEvents.IRON_GOLEM_STEP, 0.6f * w, 0.5f); if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.POOF, getX(), getY() + 0.1, getZ(), 3, 0.5, 0.05, 0.5, 0.02); } else playSound(SoundEvents.SPIDER_STEP, 0.25f * w, 0.6f); } }
     @Override public boolean canBeAffected(MobEffectInstance i) {
         var e = i.getEffect();

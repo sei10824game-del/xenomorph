@@ -1,0 +1,51 @@
+{
+ "xeno.hiss": {
+  "sounds": [
+   "xenomorph:xeno/hiss1",
+   "xenomorph:xeno/hiss2",
+   "xenomorph:xeno/hiss3"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.hiss"
+ },
+ "xeno.screech": {
+  "sounds": [
+   "xenomorph:xeno/screech1",
+   "xenomorph:xeno/screech2"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.screech"
+ },
+ "xeno.hurt": {
+  "sounds": [
+   "xenomorph:xeno/hurt1",
+   "xenomorph:xeno/hurt2"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.hurt"
+ },
+ "xeno.death": {
+  "sounds": [
+   "xenomorph:xeno/death1"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.death"
+ },
+ "xeno.attack": {
+  "sounds": [
+   "xenomorph:xeno/attack1",
+   "xenomorph:xeno/attack2",
+   "xenomorph:xeno/attack3"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.attack"
+ },
+ "xeno.skitter": {
+  "sounds": [
+   "xenomorph:xeno/skitter1",
+   "xenomorph:xeno/skitter2"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.skitter"
+ },
+ "xeno.sizzle": {
+  "sounds": [
+   "xenomorph:xeno/sizzle1"
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.sizzle"
+ }
+}

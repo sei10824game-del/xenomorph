@@ -114,7 +114,7 @@ public class FacehuggerEntity extends Monster {
         if (!level().isClientSide && getLastHurtByMob() != null) getLastHurtByMob().hurt(damageSources().magic(), 1.5f);
     }
     @Override protected boolean isSunBurnTick() { return false; }
-    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.SPIDER_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.SPIDER_DEATH; }
-    @Override protected SoundEvent getAmbientSound() { return isAttached() ? null : SoundEvents.SILVERFISH_AMBIENT; }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return XenomorphMod.HURT.get(); }
+    @Override protected SoundEvent getDeathSound() { return XenomorphMod.SIZZLE.get(); }
+    @Override protected SoundEvent getAmbientSound() { return isAttached() ? null : XenomorphMod.SKITTER.get(); }
 }

@@ -113,5 +113,12 @@
  "item.xenomorph.clone_praetorian_spawn_egg": "Clone Praetorian Spawn Egg",
  "entity.xenomorph.clone_queen": "Cloned Queen",
  "item.xenomorph.clone_queen_spawn_egg": "Cloned Queen Spawn Egg",
- "item.xenomorph.motion_tracker": "Motion Tracker"
+ "item.xenomorph.motion_tracker": "Motion Tracker",
+ "subtitles.xenomorph.xeno.hiss": "Xenomorph hisses",
+ "subtitles.xenomorph.xeno.screech": "Xenomorph screeches",
+ "subtitles.xenomorph.xeno.hurt": "Xenomorph shrieks",
+ "subtitles.xenomorph.xeno.death": "Xenomorph dies",
+ "subtitles.xenomorph.xeno.attack": "Xenomorph snarls",
+ "subtitles.xenomorph.xeno.skitter": "Something skitters",
+ "subtitles.xenomorph.xeno.sizzle": "Acid sizzles"
 }

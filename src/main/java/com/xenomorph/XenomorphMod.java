@@ -33,6 +33,10 @@ public class XenomorphMod {
     public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN = BLOCKS.register("resin", () -> new net.minecraft.world.level.block.Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BROWN).strength(3f, 6f).requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.HONEY_BLOCK)));
     static final RegistryObject<Item> TRACKER = ITEMS.register("motion_tracker", MotionTracker::new);
     static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
+    static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
+    private static RegistryObject<net.minecraft.sounds.SoundEvent> snd(String n) { return SOUNDS.register(n, () -> net.minecraft.sounds.SoundEvent.createVariableRangeEvent(new net.minecraft.resources.ResourceLocation(ID, n))); }
+    public static final RegistryObject<net.minecraft.sounds.SoundEvent> HISS = snd("xeno.hiss"), SCREECH = snd("xeno.screech"), HURT = snd("xeno.hurt"), DEATH = snd("xeno.death"),
+            ATTACK = snd("xeno.attack"), SKITTER = snd("xeno.skitter"), SIZZLE = snd("xeno.sizzle");
     static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ID);
     static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ID);
 
@@ -106,10 +110,11 @@ public class XenomorphMod {
 
     public XenomorphMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        net.minecraftforge.fml.ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, XenoConfig.SPEC);
         bus.addListener((net.minecraftforge.event.entity.SpawnPlacementRegisterEvent e) -> { for (Caste c : Caste.values()) if (c.wild()) e.register(XENOS.get(c).get(), net.minecraft.world.entity.SpawnPlacements.Type.ON_GROUND, net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (ty, lv, rs, ps, rn) -> net.minecraft.world.entity.monster.Monster.checkMonsterSpawnRules(ty, lv, rs, ps, rn), net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.Operation.OR); });
         bus.addListener((net.minecraftforge.event.entity.SpawnPlacementRegisterEvent e) -> HUNTERS.values().forEach(t -> e.register(t.get(), net.minecraft.world.entity.SpawnPlacements.Type.ON_GROUND,
                 net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (ty, lv, rs, ps, rn) -> net.minecraft.world.entity.Mob.checkMobSpawnRules(ty, lv, rs, ps, rn), net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.Operation.OR)));
-        BLOCKS.register(bus); ENTITIES.register(bus); ITEMS.register(bus); EFFECTS.register(bus); TABS.register(bus);
+        SOUNDS.register(bus); BLOCKS.register(bus); ENTITIES.register(bus); ITEMS.register(bus); EFFECTS.register(bus); TABS.register(bus);
         bus.addListener((EntityAttributeCreationEvent e) -> {
             XENOS.forEach((c, t) -> e.put(t.get(), XenoEntity.attributes(c).build()));
             HUNTERS.forEach((k, t) -> e.put(t.get(), HunterEntity.attributes(k).build()));

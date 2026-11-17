@@ -44,9 +44,9 @@ public class ChestbursterEntity extends Monster {
         }
     }
     @Override public boolean isImmobile() { return age < BURST || super.isImmobile(); }
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SILVERFISH_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.SPIDER_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.SPIDER_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return XenomorphMod.SKITTER.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return XenomorphMod.HURT.get(); }
+    @Override protected SoundEvent getDeathSound() { return XenomorphMod.DEATH.get(); }
     @Override public float getVoicePitch() { return 1.8f; }
     @Override public void addAdditionalSaveData(CompoundTag t) { super.addAdditionalSaveData(t); t.putInt("Age", age); t.putString("Form", form.name()); }
     @Override public void readAdditionalSaveData(CompoundTag t) { super.readAdditionalSaveData(t); age = t.getInt("Age"); if (t.contains("Form")) try { form = Caste.valueOf(t.getString("Form")); } catch (IllegalArgumentException ignored) { } }

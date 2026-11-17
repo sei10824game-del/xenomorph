@@ -113,5 +113,12 @@
  "item.xenomorph.clone_praetorian_spawn_egg": "クローン・プレトリアン スポーンエッグ",
  "entity.xenomorph.clone_queen": "クローン・クイーン",
  "item.xenomorph.clone_queen_spawn_egg": "クローン・クイーン スポーンエッグ",
- "item.xenomorph.motion_tracker": "モーショントラッカー"
+ "item.xenomorph.motion_tracker": "モーショントラッカー",
+ "subtitles.xenomorph.xeno.hiss": "ゼノモーフが威嚇する",
+ "subtitles.xenomorph.xeno.screech": "ゼノモーフが咆哮する",
+ "subtitles.xenomorph.xeno.hurt": "ゼノモーフが悲鳴をあげる",
+ "subtitles.xenomorph.xeno.death": "ゼノモーフが死ぬ",
+ "subtitles.xenomorph.xeno.attack": "ゼノモーフが唸る",
+ "subtitles.xenomorph.xeno.skitter": "何かが這い回る",
+ "subtitles.xenomorph.xeno.sizzle": "酸が焼ける音"
 }
