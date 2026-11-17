@@ -25,16 +25,16 @@ import java.util.Random;
 public final class Hive {
     private record Job(ServerLevel level, int cx, int cz, long due) {}
     private static final Queue<Job> JOBS = new ArrayDeque<>();
-    private static final Caste[] QUEENS = {Caste.QUEEN, Caste.MATRIARCH, Caste.EMPRESS, Caste.QUEEN_MOTHER};
+    private static final Caste[] QUEENS = {Caste.QUEEN, Caste.MATRIARCH, Caste.EMPRESS, Caste.QUEEN_MOTHER, Caste.PREDALIEN_QUEEN};
     private static final Caste[] NORMAL = {Caste.DRONE, Caste.DRONE, Caste.WARRIOR, Caste.WARRIOR, Caste.RUNNER, Caste.SPITTER, Caste.LURKER, Caste.PROWLER,
-            Caste.SENTINEL, Caste.RAVAGER, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER};
+            Caste.SENTINEL, Caste.RAVAGER, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER, Caste.WORKER, Caste.PALATINE, Caste.SMASHER, Caste.SPIKER, Caste.WARDEN, Caste.EXPLODER, Caste.SNATCHER};
     /** Spawn on their own in dark places (see biome modifiers), not in hives. */
     public static final Caste[] WILD = {Caste.CLONE_XENOMORPH, Caste.NEWBORN, Caste.WHITE_HYBRID, Caste.WHITE_KING, Caste.K_WARRIOR, Caste.K_FATALIS};
     private static final Caste[] RED = {Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE, Caste.RED_DRONE};
     private static final Caste[] KSER = {Caste.K_DRONE, Caste.K_DRONE, Caste.K_DRONE, Caste.K_WARRIOR, Caste.K_WARRIOR, Caste.K_PRAETORIAN, Caste.K_FATALIS};
     private static final Caste[] CLONES = {Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
     private static final Caste[] PROTO = {Caste.PROTOMORPH};   // own faction: never shares a hive with classic xenos
-    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE};
+    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER};
     private static final Caste[] NEO = {Caste.NEOMORPH};   // own faction
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
@@ -82,7 +82,7 @@ public final class Hive {
         for (int i = 0; i < 40; i++) { BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5); if (f != null) sl.setBlock(f.below(), resin, 2); }
         boolean pathogen = !forceRed && r.nextInt(6) == 0, proto = !forceRed && !pathogen && r.nextInt(7) == 0, neo = !forceRed && !pathogen && !proto && r.nextInt(7) == 0, red = forceRed || (!pathogen && !proto && !neo && r.nextInt(8) == 0),
                 kser = !forceRed && !pathogen && !proto && !neo && !red && r.nextInt(9) == 0, clone = !forceRed && !pathogen && !proto && !neo && !red && !kser && r.nextInt(9) == 0;
-        Caste q = kser ? Caste.K_QUEEN : clone ? Caste.CLONE_QUEEN : red ? Caste.RED_QUEEN_MOTHER : neo ? Caste.NEOMORPH : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(3)];
+        Caste q = kser ? Caste.K_QUEEN : clone ? Caste.CLONE_QUEEN : red ? Caste.RED_QUEEN_MOTHER : neo ? Caste.NEOMORPH : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(QUEENS.length - 1)];
         spawn(sl, q, x0 + 0.5, y0 - 3, z0 + 0.5, r);
         HiveData.get(sl).add(new BlockPos(x0, y0, z0), q.id);
         if (!proto && !neo && !red && !kser && !clone && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);

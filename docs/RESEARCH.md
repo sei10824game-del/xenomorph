@@ -40,8 +40,8 @@ Compared the mod's castes against the wiki. **Wiki-backed** = description matche
 
 ## Not yet implemented (Xenopedia "Xenomorph variants" category, 149 pages, checked against the mod)
 
-Canon-style castes / strains
-- Worker (Drone's non-combat molt), Defender, Palatine (purebreed), Biodrone, Biomorph, Exploder, Infectoid, Irradiated Xenomorph, Scorched, Titan Xenomorph, Ultramorph, Symbiotic Xenomorph, Tusked Xenomorph, Flying Xenomorph, Warden, Wraith, Reaper, Snatcher, Smasher, Spiker, Thrasher, Harbinger (Pathogen), Imp (Praetomorph juvenile), Siren, Seven
+Canon-style castes / strains (Worker, Palatine, Smasher, Spiker, Warden, Exploder, Harbinger, Predalien Queen, Snatcher were added afterwards)
+- Defender, Biodrone, Biomorph, Exploder, Infectoid, Irradiated Xenomorph, Scorched, Titan Xenomorph, Ultramorph, Symbiotic Xenomorph, Tusked Xenomorph, Flying Xenomorph, Warden, Wraith, Reaper, Snatcher, Smasher, Spiker, Thrasher, Harbinger (Pathogen), Imp (Praetomorph juvenile), Siren, Seven
 - Queens: Predalien Queen, Flying Queen, Dog Queen, Vampiric Queen, Queen (LV-223), Queen-Burster, Queen (Earth)
 - Predalien line: Abomination, Predalien Queen
 - Bursters: Bellyburster, Bloodburster, Goreburster, Bodyburster, Giant Chestburster, Multiburster
