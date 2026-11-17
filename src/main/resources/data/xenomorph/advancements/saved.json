@@ -1,0 +1,37 @@
+{
+ "parent": "xenomorph:implanted",
+ "display": {
+  "icon": {
+   "item": "xenomorph:surgical_kit"
+  },
+  "title": {
+   "translate": "advancement.xenomorph.saved.title"
+  },
+  "description": {
+   "translate": "advancement.xenomorph.saved.desc"
+  },
+  "frame": "goal",
+  "show_toast": true,
+  "announce_to_chat": true,
+  "hidden": false
+ },
+ "criteria": {
+  "c": {
+   "trigger": "minecraft:inventory_changed",
+   "conditions": {
+    "items": [
+     {
+      "items": [
+       "xenomorph:surgical_kit"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "requirements": [
+  [
+   "c"
+  ]
+ ]
+}

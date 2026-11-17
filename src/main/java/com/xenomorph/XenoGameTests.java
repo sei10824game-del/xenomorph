@@ -142,7 +142,7 @@ public class XenoGameTests {
         for (int x = 8; x < 14; x++) for (int z = -2; z < 12; z++) h.setBlock(new BlockPos(x, 10, z), net.minecraft.world.level.block.Blocks.STONE);
         var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(11, 11, 4)); vill.setInvulnerable(true);
         var d = (XenoEntity) h.spawn(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(3, 2, 4));
-        h.onEachTick(() -> d.setTarget(vill));      // other tests share the world: keep the target pinned
+        h.onEachTick(() -> { d.setTarget(vill); d.getMoveControl().setWantedPosition(vill.getX(), vill.getY(), vill.getZ(), 1.3); });      // other tests share the world: keep target and heading pinned
         h.succeedWhen(() -> { if (d.getY() < h.absolutePos(new BlockPos(0, 9, 0)).getY()) throw new net.minecraft.gametest.framework.GameTestAssertException("not climbing, pos=" + d.position() + " climbing=" + d.isClimbing() + " target=" + d.getTarget() + " org=" + h.absolutePos(new BlockPos(0, 0, 0)) + " vill=" + vill.position() + " hcol=" + d.horizontalCollision); });
     }
 
@@ -236,5 +236,18 @@ public class XenoGameTests {
         h.onEachTick(() -> d.setTarget(vill));
         h.runAfterDelay(3, () -> { d.setPos(vill.getX() - 1.2, vill.getY(), vill.getZ()); d.startAttack(Attack.CLAW_L); });
         h.succeedWhen(() -> { if (!vill.hasEffect(XenomorphMod.EMBRYO.get())) throw new net.minecraft.gametest.framework.GameTestAssertException("villager not cocooned"); });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "b_surgery")
+    public static void surgery(GameTestHelper h) {
+        floor(h);
+        var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(3, 2, 3));
+        vill.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 2000, 0));
+        var p = h.makeMockPlayer();
+        var kit = new net.minecraft.world.item.ItemStack(net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation("xenomorph", "surgical_kit")));
+        kit.getItem().interactLivingEntity(kit, p, vill, net.minecraft.world.InteractionHand.MAIN_HAND);
+        if (vill.hasEffect(XenomorphMod.EMBRYO.get())) throw new AssertionError("embryo not removed");
+        if (!vill.isAlive()) throw new AssertionError("patient died");
+        h.succeed();
     }
 }

@@ -167,5 +167,8 @@
  "item.xenomorph.acidproof_helmet": "酸中和ヘルメット",
  "item.xenomorph.acidproof_chestplate": "酸中和ジャケット",
  "item.xenomorph.acidproof_leggings": "酸中和パンツ",
- "item.xenomorph.acidproof_boots": "酸中和ブーツ"
+ "item.xenomorph.acidproof_boots": "酸中和ブーツ",
+ "item.xenomorph.surgical_kit": "手術キット",
+ "advancement.xenomorph.saved.title": "俺の目の前では死なせない",
+ "advancement.xenomorph.saved.desc": "手術キットを作って胚を取り除く準備をする"
 }
