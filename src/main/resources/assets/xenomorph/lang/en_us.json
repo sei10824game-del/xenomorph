@@ -190,5 +190,15 @@
  "entity.xenomorph.tusked_xeno": "Tusked Xenomorph",
  "item.xenomorph.tusked_xeno_spawn_egg": "Tusked Xenomorph Spawn Egg",
  "entity.xenomorph.imp": "Imp",
- "item.xenomorph.imp_spawn_egg": "Imp Spawn Egg"
+ "item.xenomorph.imp_spawn_egg": "Imp Spawn Egg",
+ "entity.xenomorph.alpha_xeno": "Alpha",
+ "item.xenomorph.alpha_xeno_spawn_egg": "Alpha Spawn Egg",
+ "entity.xenomorph.crawler": "Crawler",
+ "item.xenomorph.crawler_spawn_egg": "Crawler Spawn Egg",
+ "entity.xenomorph.biomorph": "Biomorph",
+ "item.xenomorph.biomorph_spawn_egg": "Biomorph Spawn Egg",
+ "entity.xenomorph.siren": "Siren",
+ "item.xenomorph.siren_spawn_egg": "Siren Spawn Egg",
+ "entity.xenomorph.seven_drone": "Seven",
+ "item.xenomorph.seven_drone_spawn_egg": "Seven Spawn Egg"
 }

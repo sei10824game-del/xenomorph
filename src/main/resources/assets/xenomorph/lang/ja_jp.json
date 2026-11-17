@@ -190,5 +190,15 @@
  "entity.xenomorph.tusked_xeno": "タスクド・ゼノモーフ",
  "item.xenomorph.tusked_xeno_spawn_egg": "タスクド・ゼノモーフ スポーンエッグ",
  "entity.xenomorph.imp": "インプ",
- "item.xenomorph.imp_spawn_egg": "インプ スポーンエッグ"
+ "item.xenomorph.imp_spawn_egg": "インプ スポーンエッグ",
+ "entity.xenomorph.alpha_xeno": "アルファ",
+ "item.xenomorph.alpha_xeno_spawn_egg": "アルファ スポーンエッグ",
+ "entity.xenomorph.crawler": "クローラー",
+ "item.xenomorph.crawler_spawn_egg": "クローラー スポーンエッグ",
+ "entity.xenomorph.biomorph": "バイオモーフ",
+ "item.xenomorph.biomorph_spawn_egg": "バイオモーフ スポーンエッグ",
+ "entity.xenomorph.siren": "サイレン",
+ "item.xenomorph.siren_spawn_egg": "サイレン スポーンエッグ",
+ "entity.xenomorph.seven_drone": "セブン",
+ "item.xenomorph.seven_drone_spawn_egg": "セブン スポーンエッグ"
 }

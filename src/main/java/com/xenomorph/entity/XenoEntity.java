@@ -571,6 +571,8 @@ public class XenoEntity extends Monster {
             case CLONE_QUEEN -> new Caste[]{Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
             case PREDALIEN_QUEEN -> new Caste[]{Caste.PREDALIEN, Caste.PREDALIEN, Caste.WARRIOR};
             case DOG_QUEEN -> new Caste[]{Caste.RUNNER, Caste.RUNNER, Caste.SENTINEL};
+            case SIREN -> new Caste[]{Caste.BURSTER, Caste.BURSTER, Caste.EXPLODER};
+            case SEVEN -> new Caste[]{Caste.DRONE, Caste.DRONE, Caste.WARRIOR};
             case TITAN -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.WARDEN};
             case TRUE_KING -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.BRUTE};
             case RED_QUEEN_MOTHER -> new Caste[]{Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE};

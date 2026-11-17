@@ -90,7 +90,13 @@ public enum Caste {
     WRAITH     ("wraith_xeno", 60, 12, 0.4f, 1.1f, 1, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, SHADOW_STRIKE, DROP_STRIKE, POUNCE)),
     ARMORED    ("armored_xeno", 110, 12, 0.3f, 1.3f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_SWEEP, BITE, GRAB, SLAM, STOMP, CREST_RAM)),
     TUSKED     ("tusked_xeno", 85, 13, 0.36f, 1.2f, 1, 3, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, CHARGE, HORN_TOSS, POUNCE, SLAM)),
-    IMP        ("imp", 30, 6, 0.46f, 0.8f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, DROP_STRIKE, GRAB));
+    IMP        ("imp", 30, 6, 0.46f, 0.8f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, DROP_STRIKE, GRAB))
+   ,
+    ALPHA      ("alpha_xeno", 130, 14, 0.34f, 1.55f, 1, 3, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, CHARGE, HORN_TOSS, CREST_RAM)),
+    CRAWLER    ("crawler", 50, 8, 0.42f, 1.1f, 0, 0, true, true, false, EnumSet.of(CLAW_L, CLAW_R, BITE, SPIT, VOLLEY, LOB, POUNCE, DROP_STRIKE)),
+    BIOMORPH   ("biomorph", 90, 12, 0.38f, 1.4f, 1, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, POUNCE, SHADOW_STRIKE, DROP_STRIKE)),
+    SIREN      ("siren", 42, 5, 0.44f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, SCREECH, SUMMON, DROP_STRIKE)),
+    SEVEN      ("seven_drone", 85, 10, 0.38f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, SUMMON, FRENZY));
 
     public final String id;
     public final float hp, dmg, speed, scale;
@@ -109,7 +115,7 @@ public enum Caste {
     /** Body mass feel: >1 = heavy (bigger knockback, slower gait, impact shake); <1 = light. */
     public float weight() {
         return switch (this) {
-            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
+            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
             case QUEEN, CHARGER -> 1.4f; case PRAETORIAN, MATRIARCH, PATHOGEN_QUEEN -> 1.3f; case BOILER -> 1.2f;
             case RUNNER, PATHOGEN_RUNNER -> 0.7f; case WORKER -> 0.6f; case IMP -> 0.7f; case WRAITH -> 0.8f; case PANTHER -> 0.75f; case BAT -> 0.65f; case SNATCHER -> 0.75f; case EXPLODER -> 0.85f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
     }
@@ -125,7 +131,7 @@ public enum Caste {
     public boolean wild() { return this == CLONE_XENOMORPH || this == WHITE_HYBRID || this == WHITE_KING || this == NEWBORN || kSeries(); }
     /** Has an emissive overlay texture <id>_glow.png (pustules, acid pouches, seams...). */
     public boolean glows() {
-        return switch (this) { case SPITTER, BOILER, BURSTER, IRRADIATED, SCORCHED, TITAN, EXPLODER, HARBINGER, SPIKER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
+        return switch (this) { case SPITTER, BOILER, BURSTER, BIOMORPH, IRRADIATED, SCORCHED, TITAN, EXPLODER, HARBINGER, SPIKER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
     }
     public boolean cloneStrain() { return id.startsWith("clone_"); }
     /** Hard, glossy cranium that gets the specular highlight layer. */
