@@ -132,11 +132,15 @@ public class XenoModel extends EntityModel<XenoEntity> {
         PartDefinition hips = root.addOrReplaceChild("hips", add(box(-3.5f * T, -3f, -4f, 7 * T, 6, 9), -2.5f, -4, -1, 5, 1.5f, 5), PartPose.offset(0, 11, 1));
 
         // torso
-        CubeListBuilder bodyB = box(-3 * T, -9, -3, 6 * T, 10, 6);
+        CubeListBuilder bodyB = box(-2.55f * T, -9, -2.6f, 5.1f * T, 10, 5.2f);       // narrow waist (hourglass between ribcage and pelvis)
+        add(bodyB, -3.1f * T, -2.6f, -3.1f, 6.2f * T, 2.8f, 6.2f);                       // flare into the pelvis
         for (int i = 0; i < 5; i++) add(bodyB, -0.9f - (i % 2) * 0.25f, -9f + i * 1.9f, 2.9f, 1.8f + (i % 2) * 0.5f, 1.3f, 1.5f + (i % 2) * 0.6f);   // vertebrae
         if (sp.belly) add(bodyB, -3.8f * T, -7, -5, 7.6f * T, 8, 2.4f);               // distended belly
         PartDefinition body = hips.addOrReplaceChild("body", bodyB, PartPose.offset(0, -1, -1));
         CubeListBuilder chestB = box(-3.8f * T, -8.5f, -3.8f, 7.6f * T, 9, 7.6f);
+        add(chestB, -3.2f * T, -9.4f, -3.2f, 6.4f * T, 1.2f, 6.4f);                      // trapezius slope into the neck
+        add(chestB, -3.0f * T, 0.2f, -3.0f, 6.0f * T, 1.0f, 6.0f);                       // ribcage tapers to the waist
+        add(chestB, -3.4f * T, -7.6f, -4.4f, 6.8f * T, 2.6f, 0.7f); add(chestB, -3.0f * T, -5.0f, -4.4f, 6.0f * T, 2.4f, 0.7f);   // stepped, rounded breastplate
         for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.3f * T, y, -3, 0.8f, 0.8f, 6); add(chestB, 3.5f * T, y, -3, 0.8f, 0.8f, 6); }
         for (int i = 0; i < 6; i++) add(chestB, -0.9f - (i % 2) * 0.25f, -8.4f + i * 1.4f, 3.8f, 1.8f + (i % 2) * 0.5f, 1.1f, 1.5f + (i % 2) * 0.7f);   // vertebrae
         add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
@@ -245,6 +249,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 float fx = (k - 1.5f) * 0.85f * L - 0.27f, f2 = fl * (k == 0 || k == 3 ? 1.05f : 1.3f);
                 add(h, fx, 0.3f, -2.4f - f2, 0.55f, 0.7f, f2); add(h, fx + 0.05f, 0.5f, -3.2f - f2, 0.4f, 0.4f, 1.1f); add(h, fx - 0.1f, -0.5f, -2.8f, 0.75f, 0.6f, 0.9f);
             }
+            add(h, sx > 0 ? 1.4f * L : -1.9f * L, 0.2f, -1.8f, 0.55f, 0.6f, 2.4f);          // thumb
             f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
             PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
