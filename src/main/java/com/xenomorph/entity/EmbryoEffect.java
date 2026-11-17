@@ -37,7 +37,8 @@ public class EmbryoEffect extends MobEffect {
         if (h instanceof net.minecraft.world.entity.animal.goat.Goat) return Caste.GOAT;
         if (h instanceof net.minecraft.world.entity.ambient.Bat) return Caste.BAT;
         if (h instanceof net.minecraft.world.entity.animal.PolarBear) return Caste.WINTERBEAST;
-        if (h instanceof Wolf || h instanceof net.minecraft.world.entity.animal.horse.AbstractHorse || h instanceof net.minecraft.world.entity.animal.Pig || h instanceof net.minecraft.world.entity.animal.Sheep) return Caste.RUNNER;
+        if (h instanceof Wolf) return h.getRandom().nextInt(8) == 0 ? Caste.DOG_QUEEN : Caste.RUNNER;   // a dog-born queen is rare
+        if (h instanceof net.minecraft.world.entity.animal.horse.AbstractHorse || h instanceof net.minecraft.world.entity.animal.Pig || h instanceof net.minecraft.world.entity.animal.Sheep) return Caste.RUNNER;
         return h.getMaxHealth() >= 60 ? Caste.PRAETORIAN : Caste.DRONE;
     }
 }

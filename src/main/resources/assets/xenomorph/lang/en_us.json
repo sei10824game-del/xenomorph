@@ -146,5 +146,9 @@
  "entity.xenomorph.bat_alien": "Bat Alien",
  "item.xenomorph.bat_alien_spawn_egg": "Bat Alien Spawn Egg",
  "entity.xenomorph.winterbeast": "Winterbeast Xenomorph",
- "item.xenomorph.winterbeast_spawn_egg": "Winterbeast Xenomorph Spawn Egg"
+ "item.xenomorph.winterbeast_spawn_egg": "Winterbeast Xenomorph Spawn Egg",
+ "entity.xenomorph.dog_queen": "Dog Queen",
+ "item.xenomorph.dog_queen_spawn_egg": "Dog Queen Spawn Egg",
+ "entity.xenomorph.reaper": "Reaper Xenomorph",
+ "item.xenomorph.reaper_spawn_egg": "Reaper Xenomorph Spawn Egg"
 }
