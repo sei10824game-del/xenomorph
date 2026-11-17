@@ -37,3 +37,22 @@ Compared the mod's castes against the wiki. **Wiki-backed** = description matche
 | Neomorph | Born from black-goo spores; pale; elongated head | matches |
 | Lurker | No xenomorph "Lurker" caste found on the wiki | **no source found** (own invention) |
 | Charger-as-separate / Matriarch / Queen-Mother variants | see above | |
+
+## Not yet implemented (Xenopedia "Xenomorph variants" category, 149 pages, checked against the mod)
+
+Canon-style castes / strains
+- Worker (Drone's non-combat molt), Defender, Palatine (purebreed), Biodrone, Biomorph, Exploder, Infectoid, Irradiated Xenomorph, Scorched, Titan Xenomorph, Ultramorph, Symbiotic Xenomorph, Tusked Xenomorph, Flying Xenomorph, Warden, Wraith, Reaper, Snatcher, Smasher, Spiker, Thrasher, Harbinger (Pathogen), Imp (Praetomorph juvenile), Siren, Seven
+- Queens: Predalien Queen, Flying Queen, Dog Queen, Vampiric Queen, Queen (LV-223), Queen-Burster, Queen (Earth)
+- Predalien line: Abomination, Predalien Queen
+- Bursters: Bellyburster, Bloodburster, Goreburster, Bodyburster, Giant Chestburster, Multiburster
+- Facehuggers: Praeto-Facehugger, Praetorian Facehugger, Octo-Facehugger, Flying Facehugger
+- Alien: Earth: Larva, Xenomorph (Earth), Predalien (Earth)
+
+Host-derived (DNA-reflex) variants
+- Bat, Beluga, Crocodile, Dolphin, Gorilla (x2), Goat, Lion-worm, Mantis, Panther, Rhino, Saurian, Scorpion, Shark, Snake, Swimming, Winterbeast, Jockey-Xenomorph, Bone alien
+
+Fan / crossover (lowest priority)
+- Necromorph, Xenoborg, Terminator hybrid, Tarkatan, Drukathi, Vurfur, Condra-Morth, Ani-Men, Killer Croc hybrid, etc.
+
+Already covered: Drone, Warrior, Praetorian, Queen, Queen Mother, Empress, King, Runner, Sentry, Crusher/Charger, Spitter, Ravager, Carrier, Arachnoid, Boiler, Burster, Prowler, Brute, Bull Alien, Stalker/Praetomorph, Neomorph, Newborn, Deacon, Protomorph, Predalien, Berserker, K-Series (+ full ladder), Cloned (+ full ladder), White Hybrid (+King), Rogue, Red Queen Mother (+ red castes), Pathogen Runner/Brute/Queen, Matriarch.
+The mod's "Lurker" has no wiki page (invented).
