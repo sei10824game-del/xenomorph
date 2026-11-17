@@ -138,5 +138,13 @@
  "entity.xenomorph.predalien_queen": "プレデリアン・クイーン",
  "item.xenomorph.predalien_queen_spawn_egg": "プレデリアン・クイーン スポーンエッグ",
  "entity.xenomorph.snatcher": "スナッチャー",
- "item.xenomorph.snatcher_spawn_egg": "スナッチャー スポーンエッグ"
+ "item.xenomorph.snatcher_spawn_egg": "スナッチャー スポーンエッグ",
+ "entity.xenomorph.panther_alien": "パンサー・エイリアン",
+ "item.xenomorph.panther_alien_spawn_egg": "パンサー・エイリアン スポーンエッグ",
+ "entity.xenomorph.goat_alien": "ゴート・エイリアン",
+ "item.xenomorph.goat_alien_spawn_egg": "ゴート・エイリアン スポーンエッグ",
+ "entity.xenomorph.bat_alien": "バット・エイリアン",
+ "item.xenomorph.bat_alien_spawn_egg": "バット・エイリアン スポーンエッグ",
+ "entity.xenomorph.winterbeast": "ウィンタービースト",
+ "item.xenomorph.winterbeast_spawn_egg": "ウィンタービースト スポーンエッグ"
 }

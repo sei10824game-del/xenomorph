@@ -204,4 +204,19 @@ public class XenoGameTests {
         if (!Caste.K_QUEEN.attacks.contains(Attack.LAY) || !Caste.CLONE_QUEEN.attacks.contains(Attack.LAY)) throw new AssertionError("queens must lay");
         h.succeed();
     }
+
+    /** DNA reflex: cow -> Bull Alien, ocelot -> Panther Alien, polar bear -> Winterbeast. */
+    @GameTest(template = "empty", timeoutTicks = 200, batch = "b_dnaReflex")
+    public static void dnaReflex(GameTestHelper h) {
+        floor(h);
+        var cow = h.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        var cat = h.spawnWithNoFreeWill(EntityType.OCELOT, new BlockPos(2, 2, 5));
+        var bear = h.spawnWithNoFreeWill(EntityType.POLAR_BEAR, new BlockPos(2, 2, 8));
+        for (var e : new net.minecraft.world.entity.LivingEntity[]{cow, cat, bear}) e.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 4, 0));
+        h.succeedWhen(() -> {
+            var all = h.getLevel().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(ChestbursterEntity.class), b -> true);
+            boolean ok = all.stream().anyMatch(b -> b.form == Caste.BULL_ALIEN) && all.stream().anyMatch(b -> b.form == Caste.PANTHER) && all.stream().anyMatch(b -> b.form == Caste.WINTERBEAST);
+            if (!ok) throw new net.minecraft.gametest.framework.GameTestAssertException("host forms not found: " + all.stream().map(b -> b.form).toList());
+        });
+    }
 }

@@ -48,7 +48,7 @@ Canon-style castes / strains (Worker, Palatine, Smasher, Spiker, Warden, Explode
 - Facehuggers: Praeto-Facehugger, Praetorian Facehugger, Octo-Facehugger, Flying Facehugger
 - Alien: Earth: Larva, Xenomorph (Earth), Predalien (Earth)
 
-Host-derived (DNA-reflex) variants
+Host-derived (DNA-reflex) variants (Bull, Panther, Goat, Bat, Winterbeast now implemented; embryo form depends on host species - see EmbryoEffect.hostForm)
 - Bat, Beluga, Crocodile, Dolphin, Gorilla (x2), Goat, Lion-worm, Mantis, Panther, Rhino, Saurian, Scorpion, Shark, Snake, Swimming, Winterbeast, Jockey-Xenomorph, Bone alien
 
 Fan / crossover (lowest priority)

@@ -20,7 +20,7 @@ public class EmbryoEffect extends MobEffect {
         if (!(host.level() instanceof ServerLevel sl)) return;
         ChestbursterEntity b = XenomorphMod.BURSTER.get().create(sl);
         if (b != null) {
-            b.form = red ? (host.getMaxHealth() >= 40 ? Caste.RED_QUEEN_MOTHER : host.getRandom().nextBoolean() ? Caste.RED_WARRIOR : Caste.RED_DRONE) : host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : Caste.DEACON) : host instanceof Wolf ? Caste.RUNNER : Caste.DRONE;
+            b.form = red ? (host.getMaxHealth() >= 40 ? Caste.RED_QUEEN_MOTHER : host.getRandom().nextBoolean() ? Caste.RED_WARRIOR : Caste.RED_DRONE) : host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : Caste.DEACON) : hostForm(host);
             b.moveTo(host.getX(), host.getY() + host.getBbHeight() * 0.6, host.getZ(), host.getYRot(), 0);
             sl.addFreshEntity(b);
         }
@@ -28,5 +28,16 @@ public class EmbryoEffect extends MobEffect {
         sl.sendParticles(ParticleTypes.ITEM_SLIME, host.getX(), host.getY() + host.getBbHeight() * 0.7, host.getZ(), 30, 0.3, 0.3, 0.3, 0.2);
         host.playSound(SoundEvents.RAVAGER_ROAR, 1.5f, 1.8f);
         host.kill();
+    }
+
+    /** DNA reflex: the burster inherits traits of the host species. */
+    static Caste hostForm(LivingEntity h) {
+        if (h instanceof net.minecraft.world.entity.animal.Cow) return Caste.BULL_ALIEN;
+        if (h instanceof net.minecraft.world.entity.animal.Ocelot || h instanceof net.minecraft.world.entity.animal.Cat) return Caste.PANTHER;
+        if (h instanceof net.minecraft.world.entity.animal.goat.Goat) return Caste.GOAT;
+        if (h instanceof net.minecraft.world.entity.ambient.Bat) return Caste.BAT;
+        if (h instanceof net.minecraft.world.entity.animal.PolarBear) return Caste.WINTERBEAST;
+        if (h instanceof Wolf || h instanceof net.minecraft.world.entity.animal.horse.AbstractHorse || h instanceof net.minecraft.world.entity.animal.Pig || h instanceof net.minecraft.world.entity.animal.Sheep) return Caste.RUNNER;
+        return h.getMaxHealth() >= 60 ? Caste.PRAETORIAN : Caste.DRONE;
     }
 }

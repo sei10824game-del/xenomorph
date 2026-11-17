@@ -30,6 +30,9 @@ public final class Hive {
             Caste.SENTINEL, Caste.RAVAGER, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER, Caste.WORKER, Caste.PALATINE, Caste.SMASHER, Caste.SPIKER, Caste.WARDEN, Caste.EXPLODER, Caste.SNATCHER};
     /** Spawn on their own in dark places (see biome modifiers), not in hives. */
     public static final Caste[] WILD = {Caste.CLONE_XENOMORPH, Caste.NEWBORN, Caste.WHITE_HYBRID, Caste.WHITE_KING, Caste.K_WARRIOR, Caste.K_FATALIS};
+    /** Only ever born from animal hosts (see EmbryoEffect.hostForm); hives carry cocooned animals so they appear naturally. */
+    private static final Caste[] HOSTED = {Caste.PANTHER, Caste.GOAT, Caste.BAT, Caste.WINTERBEAST};
+    private static final net.minecraft.world.entity.EntityType<?>[] ANIMALS = {net.minecraft.world.entity.EntityType.COW, net.minecraft.world.entity.EntityType.OCELOT, net.minecraft.world.entity.EntityType.GOAT, net.minecraft.world.entity.EntityType.POLAR_BEAR, net.minecraft.world.entity.EntityType.BAT, net.minecraft.world.entity.EntityType.WOLF};
     private static final Caste[] RED = {Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE, Caste.RED_DRONE};
     private static final Caste[] KSER = {Caste.K_DRONE, Caste.K_DRONE, Caste.K_DRONE, Caste.K_WARRIOR, Caste.K_WARRIOR, Caste.K_PRAETORIAN, Caste.K_FATALIS};
     private static final Caste[] CLONES = {Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
@@ -39,7 +42,7 @@ public final class Hive {
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
         java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);
-        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING}, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON}}) r.addAll(java.util.Arrays.asList(a));
+        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING}, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON}}) r.addAll(java.util.Arrays.asList(a));
         return r;
     }
 
@@ -92,6 +95,15 @@ public final class Hive {
             Caste[] pool = kser ? KSER : clone ? CLONES : red ? RED : neo ? NEO : proto ? PROTO : pathogen ? PATHOGEN : NORMAL;
             BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5);
             if (f != null) spawn(sl, pool[r.nextInt(pool.length)], f.getX() + .5, f.getY(), f.getZ() + .5, r);
+        }
+        if (r.nextInt(3) == 0) {   // a cocooned animal: its brood inherits the species' traits
+            BlockPos f = floor(sl, x0 + r.nextInt(9) - 4, y0, z0 + r.nextInt(9) - 4);
+            net.minecraft.world.entity.Entity an = ANIMALS[r.nextInt(ANIMALS.length)].create(sl);
+            if (f != null && an instanceof net.minecraft.world.entity.Mob m) {
+                m.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0); m.setNoAi(true); m.setPersistenceRequired();
+                m.addEffect(new net.minecraft.world.effect.MobEffectInstance((red ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get(), 1800 + r.nextInt(1200), 0, false, false));
+                sl.addFreshEntity(m);
+            }
         }
         // cocooned hosts: embryo already inside, born (after the timer) as Predalien / Deacon
         cocoon(sl, HunterEntity.Kind.PREDATOR, r.nextInt(3) == 0, red, x0, y0, z0, r);

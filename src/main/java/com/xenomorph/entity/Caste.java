@@ -71,7 +71,13 @@ public enum Caste {
     EXPLODER   ("exploder", 22, 5, 0.5f, 0.85f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, DETONATE, DROP_STRIKE)),
     HARBINGER  ("harbinger", 110, 14, 0.34f, 1.4f, 1, 6, false, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, GRAB, MULTI_STAB, FRENZY, POUNCE, SPORE)),
     PREDALIEN_QUEEN ("predalien_queen", 330, 22, 0.3f, 2.4f, 2, 2, true, true, true, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, IMPALE, SLAM, SCREECH, LAY, SUMMON, CREST_RAM, STOMP, FRENZY, GRAB_SLAM)),
-    SNATCHER   ("snatcher", 42, 9, 0.62f, 1.0f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, GRAB, DROP_STRIKE));
+    SNATCHER   ("snatcher", 42, 9, 0.62f, 1.0f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, GRAB, DROP_STRIKE))
+    // host-derived (DNA reflex): born from these vanilla animals
+   ,
+    PANTHER    ("panther_alien", 38, 9, 0.55f, 1.05f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, DEATH_ROLL, FRENZY, DROP_STRIKE)),
+    GOAT       ("goat_alien", 46, 9, 0.46f, 1.0f, 0, 3, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, CHARGE, HORN_TOSS, POUNCE)),
+    BAT        ("bat_alien", 20, 5, 0.52f, 0.8f, 1, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, LEAP_SLASH, DROP_STRIKE)),
+    WINTERBEAST ("winterbeast", 160, 14, 0.3f, 1.7f, 0, 5, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, SLAM, CHARGE, STOMP, TAIL_SWEEP));
 
     public final String id;
     public final float hp, dmg, speed, scale;
@@ -90,9 +96,9 @@ public enum Caste {
     /** Body mass feel: >1 = heavy (bigger knockback, slower gait, impact shake); <1 = light. */
     public float weight() {
         return switch (this) {
-            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
+            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case WINTERBEAST -> 1.6f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
             case QUEEN, CHARGER -> 1.4f; case PRAETORIAN, MATRIARCH, PATHOGEN_QUEEN -> 1.3f; case BOILER -> 1.2f;
-            case RUNNER, PATHOGEN_RUNNER -> 0.7f; case WORKER -> 0.6f; case SNATCHER -> 0.75f; case EXPLODER -> 0.85f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
+            case RUNNER, PATHOGEN_RUNNER -> 0.7f; case WORKER -> 0.6f; case PANTHER -> 0.75f; case BAT -> 0.65f; case SNATCHER -> 0.75f; case EXPLODER -> 0.85f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
     }
     /** Temper 0..1: fast recovery, combo chaining, berserk below 40% hp (>=0.5), twitchy idle. */
     public float ferocity() {

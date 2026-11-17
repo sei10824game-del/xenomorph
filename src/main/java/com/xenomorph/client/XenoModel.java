@@ -113,6 +113,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case HARBINGER -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 5.2f; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.5f; p.limb = 1.1f; p.armK = 1.2f; }
             case PREDALIEN_QUEEN -> { p.style = 2; p.fan = 15; p.dreads = true; p.mand = true; p.cheek = true; p.carapace = true; p.plates = 1; p.torso = 1.2f; p.limb = 1.15f; p.spines = 6; p.tailEnd = 3; p.ribs = 4; }
             case SNATCHER -> { p.limb = 1.2f; p.armK = 1.35f; p.neckK = 0.8f; p.domeL = 9; p.spines = 3; p.ribs = 4; p.clawL = 1.2f; p.tubeLen = 0; }
+            case PANTHER -> { p.limb = 0.85f; p.torso = 0.9f; p.domeL = 11; p.tailT = 0.85f; p.tubeLen = 0; p.ribs = 4; p.spines = 2; p.clawL = 1.3f; p.cheek = true; }
+            case GOAT -> { p.style = 3; p.horns = 2; p.domeW = 3.6f; p.limb = 1.0f; p.torso = 1.0f; p.tubeLen = 0; p.ribs = 3; p.spines = 3; p.cheek = true; p.tailSegs = 6; p.tailEnd = 4; }
+            case BAT -> { p.domeL = 9; p.limb = 0.7f; p.torso = 0.75f; p.armK = 1.35f; p.neckK = 1.1f; p.tubeLen = 0; p.ribs = 5; p.spines = 0; p.clawL = 1.5f; p.tailEnd = 4; p.tailT = 0.7f; }
+            case WINTERBEAST -> { p.limb = 1.35f; p.torso = 1.35f; p.domeL = 10; p.domeW = 5.4f; p.plates = 2; p.spines = 6; p.carapace = true; p.tailEnd = 2; p.tailSegs = 6; p.tubeLen = 0; p.ribs = 3; p.mand = true; p.cheek = true; }
             case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.upright = 0.15f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
             case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }
