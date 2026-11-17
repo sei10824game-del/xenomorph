@@ -163,5 +163,9 @@
  "advancement.xenomorph.implanted.title": "Something Inside",
  "advancement.xenomorph.implanted.desc": "Get a facehugger implanted",
  "advancement.xenomorph.queen_slayer.title": "Get Away From Her",
- "advancement.xenomorph.queen_slayer.desc": "Kill a xenomorph queen"
+ "advancement.xenomorph.queen_slayer.desc": "Kill a xenomorph queen",
+ "item.xenomorph.acidproof_helmet": "Acid-Neutralizing Helmet",
+ "item.xenomorph.acidproof_chestplate": "Acid-Neutralizing Jacket",
+ "item.xenomorph.acidproof_leggings": "Acid-Neutralizing Trousers",
+ "item.xenomorph.acidproof_boots": "Acid-Neutralizing Boots"
 }

@@ -163,5 +163,9 @@
  "advancement.xenomorph.implanted.title": "体内の何か",
  "advancement.xenomorph.implanted.desc": "フェイスハガーに寄生される",
  "advancement.xenomorph.queen_slayer.title": "彼女に近づくな",
- "advancement.xenomorph.queen_slayer.desc": "クイーン系のゼノを倒す"
+ "advancement.xenomorph.queen_slayer.desc": "クイーン系のゼノを倒す",
+ "item.xenomorph.acidproof_helmet": "酸中和ヘルメット",
+ "item.xenomorph.acidproof_chestplate": "酸中和ジャケット",
+ "item.xenomorph.acidproof_leggings": "酸中和パンツ",
+ "item.xenomorph.acidproof_boots": "酸中和ブーツ"
 }

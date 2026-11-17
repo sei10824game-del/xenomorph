@@ -1,5 +1,6 @@
 package com.xenomorph.entity;
 
+import com.xenomorph.XenoArmor;
 import com.xenomorph.XenoConfig;
 import com.xenomorph.XenomorphMod;
 import net.minecraft.core.particles.ParticleTypes;
@@ -269,12 +270,27 @@ public class XenoEntity extends Monster {
     private LivingEntity tgt() { return getTarget(); }
     private Vec3 fwd() { return new Vec3(-Mth.sin(yBodyRot * Mth.DEG_TO_RAD), 0, Mth.cos(yBodyRot * Mth.DEG_TO_RAD)); }
 
+    /** Wraps a badly hurt villager in resin and implants it. */
+    private void cocoon(net.minecraft.world.entity.npc.AbstractVillager v) {
+        v.setNoAi(true); v.setHealth(Math.max(v.getHealth(), 4f));
+        v.addEffect(new MobEffectInstance(XenomorphMod.EMBRYO.get(), 1800 + random.nextInt(1200), 0, false, false));
+        BlockPos b = v.blockPosition();
+        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) for (int dy = 0; dy <= 1; dy++) {
+            BlockPos q = b.offset(dx, dy, dz);
+            if ((dx != 0 || dz != 0) && level().getBlockState(q).isAir() && level().getBlockState(q.below()).isSolid() == (dy == 0)) level().setBlock(q, XenomorphMod.RESIN.get().defaultBlockState(), 3);
+        }
+        playSound(XenomorphMod.SKITTER.get(), 1f, 0.7f);
+        setTarget(null);
+    }
+
     private boolean strike(LivingEntity t, float mult, double reach, double kb) {
         if (t == null || !t.isAlive() || friendly(t)) return false;
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
         if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
         boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * (float) XenoConfig.DAMAGE_MULTIPLIER.get().doubleValue() * mult);
         float wt = caste.weight();
+        if (ok && t instanceof net.minecraft.world.entity.npc.AbstractVillager v && !caste.red() && faction(this) != 8 && v.getHealth() < v.getMaxHealth() * 0.35f
+                && !v.hasEffect(XenomorphMod.EMBRYO.get()) && !v.hasEffect(XenomorphMod.RED_EMBRYO.get())) cocoon(v);   // captured, not killed: the hive needs hosts
         if (ok && caste == Caste.TRUE_KING) heal(3f);                                  // feeding speeds its regeneration
         if (ok && kb > 0) { kb *= wt; Vec3 d = t.position().subtract(position()).multiply(1, 0, 1).normalize(); t.push(d.x * kb, 0.25 * kb, d.z * kb); t.hurtMarked = true; }
         if (ok && wt >= 1.4f && level() instanceof ServerLevel sl) {          // heavy hitters crack the ground and thud
@@ -683,10 +699,13 @@ public class XenoEntity extends Monster {
     }
     private void acidBurn(LivingEntity e, float dmg) {
         if (e instanceof XenoEntity x && x.caste.kSeries()) return;                       // K-series: acid immunity
+        int suit = XenoArmor.pieces(e);                                                   // acid-neutralizing suit: 25% per piece, full set immune
+        if (suit >= 4) return;
+        dmg *= (4 - suit) / 4f;
         e.hurt(damageSources().magic(), dmg);
         playSound(XenomorphMod.SIZZLE.get(), 0.8f, 1f);
         if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, e.getX(), e.getY() + 1, e.getZ(), 8, 0.3, 0.4, 0.3, 0.05);
-        if (XenoConfig.ACID_DAMAGES_ARMOR.get()) for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) {
+        if (suit == 0 && XenoConfig.ACID_DAMAGES_ARMOR.get()) for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) {
             if (s.getType() != EquipmentSlot.Type.ARMOR) continue;
             ItemStack st = e.getItemBySlot(s);
             if (!st.isEmpty() && random.nextFloat() < 0.5f) st.hurtAndBreak(4, e, x -> x.broadcastBreakEvent(s));

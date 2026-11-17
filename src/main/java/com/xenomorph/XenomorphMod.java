@@ -33,6 +33,12 @@ public class XenomorphMod {
     public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN = BLOCKS.register("resin", () -> new net.minecraft.world.level.block.Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BROWN).strength(3f, 6f).requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.HONEY_BLOCK)));
     static final RegistryObject<Item> RIFLE = ITEMS.register("pulse_rifle", XenoWeapons.PulseRifle::new), FLAMER = ITEMS.register("flamethrower", XenoWeapons.Flamethrower::new),
             GLAND = ITEMS.register("acid_gland", () -> new Item(new Item.Properties()));
+    static final List<RegistryObject<Item>> SUIT = new ArrayList<>();
+    static {
+        String[] names = {"helmet", "chestplate", "leggings", "boots"};
+        net.minecraft.world.item.ArmorItem.Type[] types = {net.minecraft.world.item.ArmorItem.Type.HELMET, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS};
+        for (int i = 0; i < 4; i++) { var ty = types[i]; SUIT.add(ITEMS.register("acidproof_" + names[i], () -> new net.minecraft.world.item.ArmorItem(XenoArmor.MATERIAL, ty, new Item.Properties()))); }
+    }
     static final RegistryObject<Item> TRACKER = ITEMS.register("motion_tracker", MotionTracker::new);
     static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
     static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
@@ -107,7 +113,7 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); }).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); SUIT.forEach(a -> out.accept(a.get())); }).build());
     }
 
     public XenomorphMod() {

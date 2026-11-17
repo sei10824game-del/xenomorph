@@ -2,6 +2,7 @@ package com.xenomorph;
 
 import com.xenomorph.entity.*;
 import com.xenomorph.Hive;
+import com.xenomorph.XenoArmor;
 import com.xenomorph.HiveData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -218,5 +219,22 @@ public class XenoGameTests {
             boolean ok = all.stream().anyMatch(b -> b.form == Caste.BULL_ALIEN) && all.stream().anyMatch(b -> b.form == Caste.PANTHER) && all.stream().anyMatch(b -> b.form == Caste.WINTERBEAST);
             if (!ok) throw new net.minecraft.gametest.framework.GameTestAssertException("host forms not found: " + all.stream().map(b -> b.form).toList());
         });
+    }
+
+    /** Full acid-neutralizing suit is recognised; a wounded villager struck by a xeno is cocooned instead of killed. */
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "b_suitCocoon")
+    public static void suitAndCocoon(GameTestHelper h) {
+        floor(h);
+        var z = h.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 7));
+        var slots = net.minecraft.world.entity.EquipmentSlot.values();
+        String[] n = {"boots", "leggings", "chestplate", "helmet"};
+        var reg = net.minecraftforge.registries.ForgeRegistries.ITEMS;
+        for (int i = 0; i < 4; i++) z.setItemSlot(slots[2 + i], new net.minecraft.world.item.ItemStack(reg.getValue(new net.minecraft.resources.ResourceLocation("xenomorph", "acidproof_" + n[i]))));
+        if (XenoArmor.pieces(z) != 4) throw new AssertionError("suit pieces=" + XenoArmor.pieces(z));
+        var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(4, 2, 2)); vill.setHealth(3f);
+        var d = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(2, 2, 2));
+        h.onEachTick(() -> d.setTarget(vill));
+        h.runAfterDelay(3, () -> { d.setPos(vill.getX() - 1.2, vill.getY(), vill.getZ()); d.startAttack(Attack.CLAW_L); });
+        h.succeedWhen(() -> { if (!vill.hasEffect(XenomorphMod.EMBRYO.get())) throw new net.minecraft.gametest.framework.GameTestAssertException("villager not cocooned"); });
     }
 }
