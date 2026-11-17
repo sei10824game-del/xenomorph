@@ -196,9 +196,23 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
         head.addOrReplaceChild("fan", fanB, PartPose.rotation(-0.22f, 0, 0));
         CubeListBuilder hornB = CubeListBuilder.create();
-        if (sp.style == 3) {
-            box2(hornB, -6.5f, -9, 0, 13, 9, 1.5f); box2(hornB, -7.5f, -3.5f, -3, 2, 2, 7); box2(hornB, 5.5f, -3.5f, -3, 2, 2, 7);
-            for (int i = 0; i < sp.horns; i++) { float x = sp.horns == 1 ? -1 : -4 + i * (8f / Math.max(1, sp.horns - 1)); box2(hornB, x, -10.5f, 0.2f, 2, 1.8f + (i % 2) * 1.5f, 1.2f); box2(hornB, x * 1.1f, -4.5f, -7.5f + (i % 2), 1.2f, 1.2f, 3.5f); }
+        if (sp.style == 3) {   // armoured helmet crest (Crusher/Charger/Brute/King): thick sloped block with a brow overhang, side cheek plates
+            float W = Math.max(5f, sp.domeW) + 2.2f;
+            box2(hornB, -W / 2, -9.2f, -5.5f, W, 5.2f, 10.5f); box2(hornB, -W * 0.42f, -10.6f, -2f, W * 0.84f, 1.6f, 8f);
+            box2(hornB, -W * 0.58f, -4.6f, -7.8f, W * 1.16f, 1.5f, 3.2f);
+            box2(hornB, -W / 2 - 1.2f, -5.6f, -3.5f, 1.2f, 3.2f, 6f); box2(hornB, W / 2, -5.6f, -3.5f, 1.2f, 3.2f, 6f);
+            if (sp.horns == 2 || sp.horns == 1) {   // great curved horns (Bull Alien): out, up, then tip
+                for (int sg = -1; sg <= 1; sg += 2) {
+                    float hx = sg > 0 ? W / 2 + 0.6f : -W / 2 - 2.6f;
+                    box2(hornB, hx, -6.4f, -3.5f, 2.2f, 2.2f, 2.4f);
+                    box2(hornB, hx + sg * 1.6f, -7.2f, -3.3f, 2.0f, 2.2f, 2.0f);
+                    box2(hornB, hx + sg * 2.8f, -9.6f, -3.2f, 1.7f, 3.2f, 1.7f);
+                    box2(hornB, hx + sg * 3.1f, -13.0f, -3.1f, 1.1f, 3.4f, 1.1f);
+                }
+            } else for (int i = 0; i < sp.horns; i++) {   // crown spikes along the crest
+                float x = -W * 0.4f + i * (W * 0.8f / Math.max(1, sp.horns - 1));
+                box2(hornB, x - 0.5f, -12.4f - (i % 2) * 1.2f, -0.5f + (i % 3) * 1.2f, 1.0f, 2.2f + (i % 2) * 1.2f, 1.0f);
+            }
         }
         head.addOrReplaceChild("horns", hornB, PartPose.offsetAndRotation(0, -1, -1.5f, -0.1f, 0, 0));
         CubeListBuilder dr = CubeListBuilder.create();
