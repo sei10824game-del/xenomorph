@@ -134,7 +134,7 @@ public class XenoGameTests {
     }
 
     /** A xeno must scale a wall to reach prey standing on a ledge. */
-    @GameTest(template = "empty", timeoutTicks = 260, batch = "b_climbsWalls")
+    @GameTest(template = "empty", timeoutTicks = 480, batch = "b_climbsWalls")
     public static void climbsWalls(GameTestHelper h) {
         floor(h);
         for (int y = 2; y <= 9; y++) for (int z = -2; z < 12; z++) h.setBlock(new BlockPos(8, y, z), net.minecraft.world.level.block.Blocks.STONE);

@@ -228,10 +228,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int s = 0; s < 2; s++) {
             float sx = s == 0 ? 1 : -1;
             String n = s == 0 ? "L" : "R";
-            CubeListBuilder ab = box(-1.6f * L, -1, -1.6f * L, 3.2f * L, 9.5f, 3.2f * L);
+            CubeListBuilder ab = box(-1.8f * L, -1, -1.8f * L, 3.6f * L, 4.8f, 3.6f * L);      // upper arm tapers toward the elbow
+            add(ab, -1.4f * L, 3.6f, -1.4f * L, 2.8f * L, 5.9f, 2.8f * L);
             if (sp.elbow) add(ab, -0.5f, 6.5f, 1.4f * L, 1, 1, 3.4f);
             PartDefinition a = chest.addOrReplaceChild("arm" + n, ab, PartPose.offset(sx * 5 * T, -6.5f, 0));
-            CubeListBuilder fb = box(-1.3f * L, 0, -1.3f * L, 2.6f * L, 10f, 2.6f * L);
+            a.addOrReplaceChild("elbow", box(-1.6f * L, -1.6f * L, -1.6f * L, 3.2f * L, 3.2f * L, 3.2f * L), PartPose.offsetAndRotation(0, 8.5f, 0, 0.785f, 0, 0.785f));   // rounded joint caps
+            a.addOrReplaceChild("shoulder", box(-1.9f * L, -1.9f * L, -1.9f * L, 3.8f * L, 3.8f * L, 3.8f * L), PartPose.offsetAndRotation(0, -0.4f, 0, 0.785f, 0, 0.785f));
+            CubeListBuilder fb = box(-1.55f * L, 0, -1.55f * L, 3.1f * L, 4.5f, 3.1f * L);     // forearm: muscle belly then slim wrist
+            add(fb, -1.0f * L, 4.0f, -1.0f * L, 2.0f * L, 6.0f, 2.0f * L);
             add(fb, -0.3f, 1.2f, -1.3f * L - 0.45f, 0.6f, 6.5f, 0.6f);                 // bone ridge
             if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 10.5f, 1.6f);
             PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
@@ -249,10 +253,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int s = 0; s < 2; s++) {
             float sx = s == 0 ? 1 : -1;
             String n = s == 0 ? "L" : "R";
-            CubeListBuilder tb = box(-2.2f * L, -1, -2.3f * L, 4.4f * L, 9.5f, 4.6f * L);
+            CubeListBuilder tb = box(-2.4f * L, -1, -2.5f * L, 4.8f * L, 5.5f, 5.0f * L);      // thigh: heavy top, slim knee
+            add(tb, -1.8f * L, 4.0f, -1.9f * L, 3.6f * L, 4.6f, 3.8f * L);
             if (sp.knee) add(tb, -0.5f, 7f, -3.2f * L - 2, 1, 1.4f, 2.4f);
             PartDefinition t = hips.addOrReplaceChild("thigh" + n, tb, PartPose.offset(sx * 4.2f * T, 0, 1));
-            CubeListBuilder shB = box(-1.5f * L, -0.5f, -1.5f * L, 3 * L, 8.5f, 3 * L);
+            t.addOrReplaceChild("knee", box(-1.7f * L, -1.7f * L, -1.7f * L, 3.4f * L, 3.4f * L, 3.4f * L), PartPose.offsetAndRotation(0, 8f, 0, 0.785f, 0, 0.785f));
+            CubeListBuilder shB = box(-1.7f * L, -0.5f, -1.7f * L, 3.4f * L, 4.2f, 3.4f * L);   // shin: calf bulge, slim ankle
+            add(shB, -1.15f * L, 3.5f, -1.15f * L, 2.3f * L, 5.0f, 2.3f * L);
             add(shB, -0.4f, 0.8f, 1.5f * L, 0.8f, 5.5f, 0.8f);                           // calf ridge
             PartDefinition sh = t.addOrReplaceChild("shin", shB, PartPose.offset(0, 8, 0));
             CubeListBuilder ft = box(-1.8f * L, 0, -5, 3.6f * L, 1.6f, 6.5f);
