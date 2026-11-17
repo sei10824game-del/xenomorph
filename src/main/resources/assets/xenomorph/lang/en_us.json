@@ -170,5 +170,6 @@
  "item.xenomorph.acidproof_boots": "Acid-Neutralizing Boots",
  "item.xenomorph.surgical_kit": "Surgical Kit",
  "advancement.xenomorph.saved.title": "Not On My Watch",
- "advancement.xenomorph.saved.desc": "Craft a surgical kit to cut an embryo out"
+ "advancement.xenomorph.saved.desc": "Craft a surgical kit to cut an embryo out",
+ "item.xenomorph.hive_locator": "Hive Locator"
 }

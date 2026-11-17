@@ -40,6 +40,7 @@ public class XenomorphMod {
         for (int i = 0; i < 4; i++) { var ty = types[i]; SUIT.add(ITEMS.register("acidproof_" + names[i], () -> new net.minecraft.world.item.ArmorItem(XenoArmor.MATERIAL, ty, new Item.Properties()))); }
     }
     static final RegistryObject<Item> KIT = ITEMS.register("surgical_kit", SurgicalKit::new);
+    static final RegistryObject<Item> LOCATOR = ITEMS.register("hive_locator", HiveLocator::new);
     static final RegistryObject<Item> TRACKER = ITEMS.register("motion_tracker", MotionTracker::new);
     static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
     static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
@@ -114,7 +115,7 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(KIT.get()); SUIT.forEach(a -> out.accept(a.get())); }).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); SUIT.forEach(a -> out.accept(a.get())); }).build());
     }
 
     public XenomorphMod() {

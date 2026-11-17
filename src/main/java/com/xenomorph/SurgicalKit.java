@@ -26,6 +26,8 @@ public class SurgicalKit extends Item {
         if (!implanted(host)) return false;
         host.removeEffect(XenomorphMod.EMBRYO.get()); host.removeEffect(XenomorphMod.RED_EMBRYO.get());
         if (host instanceof Mob m && m.isNoAi()) m.setNoAi(false);
+        if (host instanceof net.minecraft.world.entity.npc.AbstractVillager && surgeon != host)       // grateful village
+            surgeon.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.HERO_OF_THE_VILLAGE, 6000, 0));
         float cost = Math.min(6f, Math.max(0f, host.getHealth() - 1f));     // never kills the patient
         if (cost > 0 && !(host instanceof Player p && p.isCreative())) host.hurt(host.damageSources().generic(), cost);
         if (host.level() instanceof ServerLevel sl) {
