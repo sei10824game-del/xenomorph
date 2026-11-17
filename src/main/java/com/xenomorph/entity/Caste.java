@@ -98,4 +98,6 @@ public enum Caste {
         return switch (this) { case SPITTER, BOILER, BURSTER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
     }
     public boolean cloneStrain() { return id.startsWith("clone_"); }
+    /** Hard, glossy cranium that gets the specular highlight layer. */
+    public boolean glossy() { return !(this == NEOMORPH || this == NEWBORN || id.startsWith("pathogen") || this == WHITE_HYBRID || this == WHITE_KING || this == PROTOMORPH); }
 }

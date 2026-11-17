@@ -41,12 +41,17 @@ public class XenoModel extends EntityModel<XenoEntity> {
     }
 
     // ------------------------------------------------------------------ geometry
-    private static int[] uv;
+    private static int domeCu;   // the cranium owns a reserved texture strip (y 72..96) so a glossy highlight layer can target it
+    private static CubeListBuilder dome(CubeListBuilder b, float x, float y, float z, float w, float h, float d) {
+        int bw = (int) Math.ceil(2 * (w + d)) + 1;
+        if (domeCu + bw > 256) domeCu = 0;
+        b.texOffs(domeCu, 72).addBox(x, y, z, w, h, d); domeCu += bw; return b;
+    }
     private static int cu, cv, rowH;
     private static CubeListBuilder box(float x, float y, float z, float w, float h, float d) {
         int bw = (int) Math.ceil(2 * (w + d)) + 1, bh = (int) Math.ceil(h + d) + 1;
         if (cu + bw > 256) { cu = 0; cv += rowH; rowH = 0; }
-        if (cv + bh > 96) { cu = 0; cv = 0; rowH = 0; }
+        if (cv + bh > 72) { cu = 0; cv = 0; rowH = 0; }
         CubeListBuilder b = CubeListBuilder.create().texOffs(cu, cv).addBox(x, y, z, w, h, d);
         cu += bw; rowH = Math.max(rowH, bh);
         return b;
@@ -54,7 +59,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     private static CubeListBuilder add(CubeListBuilder b, float x, float y, float z, float w, float h, float d) {
         int bw = (int) Math.ceil(2 * (w + d)) + 1, bh = (int) Math.ceil(h + d) + 1;
         if (cu + bw > 256) { cu = 0; cv += rowH; rowH = 0; }
-        if (cv + bh > 96) { cu = 0; cv = 0; rowH = 0; }
+        if (cv + bh > 72) { cu = 0; cv = 0; rowH = 0; }
         b.texOffs(cu, cv).addBox(x, y, z, w, h, d);
         cu += bw; rowH = Math.max(rowH, bh);
         return b;
@@ -162,13 +167,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (!sp.bare) for (int i = 0; i < 4; i++) tooth(headB, (i - 1.5f) * 0.9f * hw - 0.2f, 0.8f, -6.25f, 0.45f, 1.0f + (i % 3 == 0 ? 0 : 0.4f), 0.4f);   // front fangs
         if (sp.brow) add(headB, -2.5f * hw, -3.2f, -6.3f, 5.0f * hw, 1.0f, 2.5f);
         PartDefinition head = neck.addOrReplaceChild("head", headB, PartPose.offset(0, -4.5f, 0));
+        domeCu = 0;
         CubeListBuilder domeB = CubeListBuilder.create();
         if (sp.style != 4) {     // long "banana" cranium: four tapering sections whose top line slopes down toward the back
             float W = sp.domeW, H = sp.domeH, Ln = sp.domeL;
-            box2(domeB, -W / 2, -2.2f - H * 0.8f, -6.5f, W, H * 0.8f, 7.5f);
-            box2(domeB, -W * 0.47f, -1.6f - H * 0.85f, 1, W * 0.94f, H * 0.85f, Ln * 0.5f);
-            box2(domeB, -W * 0.39f, -1.0f - H * 0.75f, 1 + Ln * 0.5f, W * 0.78f, H * 0.72f, Ln * 0.33f);
-            box2(domeB, -W * 0.27f, -0.5f - H * 0.6f, 1 + Ln * 0.83f, W * 0.54f, H * 0.5f, Ln * 0.2f);
+            dome(domeB, -W / 2, -2.2f - H * 0.8f, -6.5f, W, H * 0.8f, 7.5f);
+            dome(domeB, -W * 0.47f, -1.6f - H * 0.85f, 1, W * 0.94f, H * 0.85f, Ln * 0.5f);
+            dome(domeB, -W * 0.39f, -1.0f - H * 0.75f, 1 + Ln * 0.5f, W * 0.78f, H * 0.72f, Ln * 0.33f);
+            dome(domeB, -W * 0.27f, -0.5f - H * 0.6f, 1 + Ln * 0.83f, W * 0.54f, H * 0.5f, Ln * 0.2f);
         }
         head.addOrReplaceChild("dome", domeB, PartPose.ZERO);
         CubeListBuilder rid = CubeListBuilder.create();
