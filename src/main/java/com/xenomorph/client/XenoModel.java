@@ -216,6 +216,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
         CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 14);
+        add(inB, -1.5f, -1.2f, -1.2f, 3.0f, 2.4f, 1.3f);                                           // fleshy collar where the inner jaw emerges
+        for (int i = 0; i < 4; i++) { tooth(inB, -1.15f, -0.2f, -3.2f + i * 2.2f, 0.4f, 0.8f, 0.45f); tooth(inB, 0.75f, -0.2f, -3.2f + i * 2.2f, 0.4f, 0.8f, 0.45f); }   // rows of tiny side teeth
         tooth(inB, -0.7f, -0.5f, -5.2f, 1.4f, 1.0f, 1.2f); tooth(inB, -0.5f, -1.2f, -4.8f, 1, 0.6f, 0.6f); tooth(inB, -0.5f, 0.6f, -4.6f, 1, 0.6f, 0.6f);
         head.addOrReplaceChild("inner", inB, PartPose.offset(0, 0.4f, -1.5f));
         CubeListBuilder upT = CubeListBuilder.create();
@@ -296,7 +298,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
     private static void tailEnd(CubeListBuilder cb, int kind, float w) {
         switch (kind) {
-            case 0 -> { add(cb, -0.4f, -3.4f, 3, 0.8f, 6.8f, 6); add(cb, -0.4f, -2.2f, 8, 0.8f, 4.4f, 4); }                       // leaf blade
+            case 0 -> {                                                                                                   // long swept leaf blade with a keel
+                add(cb, -0.4f, -3.8f, 2, 0.8f, 7.6f, 3.2f); add(cb, -0.35f, -3.2f, 5, 0.7f, 6.4f, 3.2f); add(cb, -0.3f, -2.5f, 8, 0.6f, 4.9f, 3.2f);
+                add(cb, -0.25f, -1.7f, 11, 0.5f, 3.3f, 3.2f); add(cb, -0.2f, -0.9f, 14, 0.4f, 1.8f, 2.6f); add(cb, -0.6f, -0.6f, 2, 1.2f, 1.2f, 15);
+            }
             case 1 -> { add(cb, -0.5f, -0.5f, 5, 1, 1, 10); add(cb, -0.4f, -1.6f, 8, 0.8f, 3.2f, 1.2f); add(cb, -0.4f, -1.2f, 11.5f, 0.8f, 2.4f, 1.2f); } // spear + barbs
             case 2 -> { add(cb, -3f, -3f, 1, 6, 6, 6); add(cb, -0.6f, -4.6f, 2, 1.2f, 1.6f, 1.2f); add(cb, -0.6f, 3f, 2, 1.2f, 1.6f, 1.2f); add(cb, -4.6f, -0.6f, 2, 1.6f, 1.2f, 1.2f); add(cb, 3f, -0.6f, 2, 1.6f, 1.2f, 1.2f); } // spiked club
             case 3 -> { add(cb, -2.2f, -2.8f, 3, 0.8f, 5.6f, 6); add(cb, 1.4f, -2.8f, 3, 0.8f, 5.6f, 6); add(cb, -0.4f, -1.2f, 6, 0.8f, 2.4f, 5); }  // twin blade
