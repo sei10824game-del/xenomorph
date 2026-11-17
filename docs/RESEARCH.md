@@ -56,3 +56,7 @@ Fan / crossover (lowest priority)
 
 Already covered: Drone, Warrior, Praetorian, Queen, Queen Mother, Empress, King, Runner, Sentry, Crusher/Charger, Spitter, Ravager, Carrier, Arachnoid, Boiler, Burster, Prowler, Brute, Bull Alien, Stalker/Praetomorph, Neomorph, Newborn, Deacon, Protomorph, Predalien, Berserker, K-Series (+ full ladder), Cloned (+ full ladder), White Hybrid (+King), Rogue, Red Queen Mother (+ red castes), Pathogen Runner/Brute/Queen, Matriarch.
 The mod's "Lurker" has no wiki page (invented).
+
+
+## Third pass added
+Flying Queen, Vampiric Queen, Irradiated, Scorched, Titan, Wraith, Armored, Tusked, Imp. Still open: Alpha, Biodrone, Biomorph, Crawler, Infectoid, Symbiotic, Ultramorph, Thrasher, Seven, Siren, burster variants, extra facehuggers/ovomorphs, aquatic/reptile hosts, fan crossovers.

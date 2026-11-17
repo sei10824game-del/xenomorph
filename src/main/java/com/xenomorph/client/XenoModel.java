@@ -75,7 +75,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     static final class Sp {
         float domeL = 15, domeH = 3.6f, domeW = 4.0f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
         int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 10;
-        boolean fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
+        boolean wings, fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
     // tailEnd: 0 blade, 1 spear, 2 club, 3 twin-blade, 4 bare tip
@@ -119,6 +119,15 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case WINTERBEAST -> { p.limb = 1.35f; p.torso = 1.35f; p.domeL = 10; p.domeW = 5.4f; p.plates = 2; p.spines = 6; p.carapace = true; p.tailEnd = 2; p.tailSegs = 6; p.tubeLen = 0; p.ribs = 3; p.mand = true; p.cheek = true; }
             case DOG_QUEEN -> { p.style = 2; p.fan = 11; p.domeL = 12; p.limb = 1.1f; p.torso = 1.05f; p.spines = 4; p.ribs = 4; p.carapace = true; p.tailEnd = 0; p.plates = 1; }
             case REAPER -> { p.domeL = 12; p.mand = true; p.cheek = true; p.spines = 0; p.tubeLen = 0; p.ribs = 4; p.clawL = 1.2f; p.brow = true; }
+            case FLYING_QUEEN -> { p.style = 2; p.fan = 14; p.wings = true; p.carapace = false; p.limb = 0.95f; p.spines = 4; p.ribs = 5; p.tailEnd = 1; p.domeL = 14; }
+            case VAMPIRIC_QUEEN -> { p.style = 2; p.fan = 12; p.wings = true; p.mand = true; p.cheek = true; p.limb = 0.9f; p.ribs = 6; p.spines = 3; p.domeL = 13; p.tailEnd = 3; }
+            case IRRADIATED -> { p.style = 1; p.spines = 7; p.ribs = 5; p.cheek = true; p.limb = 1.05f; p.tailEnd = 3; }
+            case SCORCHED -> { p.style = 5; p.spines = 5; p.ribs = 4; p.plates = 1; p.tailEnd = 0; p.clawL = 1.3f; }
+            case TITAN -> { p.style = 3; p.horns = 6; p.domeW = 6.8f; p.carapace = true; p.plates = 2; p.spines = 11; p.ribs = 6; p.elbow = true; p.knee = true; p.torso = 1.5f; p.limb = 1.45f; p.tailEnd = 2; p.mand = true; p.cheek = true; p.clawL = 1.5f; }
+            case WRAITH -> { p.domeL = 15; p.limb = 0.8f; p.armK = 1.2f; p.neckK = 1.2f; p.ribs = 7; p.spines = 2; p.clawL = 1.5f; p.tubeLen = 0; p.tailEnd = 1; }
+            case ARMORED -> { p.style = 1; p.carapace = true; p.plates = 2; p.torso = 1.3f; p.limb = 1.3f; p.elbow = true; p.knee = true; p.spines = 4; p.ribs = 2; }
+            case TUSKED -> { p.style = 3; p.horns = 0; p.mand = true; p.cheek = true; p.torso = 1.15f; p.limb = 1.15f; p.plates = 1; p.domeW = 4.6f; p.spines = 3; }
+            case IMP -> { p.domeL = 8; p.limb = 0.8f; p.torso = 0.8f; p.tailSegs = 5; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 2; p.spines = 0; }
             case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.upright = 0.15f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
             case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }
@@ -175,6 +184,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         PartDefinition chest = body.addOrReplaceChild("chest", chestB, PartPose.offset(0, -8.5f, 0));
         CubeListBuilder neckB = box(-2 * L, -5, -2 * L, 4 * L, 6, 4 * L);
         for (int i = 0; i < 3; i++) add(neckB, -2.35f * L, -4.4f + i * 2f, -2.35f * L, 4.7f * L, 0.7f, 4.7f * L);   // cartilage rings
+        if (sp.wings) for (int sg = -1; sg <= 1; sg += 2)   // folded membrane wings
+            chest.addOrReplaceChild(sg > 0 ? "wingL" : "wingR", box(0, 0, 0, 0.8f, 16, 14), PartPose.offsetAndRotation(sg * 3.8f * T, -8.2f, 3.2f, 0.7f, sg * 0.55f, sg * -0.5f));
         PartDefinition neck = chest.addOrReplaceChild("neck", neckB, PartPose.offset(0, -7.5f, 0));
 
         // head

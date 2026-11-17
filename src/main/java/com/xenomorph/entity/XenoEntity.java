@@ -242,6 +242,7 @@ public class XenoEntity extends Monster {
                 x.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 60, 1, false, false)); x.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, false));
             }
         if (caste == Caste.TRUE_KING && tickCount % 20 == 0 && getHealth() < getMaxHealth()) heal(4f);       // the King repairs itself almost at once
+        if (caste == Caste.WRAITH && !hasEffect(MobEffects.INVISIBILITY) && getTarget() == null) addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 80, 0, false, false));   // ghost: unseen until it attacks
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
@@ -294,6 +295,12 @@ public class XenoEntity extends Monster {
         float wt = caste.weight();
         if (ok && t instanceof net.minecraft.world.entity.npc.AbstractVillager v && !caste.red() && faction(this) != 8 && v.getHealth() < v.getMaxHealth() * 0.35f
                 && !v.hasEffect(XenomorphMod.EMBRYO.get()) && !v.hasEffect(XenomorphMod.RED_EMBRYO.get())) cocoon(v);   // captured, not killed: the hive needs hosts
+        if (ok) switch (caste) {
+            case VAMPIRIC_QUEEN -> heal(caste.dmg * 0.6f);
+            case IRRADIATED -> { t.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0)); t.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0)); }
+            case SCORCHED -> t.setSecondsOnFire(5);
+            default -> {}
+        }
         if (ok && caste == Caste.TRUE_KING) heal(3f);                                  // feeding speeds its regeneration
         if (ok && kb > 0) { kb *= wt; Vec3 d = t.position().subtract(position()).multiply(1, 0, 1).normalize(); t.push(d.x * kb, 0.25 * kb, d.z * kb); t.hurtMarked = true; }
         if (ok && wt >= 1.4f && level() instanceof ServerLevel sl) {          // heavy hitters crack the ground and thud
@@ -564,6 +571,7 @@ public class XenoEntity extends Monster {
             case CLONE_QUEEN -> new Caste[]{Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
             case PREDALIEN_QUEEN -> new Caste[]{Caste.PREDALIEN, Caste.PREDALIEN, Caste.WARRIOR};
             case DOG_QUEEN -> new Caste[]{Caste.RUNNER, Caste.RUNNER, Caste.SENTINEL};
+            case TITAN -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.WARDEN};
             case TRUE_KING -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.BRUTE};
             case RED_QUEEN_MOTHER -> new Caste[]{Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE};
             case QUEEN -> new Caste[]{Caste.DRONE, Caste.DRONE, Caste.WARRIOR};
