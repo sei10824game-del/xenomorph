@@ -76,15 +76,15 @@ public class FacehuggerEntity extends Monster {
     }
 
     /** Valid host: not a xeno and not already implanted. */
-    private boolean free(LivingEntity e) { return !XenoEntity.isXeno(e) && !e.hasEffect(XenomorphMod.EMBRYO.get()) && !e.hasEffect(XenomorphMod.RED_EMBRYO.get()); }
+    private boolean free(LivingEntity e) { return !XenoEntity.isXeno(e) && !e.hasEffect(XenomorphMod.EMBRYO.get()) && !e.hasEffect(XenomorphMod.RED_EMBRYO.get()) && !e.hasEffect(XenomorphMod.PRAETO_EMBRYO.get()); }
 
     private void attach(LivingEntity t) {
-        if (t.hasEffect(XenomorphMod.EMBRYO.get()) || t.hasEffect(XenomorphMod.RED_EMBRYO.get())) return;
+        if (t.hasEffect(XenomorphMod.EMBRYO.get()) || t.hasEffect(XenomorphMod.RED_EMBRYO.get()) || t.hasEffect(XenomorphMod.PRAETO_EMBRYO.get())) return;
         net.minecraft.world.item.ItemStack helm = t.getItemBySlot(EquipmentSlot.HEAD);
         if (!helm.isEmpty()) { helm.hurtAndBreak(40, t, e -> e.broadcastBreakEvent(EquipmentSlot.HEAD)); t.hurt(damageSources().magic(), 2); if (!t.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) { setDeltaMovement(0, 0.3, 0); return; } }
         host = t; hostId = t.getId(); attachTicks = 0;
         entityData.set(ATTACHED, true);
-        t.addEffect(new MobEffectInstance((variant() > 0 ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get(), 2400, 0, false, true, true));
+        t.addEffect(new MobEffectInstance((variant() == 3 ? XenomorphMod.PRAETO_EMBRYO : variant() > 0 ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get(), 2400, 0, false, true, true));
         playSound(SoundEvents.SLIME_SQUISH, 1.2f, 0.6f);
     }
     private void tickAttached() {

@@ -20,11 +20,11 @@ import net.minecraft.world.level.Level;
 public class SurgicalKit extends Item {
     public SurgicalKit() { super(new Item.Properties().durability(6)); }
 
-    public static boolean implanted(LivingEntity e) { return e.hasEffect(XenomorphMod.EMBRYO.get()) || e.hasEffect(XenomorphMod.RED_EMBRYO.get()); }
+    public static boolean implanted(LivingEntity e) { return e.hasEffect(XenomorphMod.EMBRYO.get()) || e.hasEffect(XenomorphMod.RED_EMBRYO.get()) || e.hasEffect(XenomorphMod.PRAETO_EMBRYO.get()); }
 
     static boolean remove(LivingEntity host, Player surgeon) {
         if (!implanted(host)) return false;
-        host.removeEffect(XenomorphMod.EMBRYO.get()); host.removeEffect(XenomorphMod.RED_EMBRYO.get());
+        host.removeEffect(XenomorphMod.EMBRYO.get()); host.removeEffect(XenomorphMod.RED_EMBRYO.get()); host.removeEffect(XenomorphMod.PRAETO_EMBRYO.get());
         if (host instanceof Mob m && m.isNoAi()) m.setNoAi(false);
         if (host instanceof net.minecraft.world.entity.npc.AbstractVillager && surgeon != host)       // grateful village
             surgeon.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.HERO_OF_THE_VILLAGE, 6000, 0));

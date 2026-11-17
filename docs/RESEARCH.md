@@ -59,4 +59,4 @@ The mod's "Lurker" has no wiki page (invented).
 
 
 ## Third pass added
-Flying Queen, Vampiric Queen, Irradiated, Scorched, Titan, Wraith, Armored, Tusked, Imp. Fourth pass: Alpha, Crawler, Biomorph, Siren, Seven. Still open: Biodrone, Infectoid, Symbiotic, Ultramorph, Thrasher, burster variants, extra facehuggers/ovomorphs, aquatic/reptile hosts, fan crossovers.
+Flying Queen, Vampiric Queen, Irradiated, Scorched, Titan, Wraith, Armored, Tusked, Imp. Fourth pass: Alpha, Crawler, Biomorph, Siren, Seven. Praeto-Facehugger (-> Stalker) and Thrasher added. Still open: Biodrone, Infectoid, Symbiotic, Ultramorph, burster variants, extra facehuggers/ovomorphs, aquatic/reptile hosts, fan crossovers.

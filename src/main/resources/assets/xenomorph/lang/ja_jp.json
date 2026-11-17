@@ -200,5 +200,9 @@
  "entity.xenomorph.siren": "サイレン",
  "item.xenomorph.siren_spawn_egg": "サイレン スポーンエッグ",
  "entity.xenomorph.seven_drone": "セブン",
- "item.xenomorph.seven_drone_spawn_egg": "セブン スポーンエッグ"
+ "item.xenomorph.seven_drone_spawn_egg": "セブン スポーンエッグ",
+ "entity.xenomorph.thrasher": "スラッシャー",
+ "item.xenomorph.thrasher_spawn_egg": "スラッシャー スポーンエッグ",
+ "item.xenomorph.praeto_facehugger_spawn_egg": "プレト・フェイスハガー",
+ "effect.xenomorph.praeto_embryo": "プレト胚"
 }

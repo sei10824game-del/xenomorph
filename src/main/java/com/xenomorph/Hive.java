@@ -37,7 +37,7 @@ public final class Hive {
     private static final Caste[] KSER = {Caste.K_DRONE, Caste.K_DRONE, Caste.K_DRONE, Caste.K_WARRIOR, Caste.K_WARRIOR, Caste.K_PRAETORIAN, Caste.K_FATALIS};
     private static final Caste[] CLONES = {Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
     private static final Caste[] PROTO = {Caste.PROTOMORPH};   // own faction: never shares a hive with classic xenos
-    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER};
+    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER, Caste.THRASHER};
     private static final Caste[] NEO = {Caste.NEOMORPH};   // own faction
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {

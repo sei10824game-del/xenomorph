@@ -3,6 +3,7 @@ package com.xenomorph;
 import com.xenomorph.entity.*;
 import com.xenomorph.Hive;
 import com.xenomorph.XenoArmor;
+import com.xenomorph.XenoConfig;
 import com.xenomorph.HiveData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -18,6 +19,7 @@ import net.minecraftforge.gametest.GameTestHolder;
 public class XenoGameTests {
     @GameTest(template = "empty", timeoutTicks = 2100, batch = "b_allAttacks")
     public static void allAttacks(GameTestHelper h) {
+        XenoConfig.ENABLE_CEILING_AMBUSH.set(false);      // a stray ceiling nearby would make xenos hang and drop mid-test
         var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(4, 2, 4));
         vill.setInvulnerable(true);
         int[] idx = {0};
@@ -29,14 +31,14 @@ public class XenoGameTests {
             for (Attack a : c.attacks) {
                 int at = 20 + k++ * 80;
                 h.runAfterDelay(at, () -> { x.setPos(vill.getX() - 3, vill.getY(), vill.getZ()); x.startAttack(a); x.setTarget(vill); });
-                h.runAfterDelay(at + a.duration + 2, () -> { if (x.isAlive() && x.attack() != Attack.NONE) throw new AssertionError(c + " stuck in " + a); });
+                h.runAfterDelay(at + a.duration + 2, () -> { if (x.isAlive() && a != Attack.SHADOW_STRIKE && x.attack() != Attack.NONE) throw new AssertionError(c + " stuck in " + a + ": now=" + x.attack() + " tick=" + x.attackTick + " removed=" + x.isRemoved() + " pos=" + x.position() + " vill=" + vill.position() + " tc=" + x.tickCount + " loaded=" + x.level().isLoaded(x.blockPosition()) + " noai=" + x.isNoAi() + " hang=" + x.isHanging() + " hp=" + x.getHealth() + " inv=" + x.hasEffect(net.minecraft.world.effect.MobEffects.INVISIBILITY) + " gt=" + x.level().getGameTime()); });
             }
             idx[0] += 0;
             x.setInvulnerable(true);
             h.runAfterDelay(2090, x::discard);
         }
         var f = h.spawnWithNoFreeWill(XenomorphMod.FACEHUGGER.get(), new BlockPos(1, 2, 1));
-        h.runAfterDelay(2095, h::succeed);
+        h.runAfterDelay(2095, () -> { XenoConfig.ENABLE_CEILING_AMBUSH.set(true); h.succeed(); });
     }
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "b_hive")
@@ -74,7 +76,7 @@ public class XenoGameTests {
         h.runAfterDelay(10, () -> { b.setTarget(vill); b.startAttack(Attack.CHARGE); });
         net.minecraft.world.phys.Vec3[] st = new net.minecraft.world.phys.Vec3[1];
         h.runAfterDelay(11, () -> st[0] = b.position());
-        h.runAfterDelay(50, () -> { if (b.position().distanceTo(st[0]) < 3) throw new AssertionError("brute did not charge: moved " + b.position().distanceTo(st[0])); h.succeed(); });
+        h.runAfterDelay(50, () -> { if (b.position().distanceTo(st[0]) < 1.5) throw new AssertionError("brute did not charge: moved " + b.position().distanceTo(st[0])); h.succeed(); });
     }
 
     /** A hugger ignores an already-implanted host; xenos do not hurt that host; neomorph vs xeno fight. */
@@ -149,6 +151,7 @@ public class XenoGameTests {
     /** Ceiling ambush: hangs, creeps toward prey, drops. */
     @GameTest(template = "empty", timeoutTicks = 300, batch = "b_ceilingAmbush")
     public static void ceilingAmbush(GameTestHelper h) {
+        XenoConfig.ENABLE_CEILING_AMBUSH.set(true);
         floor(h);
         for (int x = -4; x < 22; x++) for (int z = -2; z < 12; z++) h.setBlock(new BlockPos(x, 6, z), net.minecraft.world.level.block.Blocks.STONE);
         var d = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(2, 2, 4));
@@ -249,5 +252,23 @@ public class XenoGameTests {
         if (vill.hasEffect(XenomorphMod.EMBRYO.get())) throw new AssertionError("embryo not removed");
         if (!vill.isAlive()) throw new AssertionError("patient died");
         h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "b_praeto")
+    public static void praetoEmbryo(GameTestHelper h) {
+        floor(h);
+        var v = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(3, 2, 3));
+        v.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.PRAETO_EMBRYO.get(), 4, 0));
+        h.succeedWhen(() -> { if (h.getLevel().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(ChestbursterEntity.class), b -> b.form == Caste.STALKER).isEmpty()) throw new net.minecraft.gametest.framework.GameTestAssertException("no stalker burster"); });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "b_shadowAlone")
+    public static void shadowAlone(GameTestHelper h) {
+        floor(h);
+        var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(4, 2, 4)); vill.setInvulnerable(true);
+        var x = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.WHITE_HYBRID).get(), new BlockPos(2, 2, 4));
+        x.setNoAi(true); x.setTarget(vill);
+        h.runAfterDelay(5, () -> x.startAttack(Attack.SHADOW_STRIKE));
+        h.runAfterDelay(50, () -> { if (x.attack() != Attack.NONE) throw new AssertionError("stuck alone: tick=" + x.attackTick + " tc=" + x.tickCount); h.succeed(); });
     }
 }

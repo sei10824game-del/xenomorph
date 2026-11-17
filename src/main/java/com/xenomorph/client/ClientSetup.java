@@ -39,7 +39,7 @@ public final class ClientSetup {
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         XenomorphMod.XENOS.forEach((c, t) -> e.registerEntityRenderer(t.get(), ctx -> new XenoRenderer(ctx, c)));
         e.registerEntityRenderer(XenomorphMod.FACEHUGGER.get(), ctx -> new MobRenderer<FacehuggerEntity, SmallModels.Hugger>(ctx, new SmallModels.Hugger(ctx.bakeLayer(HUGGER)), 0.3f) {
-            @Override public ResourceLocation getTextureLocation(FacehuggerEntity x) { return tex(x.variant() > 0 ? "red_facehugger" : "facehugger"); }
+            @Override public ResourceLocation getTextureLocation(FacehuggerEntity x) { return tex(x.variant() == 3 ? "praeto_facehugger" : x.variant() > 0 ? "red_facehugger" : "facehugger"); }
             @Override protected void scale(FacehuggerEntity x, PoseStack ps, float pt) { if (x.variant() == 2) ps.scale(1.8f, 1.8f, 1.8f); }
             @Override protected void setupRotations(FacehuggerEntity x, PoseStack ps, float a, float b, float pt) { super.setupRotations(x, ps, a, b, pt); }
         });

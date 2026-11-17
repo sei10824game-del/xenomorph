@@ -200,5 +200,9 @@
  "entity.xenomorph.siren": "Siren",
  "item.xenomorph.siren_spawn_egg": "Siren Spawn Egg",
  "entity.xenomorph.seven_drone": "Seven",
- "item.xenomorph.seven_drone_spawn_egg": "Seven Spawn Egg"
+ "item.xenomorph.seven_drone_spawn_egg": "Seven Spawn Egg",
+ "entity.xenomorph.thrasher": "Thrasher",
+ "item.xenomorph.thrasher_spawn_egg": "Thrasher Spawn Egg",
+ "item.xenomorph.praeto_facehugger_spawn_egg": "Praeto-Facehugger",
+ "effect.xenomorph.praeto_embryo": "Praeto Embryo"
 }
