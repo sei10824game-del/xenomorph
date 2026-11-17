@@ -231,6 +231,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 0; i * 2.6f < tl - 1; i++) { pl.addBox(-1.5f, -1.55f, 0.8f + i * 2.6f, 3.0f, 3.0f, 0.5f); pr.addBox(-1.5f, -1.55f, 0.8f + i * 2.6f, 3.0f, 3.0f, 0.5f); }   // ribbed rings
         PartDefinition tubL = chest.addOrReplaceChild("tubeL", pl, PartPose.offsetAndRotation(2 * T, -6.5f, 3.6f, 0.25f, 0.1f, 0));
         PartDefinition tubR = chest.addOrReplaceChild("tubeR", pr, PartPose.offsetAndRotation(-2 * T, -6.5f, 3.6f, 0.25f, -0.1f, 0));
+        if (tl > 4) {   // tubes curve: a tapered tip segment bends up and out at the end
+            tubL.addOrReplaceChild("tip", pipe(-0.8f, -0.8f, 0, 1.6f, 1.6f, tl * 0.45f), PartPose.offsetAndRotation(0, 0, tl - 0.4f, -0.55f, 0.18f, 0));
+            tubR.addOrReplaceChild("tip", pipe(-0.8f, -0.8f, 0, 1.6f, 1.6f, tl * 0.45f), PartPose.offsetAndRotation(0, 0, tl - 0.4f, -0.55f, -0.18f, 0));
+        }
         if (tl > 4) {   // second, lower pair of dorsal tubes like the film creature (four in all)
             tubL.addOrReplaceChild("low", pipe(-0.8f, -0.8f, 0, 1.6f, 1.6f, tl * 0.7f), PartPose.offsetAndRotation(0.7f, 4.4f, -0.6f, -0.22f, 0.14f, 0));
             tubR.addOrReplaceChild("low", pipe(-0.8f, -0.8f, 0, 1.6f, 1.6f, tl * 0.7f), PartPose.offsetAndRotation(-0.7f, 4.4f, -0.6f, -0.22f, -0.14f, 0));
