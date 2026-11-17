@@ -42,6 +42,7 @@ public class XenoEntity extends Monster {
 
     public final Caste caste;
     public int attackTick;
+    public float climbAmt, climbAmtO, hangAmt, hangAmtO;     // client-side eased 0..1 blends for the wall / ceiling poses
     public float bipedAmt, bipedAmtO;          // client-side blended stance 0=quad 1=biped
     public final EnumMap<Attack, Integer> lockout = new EnumMap<>(Attack.class);
     public int cooldown, stanceTimer, layTimer = 600;
@@ -210,6 +211,9 @@ public class XenoEntity extends Monster {
         super.tick();
         if (attack() != Attack.NONE) attackTick++;
         if (level().isClientSide) {
+            climbAmtO = climbAmt; hangAmtO = hangAmt;
+            climbAmt += Mth.clamp((isClimbing() ? 1f : 0f) - climbAmt, -0.1f, 0.1f);
+            hangAmt += Mth.clamp((isHanging() ? 1f : 0f) - hangAmt, -0.08f, 0.08f);
             bipedAmtO = bipedAmt;
             float goal = isBiped() ? 1 : 0;
             bipedAmt += Mth.clamp(goal - bipedAmt, -0.06f, 0.06f);
@@ -685,13 +689,28 @@ public class XenoEntity extends Monster {
             if (!st.isEmpty() && random.nextFloat() < 0.5f) st.hurtAndBreak(4, e, x -> x.broadcastBreakEvent(s));
         }
     }
+    /** Corpses dissolve in their own acid instead of lying there for a second. */
+    @Override protected void tickDeath() {
+        if (level() instanceof ServerLevel sl) {
+            if (deathTime == 1) playSound(XenomorphMod.SIZZLE.get(), 1.2f, 0.9f);
+            sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.2 + getBbHeight() * 0.4 * (1 - deathTime / 20f), getZ(), 3, getBbWidth() * 0.3, 0.2, getBbWidth() * 0.3, 0.02);
+            if (deathTime % 4 == 0) sl.sendParticles(ParticleTypes.SMOKE, getX(), getY() + 0.3, getZ(), 2, getBbWidth() * 0.3, 0.1, getBbWidth() * 0.3, 0.01);
+        }
+        super.tickDeath();
+    }
+
     @Override public void die(DamageSource src) {
         super.die(src);
         releaseHeld(false);
         if (!level().isClientSide) {
             boolean big = caste == Caste.BOILER || caste == Caste.BURSTER;
             for (LivingEntity e : around(big ? 5.0 : 2.6)) acidBurn(e, big ? 6 : caste.red() && faction(e) == 1 ? 9 : 3);
-            if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.5, getZ(), 40, 0.8, 0.4, 0.8, 0.1);
+            if (level() instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.5, getZ(), 40, 0.8, 0.4, 0.8, 0.1);
+                var pool = new net.minecraft.world.entity.AreaEffectCloud(level(), getX(), getY(), getZ());      // acid puddle left behind
+                pool.setRadius(1.2f + caste.scale * 0.5f); pool.setDuration(100); pool.setRadiusPerTick(-0.01f); pool.setParticle(ParticleTypes.ITEM_SLIME);
+                pool.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 1)); sl.addFreshEntity(pool);
+            }
         }
     }
 

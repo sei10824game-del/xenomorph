@@ -65,8 +65,8 @@ public final class ClientSetup {
             });
         }
         @Override public ResourceLocation getTextureLocation(XenoEntity e) { return texture; }
-        @Override protected void scale(XenoEntity e, PoseStack ps, float pt) { float s = e.caste.scale; ps.scale(s, s, s); }
-        @Override protected float getFlipDegrees(XenoEntity e) { return 90f; }
+        @Override protected void scale(XenoEntity e, PoseStack ps, float pt) { float s = e.caste.scale; float melt = e.deathTime > 0 ? 1f - 0.75f * Math.min(1f, (e.deathTime + pt) / 20f) : 1f; ps.scale(s * (1 + (1 - melt) * 0.25f), s * melt, s * (1 + (1 - melt) * 0.25f)); }   // slump and spread as it dissolves
+        @Override protected float getFlipDegrees(XenoEntity e) { return 0f; }
     }
 
     static class EggRenderer extends EntityRenderer<XenoEggEntity> {

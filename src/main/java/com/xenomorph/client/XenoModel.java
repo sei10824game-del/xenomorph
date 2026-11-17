@@ -292,13 +292,16 @@ public class XenoModel extends EntityModel<XenoEntity> {
     @Override
     public void setupAnim(XenoEntity e, float limbSwing, float amt, float age, float headYaw, float headPitch) {
         float pt = Minecraft.getInstance().getFrameTime();
-        pose(e.caste, Mth.lerp(pt, e.bipedAmtO, e.bipedAmt), e.attack(), e.attackTick + pt, limbSwing, amt, age, headYaw, headPitch, e.isClimbing(), e.isHanging());
+        pose(e.caste, Mth.lerp(pt, e.bipedAmtO, e.bipedAmt), e.attack(), e.attackTick + pt, limbSwing, amt, age, headYaw, headPitch, Mth.lerp(pt, e.climbAmtO, e.climbAmt), Mth.lerp(pt, e.hangAmtO, e.hangAmt));
     }
 
     /** Pure pose function (also used by the offline preview tool). b = biped blend, t = ticks into attack. */
     public void pose(Caste c, float bipedBlend, Attack at, float t, float limbSwing, float amt, float age, float headYaw, float headPitch) { pose(c, bipedBlend, at, t, limbSwing, amt, age, headYaw, headPitch, false, false); }
 
-    public void pose(Caste c, float bipedBlend, Attack at, float t, float limbSwing, float amt, float age, float headYaw, float headPitch, boolean climb, boolean hang) {
+    public void pose(Caste c, float bipedBlend, Attack at, float t, float limbSwing, float amt, float age, float headYaw, float headPitch, boolean climb, boolean hang) { pose(c, bipedBlend, at, t, limbSwing, amt, age, headYaw, headPitch, climb ? 1f : 0f, hang ? 1f : 0f); }
+
+    /** climbAmt / hangAmt are 0..1 blend weights so wall and ceiling poses ease in and out. */
+    public void pose(Caste c, float bipedBlend, Attack at, float t, float limbSwing, float amt, float age, float headYaw, float headPitch, float climbAmt, float hangAmt) {
         root.getAllParts().forEach(ModelPart::resetPose);
         for (ModelPart p : root.getAllParts().toList()) { p.xScale = p.yScale = p.zScale = 1; p.visible = true; }
         float b = smooth(bipedBlend);
@@ -367,23 +370,24 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
         // ---------- wall climbing: upright against the wall, hands and feet alternately reaching
         float cph = age * 0.55f;
-        boolean climbing = climb && at == Attack.NONE && !hang;
+        float cl = at == Attack.NONE ? climbAmt * (1 - hangAmt) : 0, hg = hangAmt;
+        boolean climbing = cl > 0.01f, hang = hg > 0.01f;
         if (climbing) {
-            P = 0.1f; crouch -= 1.5f;
+            P = Mth.lerp(cl, P, 0.1f); crouch -= 1.5f * cl;
             for (int s = 0; s < 2; s++) {
                 float sg = s == 0 ? 1 : -1, sw = Mth.sin(cph + s * Mth.PI);
-                A[s][0] = -2.55f + 0.5f * sw; A[s][1] = sg * -0.3f; A[s][2] = 0; A[s][3] = 0.45f + 0.45f * Math.max(0, Mth.sin(cph + s * Mth.PI + 1.57f)); A[s][4] = 0.5f; A[s][5] = 1;
+                A[s][0] = Mth.lerp(cl, A[s][0], -2.55f + 0.5f * sw); A[s][1] = Mth.lerp(cl, A[s][1], sg * -0.3f); A[s][2] = Mth.lerp(cl, A[s][2], 0); A[s][3] = Mth.lerp(cl, A[s][3], 0.45f + 0.45f * Math.max(0, Mth.sin(cph + s * Mth.PI + 1.57f))); A[s][4] = Mth.lerp(cl, A[s][4], 0.5f); A[s][5] = cl;
             }
-            legOv[0] = 1; legOv[1] = -3.2f; legOv[2] = 7.5f; legOv[3] = 2.2f;
-            headX += -0.7f; chestX += -0.12f; chestY += Mth.sin(cph) * 0.12f;
-            for (int i = 0; i < TAIL; i++) tailPitch[i] += 0.1f;
+            legOv[0] = cl; legOv[1] = -3.2f; legOv[2] = 7.5f; legOv[3] = 2.2f;
+            headX += -0.7f * cl; chestX += -0.12f * cl; chestY += Mth.sin(cph) * 0.12f * cl;
+            for (int i = 0; i < TAIL; i++) tailPitch[i] += 0.1f * cl;
         }
         // ---------- ceiling hang: belly to the ceiling, claws gripping, tail dangling
         if (hang) {
-            hRoll += Mth.PI;
-            for (int s = 0; s < 2; s++) { A[s][0] = -2.9f + 0.05f * Mth.sin(age * 0.07f + s); A[s][1] = (s == 0 ? 1 : -1) * -0.15f; A[s][3] = 0.15f; A[s][4] = -0.3f; A[s][5] = 1; }
-            headX += 0.9f; jawOpen += 0.15f + 0.2f * Math.max(0, Mth.sin(age * 0.05f));
-            for (int i = 0; i < TAIL; i++) { tailPitch[i] += 0.12f; tailYaw[i] += Mth.sin(age * 0.06f - i * 0.5f) * 0.08f; }
+            hRoll += Mth.PI * hg;
+            for (int s = 0; s < 2; s++) { A[s][0] = Mth.lerp(hg, A[s][0], -2.9f + 0.05f * Mth.sin(age * 0.07f + s)); A[s][1] = Mth.lerp(hg, A[s][1], (s == 0 ? 1 : -1) * -0.15f); A[s][3] = Mth.lerp(hg, A[s][3], 0.15f); A[s][4] = Mth.lerp(hg, A[s][4], -0.3f); A[s][5] = Math.max(A[s][5], hg); }
+            headX += 0.9f * hg; jawOpen += (0.15f + 0.2f * Math.max(0, Mth.sin(age * 0.05f))) * hg;
+            for (int i = 0; i < TAIL; i++) { tailPitch[i] += 0.12f * hg; tailYaw[i] += Mth.sin(age * 0.06f - i * 0.5f) * 0.08f * hg; }
         }
 
         // ---------- attack overlays (all times in ticks)
@@ -843,8 +847,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
         // ---------- apply stance/pose to parts
         float hAct = H - crouch;
-        if (hang) hAct = 4.5f;
-        if (climbing) hAct = 12f;
+        hAct = Mth.lerp(hg, hAct, 4.5f);
+        hAct = Mth.lerp(cl, hAct, 12f);
         hips.y = 24 - hAct + bob;
         hips.z = 1 + hipZ + (1 - b) * -1.5f;
         hips.zRot = walkRoll + hRoll; hips.xRot = flip;
@@ -876,7 +880,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 1; i < TAIL; i++) { tail[i].xRot = -tailPitch[i]; tail[i].yRot = tailYaw[i]; }
 
         // ---------- legs via IK
-        float footH = hang ? 14.5f : hAct - 1.6f;
+        float footH = Mth.lerp(hg, hAct - 1.6f, 14.5f);
         for (int s = 0; s < 2; s++) {
             float u = ((ph * legSpeed / Mth.TWO_PI) + (s == 0 ? 0 : 0.5f)) % 1f; if (u < 0) u += 1;
             float stride = Mth.lerp(b, 4.8f, 5.6f) * spd;
