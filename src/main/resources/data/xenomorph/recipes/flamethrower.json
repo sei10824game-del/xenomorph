@@ -1,0 +1,1 @@
+{"type": "minecraft:crafting_shaped", "pattern": ["II ", "IGB", " F "], "key": {"I": {"item": "minecraft:iron_ingot"}, "G": {"item": "xenomorph:acid_gland"}, "B": {"item": "minecraft:blaze_powder"}, "F": {"item": "minecraft:flint_and_steel"}}, "result": {"item": "xenomorph:flamethrower"}}

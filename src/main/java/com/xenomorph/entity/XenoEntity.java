@@ -676,6 +676,7 @@ public class XenoEntity extends Monster {
 
     // ---------- acid blood ----------
     @Override public boolean hurt(DamageSource src, float amount) {
+        if (caste == Caste.BULL_ALIEN && src.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) amount *= 2.5f;          // Bull Aliens cannot take heat
         boolean r = super.hurt(src, amount);
         if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !friendly(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, caste.red() && faction(att) == 1 ? 6 : 1 + random.nextInt(2));
         return r;

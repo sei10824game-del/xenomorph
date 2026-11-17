@@ -150,5 +150,18 @@
  "entity.xenomorph.dog_queen": "ドッグ・クイーン",
  "item.xenomorph.dog_queen_spawn_egg": "ドッグ・クイーン スポーンエッグ",
  "entity.xenomorph.reaper": "リーパー・ゼノモーフ",
- "item.xenomorph.reaper_spawn_egg": "リーパー・ゼノモーフ スポーンエッグ"
+ "item.xenomorph.reaper_spawn_egg": "リーパー・ゼノモーフ スポーンエッグ",
+ "item.xenomorph.pulse_rifle": "パルスライフル",
+ "item.xenomorph.flamethrower": "火炎放射器",
+ "item.xenomorph.acid_gland": "酸腺",
+ "advancement.xenomorph.root.title": "ゼノモーフ",
+ "advancement.xenomorph.root.desc": "モーショントラッカーを作る",
+ "advancement.xenomorph.first_kill.title": "バグハント",
+ "advancement.xenomorph.first_kill.desc": "ゼノモーフを倒す",
+ "advancement.xenomorph.hive.title": "巣の中へ",
+ "advancement.xenomorph.hive.desc": "ハイブ樹脂を手に入れる",
+ "advancement.xenomorph.implanted.title": "体内の何か",
+ "advancement.xenomorph.implanted.desc": "フェイスハガーに寄生される",
+ "advancement.xenomorph.queen_slayer.title": "彼女に近づくな",
+ "advancement.xenomorph.queen_slayer.desc": "クイーン系のゼノを倒す"
 }

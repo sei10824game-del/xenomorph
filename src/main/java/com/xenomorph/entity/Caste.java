@@ -119,4 +119,6 @@ public enum Caste {
     public boolean cloneStrain() { return id.startsWith("clone_"); }
     /** Hard, glossy cranium that gets the specular highlight layer. */
     public boolean glossy() { return !(this == NEOMORPH || this == NEWBORN || id.startsWith("pathogen") || this == HARBINGER || this == WHITE_HYBRID || this == WHITE_KING || this == PROTOMORPH); }
+    /** Heat-resistant mesoskeleton (Berserker, Warden, Ravager); everything else burns. */
+    public boolean fireproof() { return this == BERSERKER || this == WARDEN || this == RAVAGER || this == TRUE_KING; }
 }

@@ -150,5 +150,18 @@
  "entity.xenomorph.dog_queen": "Dog Queen",
  "item.xenomorph.dog_queen_spawn_egg": "Dog Queen Spawn Egg",
  "entity.xenomorph.reaper": "Reaper Xenomorph",
- "item.xenomorph.reaper_spawn_egg": "Reaper Xenomorph Spawn Egg"
+ "item.xenomorph.reaper_spawn_egg": "Reaper Xenomorph Spawn Egg",
+ "item.xenomorph.pulse_rifle": "Pulse Rifle",
+ "item.xenomorph.flamethrower": "Flamethrower",
+ "item.xenomorph.acid_gland": "Acid Gland",
+ "advancement.xenomorph.root.title": "Xenomorph",
+ "advancement.xenomorph.root.desc": "Build a motion tracker",
+ "advancement.xenomorph.first_kill.title": "Bug Hunt",
+ "advancement.xenomorph.first_kill.desc": "Kill a xenomorph",
+ "advancement.xenomorph.hive.title": "Into the Hive",
+ "advancement.xenomorph.hive.desc": "Collect hive resin",
+ "advancement.xenomorph.implanted.title": "Something Inside",
+ "advancement.xenomorph.implanted.desc": "Get a facehugger implanted",
+ "advancement.xenomorph.queen_slayer.title": "Get Away From Her",
+ "advancement.xenomorph.queen_slayer.desc": "Kill a xenomorph queen"
 }

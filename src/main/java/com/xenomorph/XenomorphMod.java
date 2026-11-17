@@ -31,6 +31,8 @@ public class XenomorphMod {
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
     static final DeferredRegister<net.minecraft.world.level.block.Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ID);
     public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN = BLOCKS.register("resin", () -> new net.minecraft.world.level.block.Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BROWN).strength(3f, 6f).requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.HONEY_BLOCK)));
+    static final RegistryObject<Item> RIFLE = ITEMS.register("pulse_rifle", XenoWeapons.PulseRifle::new), FLAMER = ITEMS.register("flamethrower", XenoWeapons.Flamethrower::new),
+            GLAND = ITEMS.register("acid_gland", () -> new Item(new Item.Properties()));
     static final RegistryObject<Item> TRACKER = ITEMS.register("motion_tracker", MotionTracker::new);
     static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
     static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
@@ -56,8 +58,8 @@ public class XenomorphMod {
 
     static {
         for (Caste c : Caste.values()) {
-            XENOS.put(c, ENTITIES.register(c.id, () -> EntityType.Builder.<XenoEntity>of((t, l) -> new XenoEntity(t, l, c), MobCategory.MONSTER)
-                    .sized(0.8f * c.scale, 2.1f * c.scale).clientTrackingRange(10).fireImmune().build(c.id)));
+            XENOS.put(c, ENTITIES.register(c.id, () -> (c.fireproof() ? EntityType.Builder.<XenoEntity>of((t, l) -> new XenoEntity(t, l, c), MobCategory.MONSTER).fireImmune() : EntityType.Builder.<XenoEntity>of((t, l) -> new XenoEntity(t, l, c), MobCategory.MONSTER))
+                    .sized(0.8f * c.scale, 2.1f * c.scale).clientTrackingRange(10).build(c.id)));
             EGGS.add(ITEMS.register(c.id + "_spawn_egg", () -> new ForgeSpawnEggItem(XENOS.get(c), 0x14181c, 0x3a5a4a + c.ordinal() * 0x050301, new Item.Properties())));
         }
         for (HunterEntity.Kind k : HunterEntity.Kind.values()) {
@@ -105,7 +107,7 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); }).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); }).build());
     }
 
     public XenomorphMod() {

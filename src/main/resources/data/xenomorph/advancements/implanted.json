@@ -1,0 +1,33 @@
+{
+ "display": {
+  "icon": {
+   "item": "xenomorph:pulse_rifle"
+  },
+  "title": {
+   "translate": "advancement.xenomorph.implanted.title"
+  },
+  "description": {
+   "translate": "advancement.xenomorph.implanted.desc"
+  },
+  "frame": "goal",
+  "show_toast": true,
+  "announce_to_chat": true,
+  "hidden": false
+ },
+ "criteria": {
+  "c": {
+   "trigger": "minecraft:effects_changed",
+   "conditions": {
+    "effects": {
+     "xenomorph:embryo": {}
+    }
+   }
+  }
+ },
+ "requirements": [
+  [
+   "c"
+  ]
+ ],
+ "parent": "xenomorph:first_kill"
+}

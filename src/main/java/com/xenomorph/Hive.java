@@ -82,6 +82,10 @@ public final class Hive {
             else if (d <= 7.0 && dy < -4) sl.setBlock(p, resin, 2);   // seal the floor over open caves
         }
         // floor: resin patches inside
+        for (int i = 0; i < 5; i++) {   // resin pillars floor-to-ceiling
+            BlockPos f = floor(sl, x0 + r.nextInt(9) - 4, y0, z0 + r.nextInt(9) - 4);
+            if (f != null) for (int y = 0; y < 9; y++) { BlockPos q2 = f.above(y); if (sl.getBlockState(q2).isAir()) sl.setBlock(q2, resin, 2); else break; }
+        }
         for (int i = 0; i < 40; i++) { BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5); if (f != null) sl.setBlock(f.below(), resin, 2); }
         boolean pathogen = !forceRed && r.nextInt(6) == 0, proto = !forceRed && !pathogen && r.nextInt(7) == 0, neo = !forceRed && !pathogen && !proto && r.nextInt(7) == 0, red = forceRed || (!pathogen && !proto && !neo && r.nextInt(8) == 0),
                 kser = !forceRed && !pathogen && !proto && !neo && !red && r.nextInt(9) == 0, clone = !forceRed && !pathogen && !proto && !neo && !red && !kser && r.nextInt(9) == 0;
