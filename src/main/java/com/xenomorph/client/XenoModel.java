@@ -146,7 +146,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
         add(chestB, -3.2f * T, -9.4f, -3.2f, 6.4f * T, 1.2f, 6.4f);                      // trapezius slope into the neck
         add(chestB, -3.0f * T, 0.2f, -3.0f, 6.0f * T, 1.0f, 6.0f);                       // ribcage tapers to the waist
         add(chestB, -3.4f * T, -7.6f, -4.4f, 6.8f * T, 2.6f, 0.7f); add(chestB, -3.0f * T, -5.0f, -4.4f, 6.0f * T, 2.4f, 0.7f);   // stepped, rounded breastplate
-        for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.3f * T, y, -3, 0.8f, 0.8f, 6); add(chestB, 3.5f * T, y, -3, 0.8f, 0.8f, 6); }
+        for (int i = 0; i < sp.ribs; i++) { float y = -7.5f + i * (8f / Math.max(1, sp.ribs)); add(chestB, -4.3f * T, y, -3.4f, 0.8f, 0.8f, 6.8f); add(chestB, 3.5f * T, y, -3.4f, 0.8f, 0.8f, 6.8f);
+            if (i % 2 == 0) add(chestB, -3.7f * T, y + 0.2f, -4.5f, 7.4f * T, 0.55f, 0.7f);         // rib arches wrapping the front
+        }
         for (int i = 0; i < 6; i++) add(chestB, -0.9f - (i % 2) * 0.25f, -8.4f + i * 1.4f, 3.8f, 1.8f + (i % 2) * 0.5f, 1.1f, 1.5f + (i % 2) * 0.7f);   // vertebrae
         add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
         for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
@@ -280,7 +282,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             add(shB, -0.4f, 0.8f, 1.5f * L, 0.8f, 5.5f, 0.8f);                           // calf ridge
             PartDefinition sh = t.addOrReplaceChild("shin", shB, PartPose.offset(0, 8, 0));
             CubeListBuilder ft = box(-1.8f * L, 0, -5, 3.6f * L, 1.6f, 6.5f);
-            for (int k = -1; k <= 1; k++) add(ft, k * 1.1f * L - 0.4f, 0.4f, -7.5f, 0.8f, 1, 3);
+            for (int k = -1; k <= 1; k++) { add(ft, k * 1.1f * L - 0.4f, 0.4f, -7.5f, 0.8f, 1, 3); add(ft, k * 1.1f * L - 0.25f, 0.55f, -8.6f, 0.5f, 0.5f, 1.2f); }   // toes with claw tips
             add(ft, -0.4f, 0.2f, 1.4f, 0.8f, 1.2f, 1.8f);                                // heel spur
             sh.addOrReplaceChild("foot", ft, PartPose.offset(0, 8, 0));
         }
