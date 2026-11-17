@@ -58,6 +58,7 @@ public class XenoEntity extends Monster {
         this.xpReward = (int) (caste.hp / 4);
         this.setMaxUpStep(1.1f);
         if (caste.stance == 2) entityData.set(BIPED, true);
+        if (caste.hp >= 250) boss = new net.minecraft.server.level.ServerBossEvent(getDisplayName(), caste == Caste.TRUE_KING ? net.minecraft.world.BossEvent.BossBarColor.PURPLE : caste.red() ? net.minecraft.world.BossEvent.BossBarColor.RED : net.minecraft.world.BossEvent.BossBarColor.WHITE, net.minecraft.world.BossEvent.BossBarOverlay.PROGRESS);
         if (caste == Caste.KING)                 // artificial queen-killer: every queen is prey number one
             targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, false, false, e -> e instanceof XenoEntity x && x != this && x.caste.attacks.contains(Attack.LAY)));
         if (caste.red()) {                   // (added here: registerGoals runs inside super() before `caste` exists) the red strain hunts the black hive first, queens above all
@@ -87,6 +88,7 @@ public class XenoEntity extends Monster {
     public boolean isHanging() { return entityData.get(HANG); }
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
+    private net.minecraft.server.level.ServerBossEvent boss;   // only for the giants (hp >= 250)
     private boolean landed;
     @Override protected net.minecraft.world.entity.ai.navigation.PathNavigation createNavigation(Level l) { return new net.minecraft.world.entity.ai.navigation.WallClimberNavigation(this, l); }
     @Override public boolean onClimbable() { return isClimbing(); }
@@ -223,6 +225,7 @@ public class XenoEntity extends Monster {
         if (cooldown > 0) cooldown--;
         lockout.replaceAll((k, v) -> v - 1);
         lockout.values().removeIf(v -> v <= 0);
+        if (boss != null) boss.setProgress(getHealth() / getMaxHealth());
         if (getTarget() != null && friendly(getTarget())) setTarget(null);
         {
             if (getTarget() != null) climbGrace = 40; else if (climbGrace > 0) climbGrace--;     // brief target loss mid-wall must not drop us
@@ -712,6 +715,10 @@ public class XenoEntity extends Monster {
         }
     }
     /** Corpses dissolve in their own acid instead of lying there for a second. */
+    @Override public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer p) { super.startSeenByPlayer(p); if (boss != null) boss.addPlayer(p); }
+    @Override public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer p) { super.stopSeenByPlayer(p); if (boss != null) boss.removePlayer(p); }
+    @Override public void remove(RemovalReason r) { if (boss != null) boss.removeAllPlayers(); super.remove(r); }
+
     @Override protected void tickDeath() {
         if (level() instanceof ServerLevel sl) {
             if (deathTime == 1) playSound(XenomorphMod.SIZZLE.get(), 1.2f, 0.9f);
