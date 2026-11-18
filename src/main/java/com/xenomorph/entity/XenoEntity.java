@@ -130,7 +130,7 @@ public class XenoEntity extends Monster {
         BlockPos above = BlockPos.containing(getX(), getBoundingBox().maxY + 0.05, getZ());
         if (!level().getBlockState(above).isFaceSturdy(level(), above, net.minecraft.core.Direction.DOWN)) { unhang(); return; }
         LivingEntity t = getTarget();
-        if (t == null || !t.isAlive() || friendly(t)) {
+        if ((t == null || !t.isAlive() || friendly(t)) && (t != null || tickCount % 5 == 0)) {   // idle ceiling watchers scan 4 times a second, not 20
             t = null; double best = 1e9;
             for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(14, 8, 14), e -> e != this && e.isAlive() && !friendly(e)
                     && (e instanceof Player p ? !p.isCreative() && !p.isSpectator() : e instanceof net.minecraft.world.entity.npc.AbstractVillager || faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy))) {
