@@ -932,6 +932,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 }
                 default -> {}
             }
+            // secondary motion for every attack: tail counter-swings against the torso twist, head lags behind, body lunges into the impact
+            {
+                float imp2 = kf(t, Math.max(0, hit - 2), 0, hit, 1, hit + 5, 0);
+                for (int i = 0; i < TAIL; i++) tailYaw[i] -= chestY * 0.5f * (1 + i * 0.15f) * aw;
+                headY -= chestY * 0.35f * aw; neckY -= chestY * 0.2f * aw;
+                hipZ -= imp2 * 0.8f; chestX += imp2 * 0.08f; headX += imp2 * 0.05f;
+            }
             // heavy bodies: impact squash, quake
             if (wt > 1.2f) {
                 float imp = kf(t, Math.max(0, hit - 1), 0, hit, 1, hit + 8, 0);
