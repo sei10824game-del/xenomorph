@@ -20,6 +20,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     final ModelPart root, hips, body, chest, neck, head, jaw, inner, dome, ridges, fan, horns, dreads, bulb, tubeL, tubeR, tail0;
     final ModelPart[] tail = new ModelPart[TAIL];
     final ModelPart[] arm = new ModelPart[2], fore = new ModelPart[2], hand = new ModelPart[2];
+    ModelPart ovi;   // queen ovipositor, only on castes that lay eggs
     final ModelPart[] arm2 = new ModelPart[2], fore2 = new ModelPart[2];
     final ModelPart[] thigh = new ModelPart[2], shin = new ModelPart[2], foot = new ModelPart[2];
 
@@ -35,6 +36,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             arm2[s] = chest.getChild("arm2" + n); fore2[s] = arm2[s].getChild("fore");
             thigh[s] = hips.getChild("thigh" + n); shin[s] = thigh[s].getChild("shin"); foot[s] = shin[s].getChild("foot");
         }
+        if (hips.hasChild("ovi")) ovi = hips.getChild("ovi");
         tail0 = hips.getChild("tail0");
         ModelPart p = tail0;
         for (int i = 0; i < TAIL; i++) { tail[i] = i == 0 ? tail0 : p.getChild("tail" + i); p = tail[i]; }
@@ -367,6 +369,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
             for (int k = -1; k <= 1; k++) { add(ft, k * 1.1f * L - 0.4f, 0.4f, -7.5f, 0.8f, 1, 3); add(ft, k * 1.1f * L - 0.25f, 0.55f, -8.6f, 0.5f, 0.5f, 1.2f); }   // toes with claw tips
             add(ft, -0.4f, 0.2f, 1.4f, 0.8f, 1.2f, 1.8f);                                // heel spur
             sh.addOrReplaceChild("foot", ft, PartPose.offset(0, 8, 0));
+        }
+        if (c.attacks.contains(Attack.LAY)) {   // ovipositor: a ribbed tube under the tail root that unfolds during egg-laying, with an egg bulge sliding down it
+            CubeListBuilder ob = box(-1.3f, -1.3f, 0, 2.6f, 2.6f, 11);
+            for (int i = 0; i < 4; i++) add(ob, -1.7f, -1.7f, 1.2f + i * 2.6f, 3.4f, 3.4f, 0.6f);
+            add(ob, -2.1f, -2.1f, 11, 4.2f, 4.2f, 3.2f);
+            hips.addOrReplaceChild("ovi", ob, PartPose.offsetAndRotation(0, 2.5f, 3.5f, -0.75f, 0, 0));
         }
         // tail
         int N = Math.max(1, sp.tailSegs);
@@ -1032,6 +1040,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
         tail0.xRot = -(tailBaseX + tailPitch[0]); tail0.yRot = tailYaw[0];
         for (int i = 1; i < TAIL; i++) { tail[i].xRot = -tailPitch[i]; tail[i].yRot = tailYaw[i]; }
 
+        if (ovi != null) {
+            float ov = at == Attack.LAY ? kf(t, 0, 0, 12, 1, 56, 1, 68, 0) : 0;
+            ovi.visible = ov > 0.02f;
+            ovi.zScale = ov; ovi.xScale = ovi.yScale = 0.6f + 0.4f * ov;
+            if (at == Attack.LAY) { float ps = Mth.sin(t * 0.55f) * kf(t, 12, 0, 20, 1, 50, 1, 60, 0); ovi.xScale *= 1 + 0.18f * ps; ovi.yScale *= 1 + 0.18f * ps; ovi.xRot = -0.75f + 0.12f * ps; }
+        }
         // ---------- legs via IK
         float footH = Mth.lerp(hg, hAct - 1.6f, 14.5f);
         for (int s = 0; s < 2; s++) {
