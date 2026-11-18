@@ -330,16 +330,17 @@ public class XenoModel extends EntityModel<XenoEntity> {
             if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 10.5f, 1.6f);
             PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
             float fl = 3.8f * sp.clawL;
-            CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
-            for (int k = 0; k < 3; k++) {   // canon hand: three long two-jointed fingers (curled, splayed tips) + opposed thumb
-                float fx = (k - 1) * 1.05f * L - 0.3f, f2 = fl * (k == 1 ? 1.45f : 1.25f), sp2 = (k - 1) * 0.3f, p1 = f2 * 0.55f, p2 = f2 - p1;
-                add(h, fx, 0.3f, -2.4f - p1, 0.6f, 0.7f, p1); add(h, fx - 0.1f, -0.45f, -2.7f, 0.8f, 0.7f, 1.0f);                 // proximal + knuckle
-                add(h, fx + sp2 * 0.5f, 0.55f, -2.4f - f2 + 0.1f, 0.5f, 0.55f, p2 + 0.4f);                                       // distal, drooping + splayed
-                if (!sp.singleNail || k == 1) add(h, fx + sp2 + 0.05f, 0.85f, -3.1f - f2, 0.35f, 0.4f, 1.2f);                     // hooked tip
+            PartDefinition hd = f.addOrReplaceChild("hand", box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f), PartPose.offset(0, 10f, 0));
+            for (int k = 0; k < 4; k++) {   // canon hand: three long two-jointed fingers + opposed thumb; each finger curls at two joints
+                boolean th = k == 3;
+                float fx = th ? (sx > 0 ? 1.45f * L : -2.05f * L) : (k - 1) * 1.05f * L - 0.3f;
+                float f2 = th ? fl * 0.6f + 2f : fl * (k == 1 ? 1.45f : 1.25f), p1 = f2 * 0.55f, p2 = f2 - p1, w0 = th ? 0.65f : 0.6f;
+                PartDefinition fg = hd.addOrReplaceChild("f" + k, add(box(0, 0, -p1, w0, 0.7f, p1), -0.1f, -0.45f, -0.3f, 0.8f, 0.7f, 1.0f),
+                    PartPose.offsetAndRotation(fx, th ? 0.2f : 0.3f, th ? -1.6f : -2.4f, 0.1f, th ? (sx > 0 ? 0.5f : -0.5f) : (k - 1) * 0.12f, 0));
+                CubeListBuilder dc = box(0.05f, 0.1f, -(p2 + 0.4f), 0.5f, 0.55f, p2 + 0.4f);
+                if (!sp.singleNail || k == 1) add(dc, 0.1f, 0.3f, -(p2 + 0.4f) - 1.2f, 0.35f, 0.4f, 1.2f);
+                fg.addOrReplaceChild("d", dc, PartPose.offset(0, 0, -p1));
             }
-            float tx = sx > 0 ? 1.45f * L : -2.05f * L;
-            add(h, tx, 0.2f, -1.6f, 0.6f, 0.65f, 1.8f); add(h, tx + (sx > 0 ? 0.25f : -0.25f), 0.5f, -3.0f - fl * 0.3f, 0.45f, 0.5f, fl * 0.3f + 1.4f);   // thumb, two joints
-            f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
             PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
         }
@@ -1045,6 +1046,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
             arm[s].yScale = sp.armK;
             arm[s].xRot = pitch - body.xRot - chest.xRot; arm[s].yRot = yaw; arm[s].zRot = roll;
             fore[s].xRot = el; hand[s].xRot = hnd;
+            // finger curl: relaxed hook at rest, spread open on wind-up, clench on impact
+            float curl = 0.35f + 0.15f * Mth.sin(age * 0.08f + s * 2f);
+            if (at != Attack.NONE && !climbing && !hang) {
+                float ht = at.hit, tt = t;
+                float cc = kf(tt, 0, 0.35f, Math.max(1, ht - 6), -0.25f, ht, 1.0f, ht + 8, 0.7f, Math.max(ht + 9, at.duration), 0.35f);
+                curl = Mth.lerp(w, curl, cc);
+            } else if (climbing || hang) curl = 0.9f;
+            for (int k = 0; k < 4; k++) { ModelPart fp = hand[s].getChild("f" + k); fp.xRot = 0.1f + curl * 0.5f; fp.getChild("d").xRot = curl * 0.9f + 0.15f; }
         }
     }
 
