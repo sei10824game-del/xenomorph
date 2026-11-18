@@ -980,7 +980,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float[] a = ik(tz, ty, 8f * lk, 8f * lk, true);
             thigh[s].yScale = lk;
             thigh[s].xRot = a[0]; shin[s].xRot = a[1] - a[0];
-            foot[s].xRot = -a[1] + Mth.lerp(legOv[0], 0.0f, 0.9f) + lift * 0.06f;
+            foot[s].xRot = -a[1] + Mth.lerp(legOv[0], 0.0f, 0.9f) + lift * 0.06f + 0.3f * b * (1 - legOv[0]);   // heel lifted: toe-walking stance like the film suit
             thigh[s].zRot = (s == 0 ? -1 : 1) * 0.06f; 
         }
 
