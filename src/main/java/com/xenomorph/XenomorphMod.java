@@ -30,7 +30,18 @@ public class XenomorphMod {
     static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ID);
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
     static final DeferredRegister<net.minecraft.world.level.block.Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ID);
-    public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN = BLOCKS.register("resin", () -> new net.minecraft.world.level.block.Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BROWN).strength(3f, 6f).requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.HONEY_BLOCK)));
+    public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN = BLOCKS.register("resin", () -> new net.minecraft.world.level.block.Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BROWN).strength(3f, 6f).requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.HONEY_BLOCK)) {
+        /** Hive ambience: wet drips, a low distant hiss, faint metallic clinks. */
+        @Override public void animateTick(net.minecraft.world.level.block.state.BlockState st, net.minecraft.world.level.Level lv, net.minecraft.core.BlockPos pos, net.minecraft.util.RandomSource r) {
+            if (r.nextInt(90) != 0) return;
+            double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
+            switch (r.nextInt(4)) {
+                case 0, 1 -> { lv.playLocalSound(x, y, z, net.minecraft.sounds.SoundEvents.POINTED_DRIPSTONE_DRIP_WATER, net.minecraft.sounds.SoundSource.AMBIENT, 0.35f, 0.7f + r.nextFloat() * 0.3f, false); lv.addParticle(net.minecraft.core.particles.ParticleTypes.FALLING_WATER, x, y - 0.5, z, 0, 0, 0); }
+                case 2 -> lv.playLocalSound(x, y, z, HISS.get(), net.minecraft.sounds.SoundSource.AMBIENT, 0.25f, 0.4f + r.nextFloat() * 0.15f, false);
+                default -> lv.playLocalSound(x, y, z, net.minecraft.sounds.SoundEvents.CHAIN_STEP, net.minecraft.sounds.SoundSource.AMBIENT, 0.3f, 0.5f + r.nextFloat() * 0.2f, false);
+            }
+        }
+    });
     static final RegistryObject<Item> RIFLE = ITEMS.register("pulse_rifle", XenoWeapons.PulseRifle::new), FLAMER = ITEMS.register("flamethrower", XenoWeapons.Flamethrower::new),
             GLAND = ITEMS.register("acid_gland", () -> new Item(new Item.Properties()));
     static final List<RegistryObject<Item>> SUIT = new ArrayList<>();
