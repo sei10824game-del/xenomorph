@@ -60,3 +60,25 @@ The mod's "Lurker" has no wiki page (invented).
 
 ## Third pass added
 Flying Queen, Vampiric Queen, Irradiated, Scorched, Titan, Wraith, Armored, Tusked, Imp. Fourth pass: Alpha, Crawler, Biomorph, Siren, Seven. Praeto-Facehugger (-> Stalker) and Thrasher added. Ultramorph (Engineer host, 1 in 4) and Biodrone (docile) added. Infectoid and Symbiotic Brute (with rider) added. Still open: burster variants, extra facehuggers/ovomorphs, aquatic/reptile hosts, fan crossovers.
+
+## Mutant lineage (Mutant Monsters / Mutant More)
+
+Source for Mutant Monsters (Fuzss, 1.20.1 branch): the public mob classes (MutantZombie / Skeleton / Creeper / Enderman / SnowGolem) were read for attack timings, damage and effects. Mutant More: the source is not public, so abilities are inferred from the Modrinth description and the 2.0.0 changelog (item / entity / effect names). Treat those seven as interpretations.
+
+| Xeno | Original | Ported abilities |
+|---|---|---|
+| Hulk | Mutant Zombie | seismic slam line, throw + dive, roar (12 blocks, raises drones) |
+| Bone | Mutant Skeleton | tipped arrow, 6-arrow backflip barrage, rib crush |
+| Blast | Mutant Creeper | 4-blast chain, lightning heal, charge by lightning, minions (+ tamed Minion Egg) |
+| Void | Mutant Enderman | blink-dodge, tele-smash, scream (20 blocks), clones, block throw |
+| Frost | Mutant Snow Golem | ice block throw, fire weakness, freeze immunity |
+| Wither | Mutant Wither Skeleton | wither slash, wither bomb, blade flurry |
+| Blaze | Mutant Blaze | 3 shield layers, fire volley, flame cone |
+| Shulker | Mutant Shulker | homing bullets, shell guard + levitation burst |
+| Husk | Mutant Husk | quicksand, sand boulder, roar |
+| Hoglin | Mutant Hoglin | charge, gore, enrage after rapid hits |
+| Frozen | Mutant Frozen Zombie | icicle volley, freeze-then-smash, snowballs |
+| Jungle | Mutant Jungle Zombie | vine pull, thorn patch, gust, raise drones |
+| Chimera Queen | (original) | every mutant trait, summons the whole mutant line |
+
+Not ported: item/mutation systems (Chemical X, Formula Y/Compound Z, laboratories), Spider Pig, Mutant Phantom (WIP upstream), Endersoul block carrying, Snow Golem water-ice platforms, zombie resurrection proper (replaced by drones from the ground).
