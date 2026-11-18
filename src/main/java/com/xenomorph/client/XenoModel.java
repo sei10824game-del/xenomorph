@@ -75,7 +75,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     static final class Sp {
         float domeL = 15, domeH = 3.6f, domeW = 4.0f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
         int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 10;
-        boolean rider, wings, fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
+        boolean glowHead, rider, wings, fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
     // tailEnd: 0 blade, 1 spear, 2 club, 3 twin-blade, 4 bare tip
@@ -159,7 +159,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; p.limb = 1.1f; }
             case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.3f; p.limb = 1.2f; p.spines = 4; p.tailSegs = 0; p.domeW = 5f; p.ribs = 0; p.tubeLen = 0; }
             case PATHOGEN_QUEEN -> { p.style = 4; p.domeW = 6f; p.horns = 6; p.carapace = true; p.mand = true; p.torso = 1.2f; p.spines = 9; p.tubeLen = 0; p.ribs = 0; p.tailEnd = 1; }
-            case BURSTER, EXPLODER -> { p.style = 4; p.domeW = 6.4f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 0; p.cheek = true; p.spines = 6; p.clawL = 1.3f; p.ribs = 3; p.tailEnd = 0; p.tailT = 0.8f; }
+            case BURSTER, EXPLODER -> { p.glowHead = true; p.style = 4; p.domeW = 6.4f; p.limb = 0.8f; p.torso = 0.85f; p.tubeLen = 0; p.cheek = true; p.spines = 6; p.clawL = 1.3f; p.ribs = 3; p.tailEnd = 0; p.tailT = 0.8f; }
             case PROWLER -> { p.style = 1; p.domeL = 9; p.brow = true; p.limb = 0.8f; p.tubeLen = 0; p.spines = 2; p.ribs = 6; p.tailT = 0.85f; p.tailEnd = 0; p.clawL = 1.4f; }
             case ARACHNID -> { p.style = 2; p.fan = 9; p.domeL = 9; p.domeH = 3.6f; p.mand = true; p.spines = 4; p.limb = 1.1f; p.tubeLen = 0; p.clawL = 1.3f; p.ribs = 2; p.tailEnd = 0; }
             default -> {}
@@ -270,8 +270,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.dreads) for (int i = -3; i <= 3; i++) box2(dr, i * 1.1f, -1, 0, 0.9f, 8 + (i & 1) * 3 + 2, 0.9f);
         head.addOrReplaceChild("dreads", dr, PartPose.offsetAndRotation(0, -3.5f, 8, 0.5f, 0, 0));
         CubeListBuilder bulbB = CubeListBuilder.create();
+        if (sp.glowHead) domeCu = 0;
         if (sp.style == 4) {
-            float bw = sp.domeW + 1.6f; box2(bulbB, -bw / 2, -7.5f, -4, bw, 8, 8); box2(bulbB, -bw * 0.35f, -9.2f, -1, bw * 0.7f, 2, 5.5f);
+            float bw = sp.domeW + 1.6f;
+            if (sp.glowHead) { dome(bulbB, -bw / 2, -7.5f, -4, bw, 8, 8); dome(bulbB, -bw * 0.35f, -9.2f, -1, bw * 0.7f, 2, 5.5f); }   // glowing cellular dome uses the reserved cranium strip
+            else { box2(bulbB, -bw / 2, -7.5f, -4, bw, 8, 8); box2(bulbB, -bw * 0.35f, -9.2f, -1, bw * 0.7f, 2, 5.5f); }
             box2(bulbB, -2, -3.4f, -6.5f, 4, 3, 2.5f);
             for (int i = 0; i < sp.horns; i++) { float x = -4 + i * (8f / Math.max(1, sp.horns - 1)); box2(bulbB, x, -11f - (i % 2), 0.5f, 0.9f, 3f, 0.9f); }
         }
