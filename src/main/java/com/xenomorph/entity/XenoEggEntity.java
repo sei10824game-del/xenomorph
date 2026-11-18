@@ -44,11 +44,21 @@ public class XenoEggEntity extends Entity {
         boolean prey = !level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(4.5, 2, 4.5), e -> !XenoEntity.isXeno(e) && e.isAlive() && !e.isSpectator()
                 && !(e instanceof net.minecraft.world.entity.player.Player p && p.isCreative())).isEmpty();
         int o = open();
-        if (prey) { idle = 0; if (o < 40) entityData.set(OPEN, o + 2); }
+        if (prey) {
+            idle = 0;
+            if (o < 40) entityData.set(OPEN, o + 2);
+            if (hugger && level() instanceof ServerLevel ps) {              // the egg stirs: wet creak when it starts, mist and drool while the petals part
+                if (o == 0) playSound(SoundEvents.SLIME_SQUISH_SMALL, 0.8f, 0.5f);
+                if (o > 0 && o % 8 == 0) ps.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, getX(), getY() + 1.0, getZ(), 2, 0.12, 0.05, 0.12, 0.01);
+                if (o >= 24 && o % 4 == 0) ps.sendParticles(net.minecraft.core.particles.ParticleTypes.FALLING_WATER, getX(), getY() + 1.1, getZ(), 1, 0.15, 0, 0.15, 0);
+            }
+        }
         else if (++idle > 100 && o > 0 && hugger) entityData.set(OPEN, o - 1);
         if (o >= 40 && hugger && prey && level() instanceof ServerLevel sl) {
             spawnHugger(sl, 1.0);
             hugger = false; playSound(SoundEvents.SLIME_SQUISH, 1f, 0.5f);
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.ITEM_SLIME, getX(), getY() + 1.0, getZ(), 14, 0.25, 0.2, 0.25, 0.08);
+            playSound(XenomorphMod.HISS.get(), 0.9f, 0.8f);
         }
     }
     @Override public boolean isPickable() { return true; }
