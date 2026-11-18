@@ -208,5 +208,9 @@
  "entity.xenomorph.ultramorph": "ウルトラモーフ",
  "item.xenomorph.ultramorph_spawn_egg": "ウルトラモーフ スポーンエッグ",
  "entity.xenomorph.biodrone": "バイオドローン（従順）",
- "item.xenomorph.biodrone_spawn_egg": "バイオドローン（従順） スポーンエッグ"
+ "item.xenomorph.biodrone_spawn_egg": "バイオドローン（従順） スポーンエッグ",
+ "entity.xenomorph.infectoid": "インフェクトイド",
+ "item.xenomorph.infectoid_spawn_egg": "インフェクトイド スポーンエッグ",
+ "entity.xenomorph.symbiotic_brute": "共生ブルート（ライダー付き）",
+ "item.xenomorph.symbiotic_brute_spawn_egg": "共生ブルート（ライダー付き） スポーンエッグ"
 }

@@ -99,7 +99,9 @@ public enum Caste {
     SEVEN      ("seven_drone", 85, 10, 0.38f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, BITE, GRAB, SUMMON, FRENZY)),
     THRASHER   ("thrasher", 300, 24, .30f, 2.2f, 0, 5, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, SLAM, STOMP, CHARGE, GRAB_SLAM, HORN_TOSS, VOMIT)),
     ULTRAMORPH ("ultramorph", 240, 20, .36f, 2.2f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, SCREECH, STOMP, GRAB_SLAM, FRENZY, CREST_RAM)),
-    BIODRONE   ("biodrone", 40, 6, .34f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, TAIL_STAB, BITE));
+    BIODRONE   ("biodrone", 40, 6, .34f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, TAIL_STAB, BITE)),
+    INFECTOID  ("infectoid", 32, 6, .30f, 1.0f, 2, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, FLAIL, GRAB)),
+    SYMBIOTIC  ("symbiotic_brute", 280, 22, .30f, 2.4f, 1, 5, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SLAM, STOMP, CHARGE, GRAB_SLAM, BITE, VOLLEY));
 
     public final String id;
     public final float hp, dmg, speed, scale;
@@ -118,7 +120,7 @@ public enum Caste {
     /** Body mass feel: >1 = heavy (bigger knockback, slower gait, impact shake); <1 = light. */
     public float weight() {
         return switch (this) {
-            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case ULTRAMORPH -> 1.5f; case THRASHER -> 2.0f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
+            case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case SYMBIOTIC -> 1.8f; case ULTRAMORPH -> 1.5f; case THRASHER -> 2.0f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
             case QUEEN, CHARGER -> 1.4f; case PRAETORIAN, MATRIARCH, PATHOGEN_QUEEN -> 1.3f; case BOILER -> 1.2f;
             case RUNNER, PATHOGEN_RUNNER -> 0.7f; case WORKER -> 0.6f; case IMP -> 0.7f; case WRAITH -> 0.8f; case PANTHER -> 0.75f; case BAT -> 0.65f; case SNATCHER -> 0.75f; case EXPLODER -> 0.85f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
     }

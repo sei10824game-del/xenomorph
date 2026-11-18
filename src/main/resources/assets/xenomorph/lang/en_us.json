@@ -208,5 +208,9 @@
  "entity.xenomorph.ultramorph": "Ultramorph",
  "item.xenomorph.ultramorph_spawn_egg": "Ultramorph Spawn Egg",
  "entity.xenomorph.biodrone": "Biodrone (docile)",
- "item.xenomorph.biodrone_spawn_egg": "Biodrone (docile) Spawn Egg"
+ "item.xenomorph.biodrone_spawn_egg": "Biodrone (docile) Spawn Egg",
+ "entity.xenomorph.infectoid": "Infectoid",
+ "item.xenomorph.infectoid_spawn_egg": "Infectoid Spawn Egg",
+ "entity.xenomorph.symbiotic_brute": "Symbiotic Brute (with rider)",
+ "item.xenomorph.symbiotic_brute_spawn_egg": "Symbiotic Brute (with rider) Spawn Egg"
 }
