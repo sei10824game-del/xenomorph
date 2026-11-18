@@ -147,6 +147,10 @@ public final class Hive {
                 }
             }
         }
+        // the mouth: two ribbed resin pillars with a lintel mark the entrance so it can be spotted from the surface
+        int ex = core.getX() + dx * bestLen, ez = core.getZ() + dz * bestLen, ey = core.getY() - 4 + (bestLen - 4);
+        for (int side = -2; side <= 2; side += 4) for (int h = 0; h < 6; h++) { BlockPos q = new BlockPos(ex + px * side, ey + h, ez + pz * side); if (sl.getBlockState(q).getDestroySpeed(sl, q) >= 0) sl.setBlock(q, resin, 2); }
+        for (int w = -2; w <= 2; w++) { BlockPos q = new BlockPos(ex + px * w, ey + 5, ez + pz * w); if (sl.getBlockState(q).getDestroySpeed(sl, q) >= 0) sl.setBlock(q, resin, 2); }
     }
 
     /** Resin creeps over natural stone/dirt/wood touching open air near the hive core, a few blocks per pass, capped at ~40 resin in range. */
