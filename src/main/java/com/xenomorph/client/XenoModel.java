@@ -215,7 +215,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder domeB = CubeListBuilder.create();
         if (sp.style != 4) {     // long "banana" cranium: four tapering sections whose top line slopes down toward the back
             float W = sp.domeW, H = sp.domeH, Ln = sp.domeL;
-            dome(domeB, -W / 2, -2.2f - H * 0.8f, -6.5f, W, H * 0.8f, 7.5f);
+            dome(domeB, -W * 0.42f, -2.2f - H * 0.8f, -5.6f, W * 0.84f, H * 0.8f, 6.6f);        // tapered snout section, shorter overhang
+            dome(domeB, -W * 0.3f, -1.9f - H * 0.55f, -6.3f, W * 0.6f, H * 0.55f, 1.0f);
             dome(domeB, -W * 0.47f, -1.6f - H * 0.85f, 1, W * 0.94f, H * 0.85f, Ln * 0.5f);
             dome(domeB, -W * 0.39f, -1.0f - H * 0.75f, 1 + Ln * 0.5f, W * 0.78f, H * 0.72f, Ln * 0.33f);
             dome(domeB, -W * 0.27f, -0.5f - H * 0.6f, 1 + Ln * 0.83f, W * 0.54f, H * 0.5f, Ln * 0.2f);
