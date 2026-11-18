@@ -385,4 +385,17 @@ public class XenoGameTests {
             h.succeed();
         });
     }
+
+    /** Mutagen mapping: vanilla creatures map to their xenomorph mutant; queens, players and ordinary animals do not mutate. */
+    @GameTest(template = "empty", timeoutTicks = 20, batch = "b_mutagen")
+    public static void mutagenMapping(GameTestHelper h) {
+        var cr = h.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2)); var en = h.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(3, 2, 2));
+        var cow = h.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 2)); var q = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.QUEEN).get(), new BlockPos(5, 2, 2));
+        var dr = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(6, 2, 2));
+        boolean ok = Mutagen.mutantFor((net.minecraft.world.entity.LivingEntity) cr) == Caste.BLAST_XENO && Mutagen.mutantFor((net.minecraft.world.entity.LivingEntity) en) == Caste.VOID_XENO
+                && Mutagen.mutantFor((net.minecraft.world.entity.LivingEntity) cow) == null && Mutagen.mutantFor(q) == null && Mutagen.mutantFor(dr) != null;
+        cr.discard(); en.discard(); cow.discard(); q.discard(); dr.discard();
+        if (!ok) throw new AssertionError("mutagen mapping wrong");
+        h.succeed();
+    }
 }

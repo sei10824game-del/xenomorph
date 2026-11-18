@@ -81,4 +81,4 @@ Source for Mutant Monsters (Fuzss, 1.20.1 branch): the public mob classes (Mutan
 | Jungle | Mutant Jungle Zombie | vine pull, thorn patch, gust, raise drones |
 | Chimera Queen | (original) | every mutant trait, summons the whole mutant line |
 
-Not ported: item/mutation systems (Chemical X, Formula Y/Compound Z, laboratories), Spider Pig, Mutant Phantom (WIP upstream), Endersoul block carrying, Snow Golem water-ice platforms, zombie resurrection proper (replaced by drones from the ground).
+Not ported: item/mutation systems (laboratories, Formula Y/Compound Z), Spider Pig, Mutant Phantom (WIP upstream), Endersoul block carrying, Snow Golem water-ice platforms, zombie resurrection proper (replaced by drones from the ground).

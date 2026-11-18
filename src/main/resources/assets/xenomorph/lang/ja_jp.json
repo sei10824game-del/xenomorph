@@ -271,5 +271,6 @@
  "item.xenomorph.bone_boots": "ボーンブーツ",
  "item.xenomorph.bone_fragment": "ボーンの欠片",
  "entity.xenomorph.chimera_queen": "キメラ・クイーン",
- "item.xenomorph.chimera_queen_spawn_egg": "キメラ・クイーン スポーンエッグ"
+ "item.xenomorph.chimera_queen_spawn_egg": "キメラ・クイーン スポーンエッグ",
+ "item.xenomorph.mutagen": "ミュータゲン"
 }

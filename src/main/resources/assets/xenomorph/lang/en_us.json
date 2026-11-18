@@ -271,5 +271,6 @@
  "item.xenomorph.bone_boots": "Bone Boots",
  "item.xenomorph.bone_fragment": "Bone Fragment",
  "entity.xenomorph.chimera_queen": "Chimera Queen",
- "item.xenomorph.chimera_queen_spawn_egg": "Chimera Queen Spawn Egg"
+ "item.xenomorph.chimera_queen_spawn_egg": "Chimera Queen Spawn Egg",
+ "item.xenomorph.mutagen": "Mutagen"
 }
