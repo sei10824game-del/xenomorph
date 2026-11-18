@@ -262,5 +262,7 @@
  "entity.xenomorph.jungle_xeno": "ジャングル・ゼノモーフ",
  "item.xenomorph.jungle_xeno_spawn_egg": "ジャングル・ゼノモーフ スポーンエッグ",
  "item.xenomorph.hulk_hammer": "ハルクハンマー",
- "item.xenomorph.void_claw": "ヴォイドクロー"
+ "item.xenomorph.void_claw": "ヴォイドクロー",
+ "item.xenomorph.minion_egg": "手下の卵",
+ "message.xenomorph.minion_limit": "すでに手下が 4 体います"
 }

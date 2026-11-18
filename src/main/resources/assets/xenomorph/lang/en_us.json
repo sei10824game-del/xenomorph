@@ -262,5 +262,7 @@
  "entity.xenomorph.jungle_xeno": "Jungle Xenomorph",
  "item.xenomorph.jungle_xeno_spawn_egg": "Jungle Xenomorph Spawn Egg",
  "item.xenomorph.hulk_hammer": "Hulk Hammer",
- "item.xenomorph.void_claw": "Void Claw"
+ "item.xenomorph.void_claw": "Void Claw",
+ "item.xenomorph.minion_egg": "Minion Egg",
+ "message.xenomorph.minion_limit": "You already command 4 minions"
 }

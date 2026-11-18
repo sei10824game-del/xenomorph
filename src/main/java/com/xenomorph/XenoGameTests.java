@@ -344,4 +344,16 @@ public class XenoGameTests {
         blaze.discard(); blast.discard(); hog.discard(); attacker.discard();
         h.succeed();
     }
+
+    /** A tamed exploder never targets its owner or villagers, but will target a hostile monster. */
+    @GameTest(template = "empty", timeoutTicks = 20, batch = "b_minion")
+    public static void tamedMinion(GameTestHelper h) {
+        var owner = h.makeMockPlayer(); var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2)); var zombie = h.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(3, 2, 3));
+        var m = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.EXPLODER).get(), new BlockPos(1, 2, 1));
+        m.owner = owner.getUUID();
+        if (m.canAttack(owner) || m.canAttack(vill)) throw new AssertionError("tamed minion would attack its owner or a villager");
+        if (!m.canAttack(zombie)) throw new AssertionError("tamed minion will not attack a zombie");
+        m.discard(); vill.discard(); zombie.discard();
+        h.succeed();
+    }
 }

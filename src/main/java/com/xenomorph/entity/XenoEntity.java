@@ -197,7 +197,10 @@ public class XenoEntity extends Monster {
         return isXeno(e) ? 1 : 0;
     }
     /** Same hive, or a host carrying an embryo (the hive needs it alive until the chestburster emerges). */
-    public boolean friendly(Entity e) { return faction(e) == faction(this) || (e instanceof LivingEntity l && (l.hasEffect((caste.red() ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get()) || (!caste.red() && l.hasEffect(XenomorphMod.PRAETO_EMBRYO.get())))); }
+    /** Tamed minions (Minion Egg): fight for their owner, only against hostile monsters. */
+    public java.util.UUID owner;
+    @Override public boolean canAttack(LivingEntity t) { return super.canAttack(t) && (owner == null || (t instanceof net.minecraft.world.entity.monster.Enemy && !isXeno(t))); }
+    public boolean friendly(Entity e) { return (owner != null && e.getUUID().equals(owner)) || faction(e) == faction(this) || (e instanceof LivingEntity l && (l.hasEffect((caste.red() ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get()) || (!caste.red() && l.hasEffect(XenomorphMod.PRAETO_EMBRYO.get())))); }
 
     public static boolean isXeno(Entity e) {
         return e instanceof XenoEntity || e instanceof FacehuggerEntity || e instanceof ChestbursterEntity || e instanceof XenoEggEntity;
@@ -275,6 +278,10 @@ public class XenoEntity extends Monster {
         if (shellTicks > 0) shellTicks--;
         if (caste == Caste.BLAZE_XENO) { float max = 90; if (shieldHp < max && ++shieldIdle > 120 && tickCount % 10 == 0) shieldHp = Math.min(max, shieldHp + 6); }
         if (cloneTicks > 0 && --cloneTicks == 0) { if (level() instanceof ServerLevel cl) cl.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 25, 0.3, 0.8, 0.3, 0.3); discard(); return; }
+        if (owner != null && getTarget() == null && attack() == Attack.NONE && tickCount % 10 == 0 && level() instanceof ServerLevel os && os.getPlayerByUUID(owner) != null && distanceToSqr(os.getPlayerByUUID(owner)) > 36) {
+            Player op = os.getPlayerByUUID(owner);   // tamed: stay close to the owner
+            if (distanceToSqr(op) > 1024) teleportTo(op.getX(), op.getY(), op.getZ()); else getNavigation().moveTo(op, 1.3);
+        }
         if (getTarget() != null) { lastSeen = getTarget().position(); memT = 200; }             // pursuit memory: lost prey is hunted to where it was last seen
         else if (memT > 0 && lastSeen != null && !isHanging() && attack() == Attack.NONE) {
             memT--;
@@ -850,6 +857,6 @@ public class XenoEntity extends Monster {
         return e != MobEffects.POISON && e != MobEffects.WITHER && e != MobEffects.CONFUSION && e != MobEffects.HUNGER && super.canBeAffected(i);
     }
 
-    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putBoolean("Biped", isBiped()); tag.putBoolean("Hang", isHanging()); }
-    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); if (tag.contains("Biped") && caste.stance == 1) entityData.set(BIPED, tag.getBoolean("Biped")); if (tag.getBoolean("Hang")) { entityData.set(HANG, true); entityData.set(BIPED, false); setNoGravity(true); } }
+    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putBoolean("Biped", isBiped()); tag.putBoolean("Hang", isHanging()); if (owner != null) tag.putUUID("Owner", owner); }
+    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); if (tag.contains("Biped") && caste.stance == 1) entityData.set(BIPED, tag.getBoolean("Biped")); if (tag.hasUUID("Owner")) { owner = tag.getUUID("Owner"); setPersistenceRequired(); } if (tag.getBoolean("Hang")) { entityData.set(HANG, true); entityData.set(BIPED, false); setNoGravity(true); } }
 }
