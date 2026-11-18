@@ -27,7 +27,7 @@ public final class Hive {
     private static final Queue<Job> JOBS = new ArrayDeque<>();
     private static final Caste[] QUEENS = {Caste.QUEEN, Caste.MATRIARCH, Caste.EMPRESS, Caste.QUEEN_MOTHER, Caste.PREDALIEN_QUEEN, Caste.DOG_QUEEN, Caste.FLYING_QUEEN, Caste.VAMPIRIC_QUEEN};
     private static final Caste[] NORMAL = {Caste.DRONE, Caste.DRONE, Caste.WARRIOR, Caste.WARRIOR, Caste.RUNNER, Caste.SPITTER, Caste.LURKER, Caste.PROWLER,
-            Caste.SENTINEL, Caste.RAVAGER, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER, Caste.WORKER, Caste.PALATINE, Caste.SMASHER, Caste.SPIKER, Caste.WARDEN, Caste.EXPLODER, Caste.SNATCHER, Caste.REAPER, Caste.IRRADIATED, Caste.SCORCHED, Caste.WRAITH, Caste.ARMORED, Caste.TUSKED, Caste.IMP, Caste.TITAN, Caste.ALPHA, Caste.BIODRONE, Caste.INFECTOID, Caste.SYMBIOTIC, Caste.CRAWLER, Caste.BIOMORPH, Caste.SIREN, Caste.SEVEN};
+            Caste.SENTINEL, Caste.RAVAGER, Caste.CARRIER, Caste.ARACHNID, Caste.PRAETORIAN, Caste.CRUSHER, Caste.BRUTE, Caste.BULL_ALIEN, Caste.CHARGER, Caste.BOILER, Caste.BURSTER, Caste.STALKER, Caste.WORKER, Caste.PALATINE, Caste.SMASHER, Caste.SPIKER, Caste.WARDEN, Caste.EXPLODER, Caste.SNATCHER, Caste.REAPER, Caste.IRRADIATED, Caste.SCORCHED, Caste.WRAITH, Caste.ARMORED, Caste.TUSKED, Caste.IMP, Caste.TITAN, Caste.ALPHA, Caste.BIODRONE, Caste.INFECTOID, Caste.SYMBIOTIC, Caste.BELLYBURSTER, Caste.CRAWLER, Caste.BIOMORPH, Caste.SIREN, Caste.SEVEN};
     /** Spawn on their own in dark places (see biome modifiers), not in hives. */
     public static final Caste[] WILD = {Caste.CLONE_XENOMORPH, Caste.NEWBORN, Caste.WHITE_HYBRID, Caste.WHITE_KING, Caste.K_WARRIOR, Caste.K_FATALIS};
     /** Only ever born from animal hosts (see EmbryoEffect.hostForm); hives carry cocooned animals so they appear naturally. */
@@ -37,8 +37,8 @@ public final class Hive {
     private static final Caste[] KSER = {Caste.K_DRONE, Caste.K_DRONE, Caste.K_DRONE, Caste.K_WARRIOR, Caste.K_WARRIOR, Caste.K_PRAETORIAN, Caste.K_FATALIS};
     private static final Caste[] CLONES = {Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
     private static final Caste[] PROTO = {Caste.PROTOMORPH};   // own faction: never shares a hive with classic xenos
-    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER, Caste.THRASHER};
-    private static final Caste[] NEO = {Caste.NEOMORPH};   // own faction
+    private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER, Caste.THRASHER, Caste.GOREBURSTER};
+    private static final Caste[] NEO = {Caste.NEOMORPH, Caste.NEOMORPH, Caste.BLOODBURSTER};   // own faction
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
         java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);

@@ -138,6 +138,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case BIODRONE -> { p.spines = 0; p.ribs = 3; p.limb = 0.9f; p.tubeLen = 8; }
             case INFECTOID -> { p.style = 0; p.domeL = 8; p.domeW = 3.8f; p.limb = 0.7f; p.torso = 0.75f; p.armK = 1.2f; p.upright = 0.2f; p.bare = true; p.tailSegs = 0; p.ribs = 7; p.tubeLen = 0; p.spines = 0; p.neckK = 1.2f; }
             case SYMBIOTIC -> { p.style = 5; p.rider = true; p.domeL = 9; p.domeW = 5.6f; p.torso = 1.5f; p.limb = 1.5f; p.armK = 1.3f; p.plates = 2; p.spines = 5; p.ribs = 3; p.knee = true; p.elbow = true; p.tubeLen = 0; p.tailEnd = 2; p.tailSegs = 5; p.mand = true; }
+            case BELLYBURSTER -> { p.domeL = 7; p.limb = 0.8f; p.torso = 0.8f; p.tubeLen = 0; p.ribs = 2; p.spines = 0; p.tailSegs = 5; p.tailEnd = 4; p.belly = true; }
+            case BLOODBURSTER -> { p.style = 4; p.domeW = 4.2f; p.limb = 0.75f; p.torso = 0.8f; p.tubeLen = 0; p.ribs = 0; p.spines = 3; p.tailSegs = 4; p.tailEnd = 4; }
+            case GOREBURSTER -> { p.style = 4; p.sac = true; p.domeW = 5f; p.limb = 0.9f; p.tubeLen = 0; p.ribs = 3; p.spines = 5; p.tailSegs = 3; p.tailEnd = 4; p.belly = true; }
             case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.upright = 0.15f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
             case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }

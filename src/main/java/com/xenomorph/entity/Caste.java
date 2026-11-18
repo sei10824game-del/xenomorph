@@ -101,7 +101,10 @@ public enum Caste {
     ULTRAMORPH ("ultramorph", 240, 20, .36f, 2.2f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, GRAB, SLAM, SCREECH, STOMP, GRAB_SLAM, FRENZY, CREST_RAM)),
     BIODRONE   ("biodrone", 40, 6, .34f, 1.0f, 1, 0, true, false, false, EnumSet.of(CLAW_L, CLAW_R, TAIL_STAB, BITE)),
     INFECTOID  ("infectoid", 32, 6, .30f, 1.0f, 2, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, FLAIL, GRAB)),
-    SYMBIOTIC  ("symbiotic_brute", 280, 22, .30f, 2.4f, 1, 5, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SLAM, STOMP, CHARGE, GRAB_SLAM, BITE, VOLLEY));
+    SYMBIOTIC  ("symbiotic_brute", 280, 22, .30f, 2.4f, 1, 5, false, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SLAM, STOMP, CHARGE, GRAB_SLAM, BITE, VOLLEY)),
+    BELLYBURSTER("bellyburster", 18, 5, .46f, .6f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE)),
+    BLOODBURSTER("bloodburster", 20, 6, .44f, .65f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, DROP_STRIKE)),
+    GOREBURSTER("goreburster", 34, 7, .38f, .8f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, DETONATE));
 
     public final String id;
     public final float hp, dmg, speed, scale;

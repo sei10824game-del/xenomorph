@@ -212,5 +212,11 @@
  "entity.xenomorph.infectoid": "Infectoid",
  "item.xenomorph.infectoid_spawn_egg": "Infectoid Spawn Egg",
  "entity.xenomorph.symbiotic_brute": "Symbiotic Brute (with rider)",
- "item.xenomorph.symbiotic_brute_spawn_egg": "Symbiotic Brute (with rider) Spawn Egg"
+ "item.xenomorph.symbiotic_brute_spawn_egg": "Symbiotic Brute (with rider) Spawn Egg",
+ "entity.xenomorph.bellyburster": "Bellyburster",
+ "item.xenomorph.bellyburster_spawn_egg": "Bellyburster Spawn Egg",
+ "entity.xenomorph.bloodburster": "Bloodburster",
+ "item.xenomorph.bloodburster_spawn_egg": "Bloodburster Spawn Egg",
+ "entity.xenomorph.goreburster": "Goreburster",
+ "item.xenomorph.goreburster_spawn_egg": "Goreburster Spawn Egg"
 }

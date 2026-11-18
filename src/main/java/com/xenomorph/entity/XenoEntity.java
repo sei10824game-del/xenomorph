@@ -174,7 +174,7 @@ public class XenoEntity extends Monster {
 
     /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 8 = rogue king, 9 = clone, 12 = Newborn (killed the Cloned Queen), 10 = white hybrid, 11 = K-series, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */
     public static int faction(Entity e) {
-        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.KING ? 8 : x.caste == Caste.CLONE_XENOMORPH || x.caste.cloneStrain() ? 9 : x.caste == Caste.WHITE_HYBRID || x.caste == Caste.WHITE_KING ? 10 : x.caste == Caste.NEWBORN ? 12 : x.caste.kSeries() ? 11 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH ? 6 : x.caste.id.startsWith("pathogen") || x.caste == Caste.HARBINGER || x.caste == Caste.THRASHER ? 2 : 1;   // black-goo lineage vs classic hive
+        if (e instanceof XenoEntity x) return x.caste.red() ? 7 : x.caste == Caste.KING ? 8 : x.caste == Caste.CLONE_XENOMORPH || x.caste.cloneStrain() ? 9 : x.caste == Caste.WHITE_HYBRID || x.caste == Caste.WHITE_KING ? 10 : x.caste == Caste.NEWBORN ? 12 : x.caste.kSeries() ? 11 : x.caste == Caste.PROTOMORPH ? 4 : x.caste == Caste.DEACON ? 5 : x.caste == Caste.NEOMORPH || x.caste == Caste.BLOODBURSTER ? 6 : x.caste.id.startsWith("pathogen") || x.caste == Caste.HARBINGER || x.caste == Caste.THRASHER || x.caste == Caste.GOREBURSTER ? 2 : 1;   // black-goo lineage vs classic hive
         if (e instanceof HunterEntity) return 3;
         if (e instanceof FacehuggerEntity f && (f.variant() == 1 || f.variant() == 2)) return 7;
         if (e instanceof ChestbursterEntity b && b.form.red()) return 7;

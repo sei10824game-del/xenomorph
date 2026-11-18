@@ -212,5 +212,11 @@
  "entity.xenomorph.infectoid": "インフェクトイド",
  "item.xenomorph.infectoid_spawn_egg": "インフェクトイド スポーンエッグ",
  "entity.xenomorph.symbiotic_brute": "共生ブルート（ライダー付き）",
- "item.xenomorph.symbiotic_brute_spawn_egg": "共生ブルート（ライダー付き） スポーンエッグ"
+ "item.xenomorph.symbiotic_brute_spawn_egg": "共生ブルート（ライダー付き） スポーンエッグ",
+ "entity.xenomorph.bellyburster": "ベリーバースター",
+ "item.xenomorph.bellyburster_spawn_egg": "ベリーバースター スポーンエッグ",
+ "entity.xenomorph.bloodburster": "ブラッドバースター",
+ "item.xenomorph.bloodburster_spawn_egg": "ブラッドバースター スポーンエッグ",
+ "entity.xenomorph.goreburster": "ゴアバースター",
+ "item.xenomorph.goreburster_spawn_egg": "ゴアバースター スポーンエッグ"
 }
