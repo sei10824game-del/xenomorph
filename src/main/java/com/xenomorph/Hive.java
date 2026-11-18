@@ -247,6 +247,20 @@ public final class Hive {
             XenoEggEntity egg = XenomorphMod.EGG.get().create(sl);
             if (f != null && egg != null) { egg.setRed(red); egg.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0); sl.addFreshEntity(egg); }
         }
+        // a cocooned researcher's cache: a chest of supplies (Mutagen, acid glands) left by the hive's previous victims
+        if (r.nextInt(3) == 0) {
+            BlockPos cf = floor(sl, x0 + r.nextInt(9) - 4, y0, z0 + r.nextInt(9) - 4);
+            if (cf != null) {
+                sl.setBlock(cf, Blocks.CHEST.defaultBlockState(), 2);
+                if (sl.getBlockEntity(cf) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity ch) {
+                    ch.setItem(0, new net.minecraft.world.item.ItemStack(XenomorphMod.MUTAGEN.get(), 1 + r.nextInt(2)));
+                    ch.setItem(3, new net.minecraft.world.item.ItemStack(XenomorphMod.GLAND.get(), 1 + r.nextInt(3)));
+                    ch.setItem(5, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GUNPOWDER, 2 + r.nextInt(5)));
+                    if (r.nextInt(3) == 0) ch.setItem(7, new net.minecraft.world.item.ItemStack(XenomorphMod.PEDIA.get()));
+                    ch.setItem(9, new net.minecraft.world.item.ItemStack(XenomorphMod.TRACKER.get()));
+                }
+            }
+        }
         // hive dressing: a ring of eggs around the queen's chamber (classic/red) and resin stalactites hanging from the ceiling
         if (!pathogen && !proto && !neo) for (int i = 0; i < 6; i++) {
             double an = i * Math.PI / 3; BlockPos f = floor(sl, x0 + (int) Math.round(Math.cos(an) * 4), y0, z0 + (int) Math.round(Math.sin(an) * 4));
