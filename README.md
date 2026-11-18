@@ -1,6 +1,6 @@
 # Xenomorph (Minecraft 1.20.1 / Forge 47.3)
 
-80 xenomorph castes (+ Predator, Engineer, facehuggers, chestbursters, eggs). Procedural models/textures, no external deps.
+85 xenomorph castes (+ Predator, Engineer, facehuggers, chestbursters, eggs). Procedural models/textures, no external deps.
 
 ## Play
 - Creative tab **Xenomorph**: spawn eggs, resin, tools. Build: JDK 17, `./gradlew build` (or `gradlew.bat`). Smoke tests: `./gradlew runGameTestServer`.
