@@ -249,6 +249,15 @@ public class XenoEntity extends Monster {
             hangTimer = 120 + random.nextInt(240);
             if (random.nextInt(3) == 0 && level().getMaxLocalRawBrightness(blockPosition()) < 8) tryHang();
         }
+        if (getTarget() == null && !isHanging() && attack() == Attack.NONE && tickCount % 80 == 17 && getNavigation().isDone() && level().getMaxLocalRawBrightness(blockPosition()) >= 12) {   // idle xenos drift out of bright light into shadow
+            BlockPos best = null; int bb = 99;
+            for (int i = 0; i < 10; i++) {
+                BlockPos c = blockPosition().offset(random.nextInt(17) - 8, random.nextInt(5) - 2, random.nextInt(17) - 8);
+                int br = level().getMaxLocalRawBrightness(c);
+                if (br < bb && level().getBlockState(c).isAir() && level().getBlockState(c.below()).isSolid()) { bb = br; best = c; }
+            }
+            if (best != null && bb < 8) getNavigation().moveTo(best.getX() + .5, best.getY(), best.getZ() + .5, 1.0);
+        }
         if ((caste == Caste.RED_QUEEN_MOTHER || caste == Caste.TRUE_KING) && tickCount % 20 == 0)            // pheromone: the colony fights at its limit
             for (XenoEntity x : level().getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(28), x -> caste == Caste.TRUE_KING ? faction(x) == 1 : x.caste.red())) {
                 x.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 60, 1, false, false)); x.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, false));
