@@ -8,6 +8,7 @@ public final class XenoConfig {
     public static final ForgeConfigSpec.IntValue HIVE_RARITY;
     public static final ForgeConfigSpec.BooleanValue ACID_DAMAGES_ARMOR, ENABLE_CEILING_AMBUSH;
     public static final ForgeConfigSpec.DoubleValue DAMAGE_MULTIPLIER;
+    public static final ForgeConfigSpec.BooleanValue FIGHT_OTHER_MONSTERS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -15,6 +16,7 @@ public final class XenoConfig {
         ACID_DAMAGES_ARMOR = b.comment("Xeno acid blood eats the armor of whoever hit them.").define("acidDamagesArmor", true);
         ENABLE_CEILING_AMBUSH = b.comment("Xenos may hang from cave ceilings and drop onto prey.").define("ceilingAmbush", true);
         DAMAGE_MULTIPLIER = b.comment("Global multiplier for xeno melee damage.").defineInRange("damageMultiplier", 1.0, 0.1, 10.0);
+        FIGHT_OTHER_MONSTERS = b.comment("Xenos and all other hostile mobs (vanilla and other mods) attack each other. Turn off to leave other mods' monsters alone.").define("fightOtherMonsters", true);
         SPEC = b.build();
     }
     private XenoConfig() {}

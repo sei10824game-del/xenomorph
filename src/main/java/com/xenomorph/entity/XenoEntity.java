@@ -169,7 +169,7 @@ public class XenoEntity extends Monster {
         targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
         // enemy faction xenos and every other hostile mob (husks, mutant zombies, other mods' monsters)
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
-                e -> !friendly(e) && (faction(e) != 0 || e instanceof net.minecraft.world.entity.monster.Enemy)));
+                e -> !friendly(e) && (faction(e) != 0 || (XenoConfig.FIGHT_OTHER_MONSTERS.get() && e instanceof net.minecraft.world.entity.monster.Enemy))));
     }
 
     /** 0 = not a xeno, 1 = classic hive, 2 = pathogen, 7 = red strain, 8 = rogue king, 9 = clone, 12 = Newborn (killed the Cloned Queen), 10 = white hybrid, 11 = K-series, 4 = protomorph, 5 = deacon, 6 = neomorph/newborn. Different non-zero factions fight each other. */

@@ -9,6 +9,6 @@
 - **Life cycle**: egg → facehugger → embryo → chestburster; the form depends on the host species (DNA reflex). Cut embryos out with the **Surgical Kit**.
 - **Gear**: Pulse Rifle, Flamethrower, Acid-Neutralizing Suit (resin), Acid Gland / Royal Jelly drops. Xenos burn (except fire-resistant castes).
 - **Behaviour**: unique attacks per caste, weight/ferocity, wall climbing, ceiling ambush, melting corpses, boss bars for giants.
-- Config: `config/xenomorph-common.toml` (hive rarity, acid armor damage, ceiling ambush, damage multiplier).
+- Config: `config/xenomorph-common.toml` (hive rarity, acid armor damage, ceiling ambush, damage multiplier, fight other monsters).
 
 Source notes and gaps: `docs/RESEARCH.md`.

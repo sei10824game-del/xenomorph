@@ -16,7 +16,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 public final class Factions {
     @SubscribeEvent
     public static void join(EntityJoinLevelEvent e) {
-        if (e.getLevel().isClientSide || !(e.getEntity() instanceof Mob m) || !(m instanceof Enemy) || XenoEntity.faction(m) != 0) return;
+        if (e.getLevel().isClientSide || !XenoConfig.FIGHT_OTHER_MONSTERS.get() || !(e.getEntity() instanceof Mob m) || !(m instanceof Enemy) || XenoEntity.faction(m) != 0) return;
         try {
             GoalSelector ts = ObfuscationReflectionHelper.getPrivateValue(Mob.class, m, "f_21346_"); // Mob.targetSelector
             if (ts != null) ts.addGoal(3, new NearestAttackableTargetGoal<>(m, LivingEntity.class, 10, true, false, t -> XenoEntity.faction(t) != 0));
