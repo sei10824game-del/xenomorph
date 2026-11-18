@@ -1008,13 +1008,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
             if (u < 0.58f) { tz = Mth.lerp(u / 0.58f, -stride, stride); lift = 0; }
             else { float k = (u - 0.58f) / 0.42f; tz = Mth.lerp(smooth(k), stride, -stride); lift = Mth.sin(k * Mth.PI) * (1.6f + 1.8f * spd); }
             tz += Mth.lerp(b, 0.5f, 1.0f) + stepTz[s];                // keep feet slightly forward of hip, plus attack footwork
-            float ty = footH - lift - stepLift[s];
+            float ty = footH - lift - stepLift[s] - 2.2f * b * (1 - legOv[0]);   // ankle held high: digitigrade stance
             tz = Mth.lerp(legOv[0], tz, legOv[1]); ty = Mth.lerp(legOv[0], ty, legOv[2] + legOv[3] * Mth.sin(cph + s * Mth.PI));
             float lk = sp.legK;
             float[] a = ik(tz, ty, 8f * lk, 8f * lk, true);
             thigh[s].yScale = lk;
             thigh[s].xRot = a[0]; shin[s].xRot = a[1] - a[0];
-            foot[s].xRot = -a[1] + Mth.lerp(legOv[0], 0.0f, 0.9f) + lift * 0.06f + 0.3f * b * (1 - legOv[0]);   // heel lifted: toe-walking stance like the film suit
+            foot[s].xRot = -a[1] + Mth.lerp(legOv[0], 0.0f, 0.9f) + lift * 0.06f + 0.62f * b * (1 - legOv[0]);   // heel lifted: toe-walking stance like the film suit
             thigh[s].zRot = (s == 0 ? -1 : 1) * 0.06f; 
         }
 
