@@ -407,6 +407,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
     /** climbAmt / hangAmt are 0..1 blend weights so wall and ceiling poses ease in and out. */
     public void pose(Caste c, float bipedBlend, Attack at, float t, float limbSwing, float amt, float age, float headYaw, float headPitch, float climbAmt, float hangAmt) {
+        if (at != Attack.NONE && at.hit > 0 && at.duration > at.hit + 8) t = t < at.hit ? t : t < at.hit + 2.5f ? at.hit : t - 2.5f;   // hit-stop: pose freezes 2.5 ticks on impact
         root.getAllParts().forEach(ModelPart::resetPose);
         for (ModelPart p : root.getAllParts().toList()) { p.xScale = p.yScale = p.zScale = 1; p.visible = true; }
         float b = smooth(bipedBlend);
