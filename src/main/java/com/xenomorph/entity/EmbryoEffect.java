@@ -14,10 +14,20 @@ public class EmbryoEffect extends MobEffect {
     private final boolean red, praeto;
     public EmbryoEffect(boolean red, boolean praeto) { super(MobEffectCategory.HARMFUL, red ? 0xd01010 : praeto ? 0x6070a0 : 0x8a1f1f); this.red = red; this.praeto = praeto; }
 
-    @Override public boolean isDurationEffectTick(int duration, int amp) { return duration == 1; }
+    @Override public boolean isDurationEffectTick(int duration, int amp) { return duration == 1 || (duration <= 600 && duration % 20 == 0); }
 
     @Override public void applyEffectTick(LivingEntity host, int amp) {
         if (!(host.level() instanceof ServerLevel sl)) return;
+        var inst = host.getEffect(this);
+        if (inst != null && inst.getDuration() > 1) {          // last 30 s: the chest writhes, heart pounds, vision swims; worse as the moment nears
+            float k = 1 - inst.getDuration() / 600f;
+            host.playSound(SoundEvents.WARDEN_HEARTBEAT, 0.6f + 0.6f * k, 0.9f + 0.4f * k);
+            sl.sendParticles(ParticleTypes.DAMAGE_INDICATOR, host.getX(), host.getY() + host.getBbHeight() * 0.7, host.getZ(), 1 + (int) (4 * k), 0.15, 0.1, 0.15, 0.02);
+            if (k > 0.5f) sl.sendParticles(ParticleTypes.ITEM_SLIME, host.getX(), host.getY() + host.getBbHeight() * 0.7, host.getZ(), 2, 0.2, 0.1, 0.2, 0.01);
+            if (host instanceof net.minecraft.world.entity.player.Player) host.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.CONFUSION, 80, 0, false, false));
+            if (k > 0.8f) host.hurt(host.damageSources().magic(), 0.5f);
+            return;
+        }
         ChestbursterEntity b = XenomorphMod.BURSTER.get().create(sl);
         if (b != null) {
             b.form = praeto ? Caste.STALKER : red ? (host.getMaxHealth() >= 40 ? Caste.RED_QUEEN_MOTHER : host.getRandom().nextBoolean() ? Caste.RED_WARRIOR : Caste.RED_DRONE) : host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : (host.getRandom().nextInt(4) == 0 ? Caste.ULTRAMORPH : Caste.DEACON)) : hostForm(host);
