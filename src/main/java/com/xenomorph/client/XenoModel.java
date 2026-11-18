@@ -75,7 +75,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     static final class Sp {
         float domeL = 15, domeH = 3.6f, domeW = 4.0f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
         int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 10;
-        boolean glowHead, rider, wings, fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
+        boolean singleNail, glowHead, rider, wings, fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
     // tailEnd: 0 blade, 1 spear, 2 club, 3 twin-blade, 4 bare tip
@@ -155,7 +155,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case CHARGER -> { p.style = 3; p.horns = 4; p.carapace = true; p.limb = 1.3f; p.tailSegs = 5; p.tailEnd = 2; p.domeL = 6; p.domeH = 5; p.domeW = 5; p.torso = 1.1f; p.tubeLen = 0; p.ribs = 0; }
             case BRUTE -> { p.style = 5; p.domeL = 8; p.domeW = 6.6f; p.domeH = 6; p.plates = 2; p.spines = 4; p.armK = 1.3f; p.torso = 1.4f; p.limb = 1.4f; p.knee = true; p.elbow = true; p.tailEnd = 0; p.tailT = 1.2f; p.ribs = 3; p.clawL = 1.3f; }
             case BULL_ALIEN -> { p.style = 3; p.horns = 2; p.torso = 1.25f; p.limb = 1.25f; p.cheek = true; p.mand = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 1; p.tailEnd = 1; p.ribs = 4; p.spines = 4; }
-            case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; p.mand = true; }
+            case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; p.mand = true; p.singleNail = true; }
             case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; p.limb = 1.1f; }
             case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.3f; p.limb = 1.2f; p.spines = 4; p.tailSegs = 0; p.domeW = 5f; p.ribs = 0; p.tubeLen = 0; }
             case PATHOGEN_QUEEN -> { p.style = 4; p.domeW = 6f; p.horns = 6; p.carapace = true; p.mand = true; p.torso = 1.2f; p.spines = 9; p.tubeLen = 0; p.ribs = 0; p.tailEnd = 1; }
@@ -333,7 +333,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
             for (int k = 0; k < 4; k++) {   // four long, thin fingers + hooked tips + knuckles
                 float fx = (k - 1.5f) * 0.85f * L - 0.27f, f2 = fl * (k == 0 || k == 3 ? 1.05f : 1.3f);
-                add(h, fx, 0.3f, -2.4f - f2, 0.55f, 0.7f, f2); add(h, fx + 0.05f, 0.5f, -3.2f - f2, 0.4f, 0.4f, 1.1f); add(h, fx - 0.1f, -0.5f, -2.8f, 0.75f, 0.6f, 0.9f);
+                add(h, fx, 0.3f, -2.4f - f2, 0.55f, 0.7f, f2); if (!sp.singleNail || k == 1) add(h, fx + 0.05f, 0.5f, -3.2f - f2, 0.4f, 0.4f, 1.1f); add(h, fx - 0.1f, -0.5f, -2.8f, 0.75f, 0.6f, 0.9f);
             }
             add(h, sx > 0 ? 1.4f * L : -1.9f * L, 0.2f, -1.8f, 0.55f, 0.6f, 2.4f);          // thumb
             f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
