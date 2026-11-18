@@ -59,6 +59,7 @@ public class FacehuggerEntity extends Monster {
         goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.5, true) { @Override public boolean canUse() { return !isAttached() && super.canUse(); } });
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.9));
         goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 6, true, false, e -> free(e) && e.getHealth() < e.getMaxHealth() * 0.6f && e.getMaxHealth() >= 6));   // wounded hosts (any creature, mod mobs too) first
         targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::free));
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, 10, true, false, this::free));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, 10, true, false, this::free));

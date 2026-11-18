@@ -56,6 +56,7 @@ public class XenoEntity extends Monster {
         super(type, level);
         this.caste = caste;
         this.xpReward = (int) (caste.hp / 4);
+        if (XenoConfig.hp() != 1.0) { var mh = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH); if (mh != null) { mh.setBaseValue(caste.hp * XenoConfig.hp()); setHealth((float) (caste.hp * XenoConfig.hp())); } }   // difficulty preset
         this.setMaxUpStep(1.1f);
         if (caste == Caste.WORKER) goalSelector.addGoal(4, new WorkerResinGoal(this));   // here, not registerGoals(): caste is still unset while the super constructor runs
         if (getNavigation() instanceof net.minecraft.world.entity.ai.navigation.GroundPathNavigation gn) gn.setCanOpenDoors(true);
@@ -333,7 +334,7 @@ public class XenoEntity extends Monster {
         if (t == null || !t.isAlive() || friendly(t)) return false;
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
         if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
-        boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * (float) XenoConfig.DAMAGE_MULTIPLIER.get().doubleValue() * mult);
+        boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * (float) XenoConfig.dmg() * mult);
         float wt = caste.weight();
         if (ok && t instanceof net.minecraft.world.entity.npc.AbstractVillager v && !caste.red() && faction(this) != 8 && v.getHealth() < v.getMaxHealth() * 0.35f
                 && !v.hasEffect(XenomorphMod.EMBRYO.get()) && !v.hasEffect(XenomorphMod.RED_EMBRYO.get())) cocoon(v);   // captured, not killed: the hive needs hosts

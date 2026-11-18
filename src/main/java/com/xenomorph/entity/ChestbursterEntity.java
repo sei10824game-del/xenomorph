@@ -36,6 +36,7 @@ public class ChestbursterEntity extends Monster {
     @Override public void tick() {
         super.tick();
         age++;
+        if (!level().isClientSide) huntShadow();
         if (age < BURST) { setDeltaMovement(getDeltaMovement().multiply(0.2, 1, 0.2)); if (age == 2) playSound(SoundEvents.RAVAGER_ROAR, 1.2f, 2.0f); }
         if (!level().isClientSide && age >= (form == Caste.RED_QUEEN_MOTHER ? 1500 : GROW) && level() instanceof ServerLevel sl) {
             XenoEntity x = XenomorphMod.XENOS.get(form).get().create(sl);
@@ -44,6 +45,16 @@ public class ChestbursterEntity extends Monster {
             net.minecraft.world.entity.item.ItemEntity sk = new net.minecraft.world.entity.item.ItemEntity(sl, getX(), getY() + 0.2, getZ(), new net.minecraft.world.item.ItemStack(XenomorphMod.SKIN.get())); sl.addFreshEntity(sk);
             discard();
         }
+    }
+    private void huntShadow() {
+        if (age < BURST || tickCount % 40 != 11 || !getNavigation().isDone() || level().getMaxLocalRawBrightness(blockPosition()) < 7) return;
+        net.minecraft.core.BlockPos best = null; int bb = 99;
+        for (int i = 0; i < 10; i++) {
+            net.minecraft.core.BlockPos c = blockPosition().offset(random.nextInt(15) - 7, random.nextInt(3) - 1, random.nextInt(15) - 7);
+            int br = level().getMaxLocalRawBrightness(c);
+            if (br < bb && level().getBlockState(c).isAir() && level().getBlockState(c.below()).isSolid()) { bb = br; best = c; }
+        }
+        if (best != null && bb < 7) getNavigation().moveTo(best.getX() + .5, best.getY(), best.getZ() + .5, 1.3);
     }
     @Override public boolean isImmobile() { return age < BURST || super.isImmobile(); }
     @Override protected SoundEvent getAmbientSound() { return XenomorphMod.SKITTER.get(); }

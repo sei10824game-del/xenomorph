@@ -6,12 +6,18 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class XenoConfig {
     public static final ForgeConfigSpec SPEC;
     public static final ForgeConfigSpec.IntValue HIVE_RARITY;
+    public static final ForgeConfigSpec.ConfigValue<String> PRESET;
+    /** easy / normal / nightmare: xeno health, damage and hive frequency in one switch. */
+    public static double hp() { return switch (PRESET.get().toLowerCase()) { case "easy" -> 0.7; case "nightmare" -> 1.5; default -> 1.0; }; }
+    public static double dmg() { return DAMAGE_MULTIPLIER.get() * switch (PRESET.get().toLowerCase()) { case "easy" -> 0.6; case "nightmare" -> 1.4; default -> 1.0; }; }
+    public static double hiveFreq() { return switch (PRESET.get().toLowerCase()) { case "easy" -> 0.5; case "nightmare" -> 2.0; default -> 1.0; }; }
     public static final ForgeConfigSpec.BooleanValue ACID_DAMAGES_ARMOR, ENABLE_CEILING_AMBUSH;
     public static final ForgeConfigSpec.DoubleValue DAMAGE_MULTIPLIER;
     public static final ForgeConfigSpec.BooleanValue FIGHT_OTHER_MONSTERS, HIVE_CREEP, HIVE_RAIDS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
+        PRESET = b.comment("Difficulty preset: easy (xeno hp x0.7, damage x0.6, half as many hives), normal, nightmare (hp x1.5, damage x1.4, twice as many hives).").define("preset", "normal");
         HIVE_RARITY = b.comment("A newly generated overworld chunk holds a hive with probability 1/N. Higher = rarer.").defineInRange("hiveRarity", 90, 5, 5000);
         ACID_DAMAGES_ARMOR = b.comment("Xeno acid blood eats the armor of whoever hit them.").define("acidDamagesArmor", true);
         ENABLE_CEILING_AMBUSH = b.comment("Xenos may hang from cave ceilings and drop onto prey.").define("ceilingAmbush", true);

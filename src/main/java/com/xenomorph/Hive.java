@@ -50,7 +50,7 @@ public final class Hive {
     public static void onChunk(ChunkEvent.Load e) {
         if (!(e.getLevel() instanceof ServerLevel sl) || sl.dimension() != Level.OVERWORLD || !e.isNewChunk()) return;
         int cx = e.getChunk().getPos().x, cz = e.getChunk().getPos().z;
-        if (new Random(sl.getSeed() ^ (cx * 341873128712L + cz * 132897987541L)).nextInt(XenoConfig.HIVE_RARITY.get()) == 0) JOBS.add(new Job(sl, cx, cz, sl.getGameTime() + 60));
+        if (new Random(sl.getSeed() ^ (cx * 341873128712L + cz * 132897987541L)).nextInt(Math.max(1, (int) (XenoConfig.HIVE_RARITY.get() / XenoConfig.hiveFreq()))) == 0) JOBS.add(new Job(sl, cx, cz, sl.getGameTime() + 60));
     }
 
     @SubscribeEvent

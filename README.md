@@ -10,6 +10,6 @@
 - **Gear**: Pulse Rifle, Flamethrower, Acid Spear (acid gland + sticks), Shed Skin (dropped on molt; 3 → acid gland), Xenopedia (book + acid gland; right-click a xeno for its stats and attack list), held Motion Tracker beeps faster the closer a contact is, Acid-Neutralizing Suit (resin), Acid Gland / Royal Jelly drops. Xenos burn (except fire-resistant castes).
 - **Behaviour**: unique attacks per caste, weight/ferocity, wall climbing, ceiling ambush, melting corpses, boss bars + boss theme for giants, pack flanking, stalking (freeze under the prey's gaze), drifting out of bright light, acid-blood spray, saliva, hit-stop and attack footwork, embryo symptoms before the burst.
 - **Hives** regrow eggs, creep resin over nearby stone/dirt/wood, and hum with drips and hisses.
-- Config: `config/xenomorph-common.toml` (hive rarity, acid armor damage, ceiling ambush, damage multiplier, fight other monsters, hive creep).
+- Config: `config/xenomorph-common.toml` (hive rarity, acid armor damage, ceiling ambush, damage multiplier, fight other monsters, hive creep, hive raids, difficulty preset easy/normal/nightmare).
 
 Source notes and gaps: `docs/RESEARCH.md`.
