@@ -282,10 +282,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (!sp.bare) for (int i = 0; i < 4; i++) tooth(jawB, (i - 1.5f) * 0.85f * hw - 0.2f, -0.9f, -6.15f, 0.4f, 0.9f, 0.4f);
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
-        CubeListBuilder inB = box(-1, -0.7f, -4, 2, 1.4f, 14);
-        add(inB, -1.5f, -1.2f, -1.2f, 3.0f, 2.4f, 1.3f);                                           // fleshy collar where the inner jaw emerges
-        for (int i = 0; i < 4; i++) { tooth(inB, -1.15f, -0.2f, -3.2f + i * 2.2f, 0.4f, 0.8f, 0.45f); tooth(inB, 0.75f, -0.2f, -3.2f + i * 2.2f, 0.4f, 0.8f, 0.45f); }   // rows of tiny side teeth
-        tooth(inB, -0.7f, -0.5f, -5.2f, 1.4f, 1.0f, 1.2f); tooth(inB, -0.5f, -1.2f, -4.8f, 1, 0.6f, 0.6f); tooth(inB, -0.5f, 0.6f, -4.6f, 1, 0.6f, 0.6f);
+        // pharyngeal jaw: a telescoping, ribbed tube of four tapering segments ending in a ring of needle teeth around a centre fang
+        CubeListBuilder inB = pipe(-1.0f, -0.9f, 0.5f, 2.0f, 1.8f, 9.5f);                    // hidden rear body
+        add(inB, -1.5f, -1.2f, -1.2f, 3.0f, 2.4f, 1.3f);                                         // fleshy collar where it emerges
+        inB.texOffs(0, 96).addBox(-0.95f, -0.85f, -2.2f, 1.9f, 1.7f, 3.0f).addBox(-0.8f, -0.7f, -5.0f, 1.6f, 1.4f, 2.9f).addBox(-0.65f, -0.55f, -7.2f, 1.3f, 1.1f, 2.3f).addBox(-0.5f, -0.45f, -8.8f, 1.0f, 0.9f, 1.7f);
+        for (int k = 0; k < 4; k++) { float z = -2.0f - k * 2.2f, w = 1.1f - k * 0.17f; inB.texOffs(0, 96).addBox(-w - 0.15f, -w * 0.9f - 0.15f, z, 2 * w + 0.3f, 1.8f * w + 0.3f, 0.45f); }   // segment rings
+        for (int i = 0; i < 3; i++) { tooth(inB, -1.0f, -0.2f, -2.4f - i * 2.2f, 0.35f, 0.7f, 0.4f); tooth(inB, 0.65f, -0.2f, -2.4f - i * 2.2f, 0.35f, 0.7f, 0.4f); }   // side teeth rows
+        tooth(inB, -0.7f, -0.7f, -10.0f, 0.35f, 0.35f, 1.3f); tooth(inB, 0.35f, -0.7f, -10.0f, 0.35f, 0.35f, 1.3f); tooth(inB, -0.7f, 0.25f, -10.0f, 0.35f, 0.35f, 1.3f); tooth(inB, 0.35f, 0.25f, -10.0f, 0.35f, 0.35f, 1.3f);
+        tooth(inB, -0.2f, -0.2f, -10.6f, 0.4f, 0.4f, 1.8f);                                      // centre fang
         head.addOrReplaceChild("inner", inB, PartPose.offset(0, 0.4f, -1.5f));
         CubeListBuilder upT = CubeListBuilder.create();
         for (int i = 0; i < (sp.bare ? 0 : 5); i++) { float th = 1.0f + ((i + 1) % 2) * 0.6f; tooth(upT, -2 * hw, 0.9f, -5.7f + i * 1.2f, 0.45f, th, 0.45f); tooth(upT, 1.55f * hw, 0.9f, -5.7f + i * 1.2f, 0.45f, th, 0.45f); }
@@ -954,7 +958,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         head.xRot = headX - aim * 0.34f - 0.22f * b + Mth.clamp(headPitch, -45, 45) * Mth.DEG_TO_RAD * 0.7f;
         head.yRot = headY + Mth.clamp(headYaw, -60, 60) * Mth.DEG_TO_RAD * 0.3f; head.zRot = headZ;
         jaw.xRot = Mth.clamp(jawOpen, 0, 1.5f);
-        inner.z = -1.5f - innerExt; inner.xRot = jaw.xRot * 0.15f;
+        inner.z = -1.5f - innerExt * 0.75f; inner.xRot = jaw.xRot * 0.15f;
         chest.xScale = chestScale; chest.yScale = chestScale; chest.zScale = chestScale;
         neck.xScale = neck.zScale = neckScale;
         root.yRot = rootSpin;
