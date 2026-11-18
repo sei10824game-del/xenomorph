@@ -460,6 +460,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float und = Mth.sin(ph) * 0.22f * spd * (1.2f - 0.6f * b);
         bodyY += und; chestY -= und * 1.3f; neckY += und * 0.6f; headY -= und * 0.5f;
         float walkRoll = Mth.sin(ph) * 0.05f * spd;
+        float lightK = Mth.clamp((1 - wt) / 0.4f, 0, 1), heavyK = Mth.clamp((wt - 1.2f) / 1.0f, 0, 1);   // gait character: light = springy bounding, heavy = rolling lumber
+        bob *= 1 + 1.2f * lightK + 0.8f * heavyK; walkRoll *= 1 + 2.2f * heavyK;
+        bodyX += lightK * Mth.sin(ph * 2) * 0.06f * spd; chestY += heavyK * Mth.sin(ph) * 0.1f * spd;
         // tail
         for (int i = 0; i < TAIL; i++) {
             float w = (0.14f + 0.12f * spd) * (0.6f + i * 0.14f);
