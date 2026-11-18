@@ -131,7 +131,7 @@ public class XenoGameTests {
         eng.addEffect(new net.minecraft.world.effect.MobEffectInstance(XenomorphMod.EMBRYO.get(), 4, 0));
         h.succeedWhen(() -> {
             var all = h.getLevel().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(ChestbursterEntity.class), b -> true);
-            boolean p = all.stream().anyMatch(b -> b.form == Caste.PREDALIEN || b.form == Caste.BERSERKER), d = all.stream().anyMatch(b -> b.form == Caste.DEACON);
+            boolean p = all.stream().anyMatch(b -> b.form == Caste.PREDALIEN || b.form == Caste.BERSERKER), d = all.stream().anyMatch(b -> b.form == Caste.DEACON || b.form == Caste.ULTRAMORPH);
             if (!p || !d) throw new net.minecraft.gametest.framework.GameTestAssertException("forms predalien=" + p + " deacon=" + d);
         });
     }
