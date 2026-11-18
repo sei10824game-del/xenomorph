@@ -118,6 +118,7 @@ public enum Caste {
     HUSK_XENO   ("husk_xeno", 260, 16, .26f, 2.3f, 2, 3, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, SLAM, SEISMIC, THROW_BLOCK, QUICKSAND, ROAR_BLAST)),
     HOG_XENO    ("hog_xeno", 230, 15, .36f, 2.1f, 0, 4, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, TAIL_SWEEP, STOMP, CHARGE, HORN_TOSS)),
     FROZEN_XENO ("frozen_xeno", 210, 10, .22f, 2.1f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, SLAM, THROW_BLOCK, ICE_SMASH, ICICLE_VOLLEY)),
+    CHIMERA_QUEEN("chimera_queen", 700, 22, .27f, 2.6f, 2, 2, true, true, true, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, IMPALE, SLAM, LAY, SUMMON, SEISMIC, ROAR_BLAST, CLONE_SPLIT, MINION_BURST, BONE_BARRAGE, QUICKSAND, THORN_PATCH)),
     JUNGLE_XENO ("jungle_xeno", 240, 12, .30f, 2.2f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, TAIL_STAB, GRAB, WEB, THORN_PATCH, GUST, ROAR_BLAST));
 
     public final String id;
@@ -137,7 +138,7 @@ public enum Caste {
     /** Body mass feel: >1 = heavy (bigger knockback, slower gait, impact shake); <1 = light. */
     public float weight() {
         return switch (this) {
-            case HULK_XENO, HUSK_XENO -> 1.9f; case HOG_XENO -> 1.7f; case FROZEN_XENO, JUNGLE_XENO, BLAZE_XENO -> 1.4f; case SHULKER_XENO -> 1.5f; case WITHER_XENO -> 0.9f; case BLAST_XENO -> 1.3f; case VOID_XENO -> 1.2f; case FROST_XENO -> 1.2f; case BONE_XENO -> 1.0f; case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case SYMBIOTIC -> 1.8f; case ULTRAMORPH -> 1.5f; case THRASHER -> 2.0f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
+            case CHIMERA_QUEEN -> 2.1f; case HULK_XENO, HUSK_XENO -> 1.9f; case HOG_XENO -> 1.7f; case FROZEN_XENO, JUNGLE_XENO, BLAZE_XENO -> 1.4f; case SHULKER_XENO -> 1.5f; case WITHER_XENO -> 0.9f; case BLAST_XENO -> 1.3f; case VOID_XENO -> 1.2f; case FROST_XENO -> 1.2f; case BONE_XENO -> 1.0f; case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case SYMBIOTIC -> 1.8f; case ULTRAMORPH -> 1.5f; case THRASHER -> 2.0f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
             case QUEEN, CHARGER -> 1.4f; case PRAETORIAN, MATRIARCH, PATHOGEN_QUEEN -> 1.3f; case BOILER -> 1.2f;
             case RUNNER, PATHOGEN_RUNNER -> 0.7f; case WORKER -> 0.6f; case IMP -> 0.7f; case WRAITH -> 0.8f; case PANTHER -> 0.75f; case BAT -> 0.65f; case SNATCHER -> 0.75f; case EXPLODER -> 0.85f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
     }
@@ -145,7 +146,7 @@ public enum Caste {
     public float ferocity() {
         return switch (this) {
             case PREDALIEN, BERSERKER, RED_QUEEN_MOTHER -> 1f; case TRUE_KING, K_FATALIS -> 0.9f; case K_PRAETORIAN, K_QUEEN -> 0.6f; case K_DRONE -> 0.55f; case K_WARRIOR, WHITE_HYBRID -> 0.65f; case RED_WARRIOR, RED_DRONE -> 0.85f; case RAVAGER, NEOMORPH -> 0.9f; case RUNNER, PATHOGEN_RUNNER, NEWBORN -> 0.8f; case BULL_ALIEN, CHARGER -> 0.7f;
-            case STALKER, PROWLER, DEACON, KING, BONE_XENO, FROST_XENO -> 0.6f; case VOID_XENO, HULK_XENO, WITHER_XENO, HOG_XENO -> 0.8f; case JUNGLE_XENO, HUSK_XENO -> 0.7f; case BLAST_XENO -> 0.7f; case BRUTE, QUEEN, PATHOGEN_BRUTE -> 0.5f; case QUEEN_MOTHER -> 0.45f; default -> 0.25f; };
+            case CHIMERA_QUEEN -> 0.9f; case STALKER, PROWLER, DEACON, KING, BONE_XENO, FROST_XENO -> 0.6f; case VOID_XENO, HULK_XENO, WITHER_XENO, HOG_XENO -> 0.8f; case JUNGLE_XENO, HUSK_XENO -> 0.7f; case BLAST_XENO -> 0.7f; case BRUTE, QUEEN, PATHOGEN_BRUTE -> 0.5f; case QUEEN_MOTHER -> 0.45f; default -> 0.25f; };
     }
     public boolean red() { return id.startsWith("red_"); }
     public boolean kSeries() { return id.startsWith("k_"); }
@@ -153,7 +154,7 @@ public enum Caste {
     public boolean wild() { return this == CLONE_XENOMORPH || this == WHITE_HYBRID || this == WHITE_KING || this == NEWBORN || kSeries(); }
     /** Has an emissive overlay texture <id>_glow.png (pustules, acid pouches, seams...). */
     public boolean glows() {
-        return switch (this) { case BLAST_XENO, VOID_XENO, FROST_XENO, BONE_XENO, WITHER_XENO, BLAZE_XENO, SHULKER_XENO, HUSK_XENO, HOG_XENO, FROZEN_XENO, JUNGLE_XENO, SPITTER, BOILER, BURSTER, BIOMORPH, IRRADIATED, SCORCHED, TITAN, EXPLODER, HARBINGER, SPIKER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
+        return switch (this) { case CHIMERA_QUEEN, BLAST_XENO, VOID_XENO, FROST_XENO, BONE_XENO, WITHER_XENO, BLAZE_XENO, SHULKER_XENO, HUSK_XENO, HOG_XENO, FROZEN_XENO, JUNGLE_XENO, SPITTER, BOILER, BURSTER, BIOMORPH, IRRADIATED, SCORCHED, TITAN, EXPLODER, HARBINGER, SPIKER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
     }
     public boolean cloneStrain() { return id.startsWith("clone_"); }
     /** Hard, glossy cranium that gets the specular highlight layer. */

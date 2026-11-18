@@ -269,5 +269,7 @@
  "item.xenomorph.bone_chestplate": "Bone Chestplate",
  "item.xenomorph.bone_leggings": "Bone Leggings",
  "item.xenomorph.bone_boots": "Bone Boots",
- "item.xenomorph.bone_fragment": "Bone Fragment"
+ "item.xenomorph.bone_fragment": "Bone Fragment",
+ "entity.xenomorph.chimera_queen": "Chimera Queen",
+ "item.xenomorph.chimera_queen_spawn_egg": "Chimera Queen Spawn Egg"
 }

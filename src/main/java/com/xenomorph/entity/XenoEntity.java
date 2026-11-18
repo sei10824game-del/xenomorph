@@ -636,6 +636,7 @@ public class XenoEntity extends Monster {
             case TITAN -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.WARDEN};
             case TRUE_KING -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.CRUSHER, Caste.RAVAGER, Caste.BRUTE};
             case RED_QUEEN_MOTHER -> new Caste[]{Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE};
+            case CHIMERA_QUEEN -> new Caste[]{Caste.HULK_XENO, Caste.BONE_XENO, Caste.BLAST_XENO, Caste.VOID_XENO, Caste.WITHER_XENO, Caste.JUNGLE_XENO, Caste.HUSK_XENO};   // the whole mutant line
             case QUEEN -> new Caste[]{Caste.DRONE, Caste.DRONE, Caste.WARRIOR};
             case MATRIARCH -> new Caste[]{Caste.WARRIOR, Caste.WARRIOR, Caste.PRAETORIAN};
             case EMPRESS -> new Caste[]{Caste.PRAETORIAN, Caste.PRAETORIAN, Caste.RAVAGER};

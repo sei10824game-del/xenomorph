@@ -45,7 +45,7 @@ public final class Hive {
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
         java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);
-        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING}, MUTANTS, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON, Caste.ULTRAMORPH}}) r.addAll(java.util.Arrays.asList(a));
+        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING, Caste.CHIMERA_QUEEN}, MUTANTS, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON, Caste.ULTRAMORPH}}) r.addAll(java.util.Arrays.asList(a));
         return r;
     }
 
@@ -216,8 +216,9 @@ public final class Hive {
         for (int i = 0; i < 40; i++) { BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5); if (f != null) sl.setBlock(f.below(), resin, 2); }
         boolean pathogen = !forceRed && r.nextInt(6) == 0, proto = !forceRed && !pathogen && r.nextInt(7) == 0, neo = !forceRed && !pathogen && !proto && r.nextInt(7) == 0, red = forceRed || (!pathogen && !proto && !neo && r.nextInt(8) == 0),
                 kser = !forceRed && !pathogen && !proto && !neo && !red && r.nextInt(9) == 0, clone = !forceRed && !pathogen && !proto && !neo && !red && !kser && r.nextInt(9) == 0;
-        Caste q = kser ? Caste.K_QUEEN : clone ? Caste.CLONE_QUEEN : red ? Caste.RED_QUEEN_MOTHER : neo ? Caste.NEOMORPH : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(QUEENS.length - 1)];
+        Caste q = kser ? Caste.K_QUEEN : clone ? Caste.CLONE_QUEEN : red ? Caste.RED_QUEEN_MOTHER : neo ? Caste.NEOMORPH : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : r.nextInt(30) == 0 ? Caste.CHIMERA_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(QUEENS.length - 1)];
         spawn(sl, q, x0 + 0.5, y0 - 3, z0 + 0.5, r);
+        if (q == Caste.CHIMERA_QUEEN) for (int i = 0; i < 3; i++) { BlockPos ef = floor(sl, x0 + r.nextInt(7) - 3, y0, z0 + r.nextInt(7) - 3); if (ef != null) spawn(sl, MUTANTS[r.nextInt(MUTANTS.length)], ef.getX() + .5, ef.getY(), ef.getZ() + .5, r); }   // her mutant escort
         HiveData.get(sl).add(new BlockPos(x0, y0, z0), q.id);
         try { tunnel(sl, new BlockPos(x0, y0, z0)); HiveData.get(sl).markTunneled(new BlockPos(x0, y0, z0)); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive tunnel failed", ex); }
         if (!proto && !neo && !red && !kser && !clone && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);

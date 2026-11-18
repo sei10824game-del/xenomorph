@@ -269,5 +269,7 @@
  "item.xenomorph.bone_chestplate": "ボーンチェストプレート",
  "item.xenomorph.bone_leggings": "ボーンレギンス",
  "item.xenomorph.bone_boots": "ボーンブーツ",
- "item.xenomorph.bone_fragment": "ボーンの欠片"
+ "item.xenomorph.bone_fragment": "ボーンの欠片",
+ "entity.xenomorph.chimera_queen": "キメラ・クイーン",
+ "item.xenomorph.chimera_queen_spawn_egg": "キメラ・クイーン スポーンエッグ"
 }
