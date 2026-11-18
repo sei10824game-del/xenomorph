@@ -430,7 +430,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float tailBaseY = 0, tailBaseX = 0;
         // arm overrides (world pitch etc.)
         float[][] A = new float[2][6];  // [pitch, yaw, roll, elbow, wrist, weight]
-        float[] legOv = new float[]{0, 0, 0, 0};  // blend, tz, ty
+        float[] legOv = new float[]{0, 0, 0, 0};
+        float[] stepTz = new float[2], stepLift = new float[2];       // footwork offsets during melee attacks  // blend, tz, ty
         float legSpeed = 1;
         float hRoll = 0, flip = 0, a2w = 0;
         float[] a2p = new float[2];
@@ -932,6 +933,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 }
                 default -> {}
             }
+            // footwork: the lead foot lifts and steps into the strike, the rear foot pushes off (skipped for leaps / rolls / flips that pose the legs themselves)
+            if (legOv[0] < 0.01f && at != Attack.POUNCE && at != Attack.LEAP_SLASH && at != Attack.DEATH_ROLL && at != Attack.DROP_STRIKE && at != Attack.SHADOW_STRIKE) {
+                int lead = at == Attack.CLAW_R || ((at == Attack.DOUBLE_CLAW || at == Attack.FRENZY || at == Attack.BLADE_FLURRY) && Mth.sin(t * 0.4f) > 0) ? 1 : 0;
+                float lift = kf(t, Math.max(0, hit - 7), 0, hit - 3, 1, hit, 0), plant = kf(t, Math.max(0, hit - 3), 0, hit, 1, hit + 10, 0.7f, dur, 0);
+                stepTz[lead] = -3.2f * plant; stepLift[lead] = 2.4f * lift * aw;
+                stepTz[1 - lead] = 1.6f * plant;
+            }
             // secondary motion for every attack: tail counter-swings against the torso twist, head lags behind, body lunges into the impact
             {
                 float imp2 = kf(t, Math.max(0, hit - 2), 0, hit, 1, hit + 5, 0);
@@ -995,8 +1003,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float tz, lift;
             if (u < 0.58f) { tz = Mth.lerp(u / 0.58f, -stride, stride); lift = 0; }
             else { float k = (u - 0.58f) / 0.42f; tz = Mth.lerp(smooth(k), stride, -stride); lift = Mth.sin(k * Mth.PI) * (1.6f + 1.8f * spd); }
-            tz += Mth.lerp(b, 0.5f, 1.0f);                           // keep feet slightly forward of hip
-            float ty = footH - lift;
+            tz += Mth.lerp(b, 0.5f, 1.0f) + stepTz[s];                // keep feet slightly forward of hip, plus attack footwork
+            float ty = footH - lift - stepLift[s];
             tz = Mth.lerp(legOv[0], tz, legOv[1]); ty = Mth.lerp(legOv[0], ty, legOv[2] + legOv[3] * Mth.sin(cph + s * Mth.PI));
             float lk = sp.legK;
             float[] a = ik(tz, ty, 8f * lk, 8f * lk, true);
