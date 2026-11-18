@@ -958,7 +958,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         head.xRot = headX - aim * 0.34f - 0.22f * b + Mth.clamp(headPitch, -45, 45) * Mth.DEG_TO_RAD * 0.7f;
         head.yRot = headY + Mth.clamp(headYaw, -60, 60) * Mth.DEG_TO_RAD * 0.3f; head.zRot = headZ;
         jaw.xRot = Mth.clamp(jawOpen, 0, 1.5f);
-        inner.z = -1.5f - innerExt * 0.75f; inner.xRot = jaw.xRot * 0.15f;
+        inner.z = 5.0f - innerExt * 1.6f;   // retracted inside the mouth at rest, telescopes about 12 units out on a bite inner.xRot = jaw.xRot * 0.15f;
         chest.xScale = chestScale; chest.yScale = chestScale; chest.zScale = chestScale;
         neck.xScale = neck.zScale = neckScale;
         root.yRot = rootSpin;
