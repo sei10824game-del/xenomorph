@@ -997,6 +997,16 @@ public class XenoModel extends EntityModel<XenoEntity> {
             arm2[s].zRot = sg * -0.25f; fore2[s].xRot = -1.0f + Mth.sin(age * 0.09f + s) * 0.15f;
         }
 
+        // tail counter-motion on every melee strike: tip cocks up on wind-up, then a whip wave runs down the tail after impact
+        if (at != Attack.NONE && at.hit > 0 && at != Attack.TAIL_STAB && at != Attack.TAIL_SWEEP && !climbing && !hang) {
+            for (int i = 1; i < TAIL; i++) {
+                float tt = t - i * 0.7f, ht = at.hit;
+                tailPitch[i] -= 0.03f * i * aw * kf(t, 0, 0, Math.max(1, ht - 6), 1, ht, 0.4f, ht + 3, 0);
+                tailPitch[i] += 0.035f * i * aw * kf(tt, ht - 1, 0, ht + 1, 1, ht + 6, -0.4f, ht + 12, 0);
+                tailYaw[i] += 0.07f * aw * Mth.sin((t - ht) * 0.5f - i * 0.6f) * kf(t, ht, 0, ht + 2, 1, ht + 14, 0);
+            }
+        }
+
         // tail
         // authored with negative = raise; model +xRot lifts the tip, so flip here
         tail0.xRot = -(tailBaseX + tailPitch[0]); tail0.yRot = tailYaw[0];
