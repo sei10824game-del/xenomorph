@@ -57,10 +57,25 @@ public final class Hive {
     public static void tick(TickEvent.LevelTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !(e.level instanceof ServerLevel sl)) return;
         if (sl.getGameTime() % 6000 == 3000) regrow(sl);
+        if (sl.getGameTime() % 20 == 0) warnTerritory(sl);
         Job j = JOBS.peek();
         if (j == null || j.level != sl || j.due > sl.getGameTime()) return;
         JOBS.poll();
         try { build(sl, j.cx, j.cz, null); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive build failed", ex); }
+    }
+
+    private static final java.util.Set<java.util.UUID> INSIDE = new java.util.HashSet<>();
+    /** Walking into a hive's territory (within 14 blocks of its core) gives a one-time warning with a heartbeat. */
+    private static void warnTerritory(ServerLevel sl) {
+        var data = HiveData.get(sl);
+        for (var p : sl.players()) {
+            boolean in = false;
+            for (HiveData.Entry h : data.hives) if (h.pos().distSqr(p.blockPosition()) < 196) { in = true; break; }
+            if (in && INSIDE.add(p.getUUID())) {
+                p.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.xenomorph.territory").withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
+                p.playNotifySound(net.minecraft.sounds.SoundEvents.WARDEN_HEARTBEAT, net.minecraft.sounds.SoundSource.AMBIENT, 1f, 0.8f);
+            } else if (!in) INSIDE.remove(p.getUUID());
+        }
     }
 
     /** Resin creeps over natural stone/dirt/wood touching open air near the hive core, a few blocks per pass, capped at ~40 resin in range. */

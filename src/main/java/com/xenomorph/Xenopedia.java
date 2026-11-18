@@ -26,6 +26,11 @@ public class Xenopedia extends Item {
             p.displayClientMessage(Component.literal("== ").append(x.getDisplayName()).append(" ==").withStyle(net.minecraft.ChatFormatting.GREEN), false);
             p.displayClientMessage(Component.literal(String.format("HP %.0f | dmg %.0f | speed %.2f | scale %.1f | weight %.1f | temper %.2f | %s | %s", c.hp, c.dmg, c.speed, c.scale, c.weight(), c.ferocity(), stance, FACTIONS[Math.min(XenoEntity.faction(x), 12)])), false);
             p.displayClientMessage(Component.literal("Attacks: " + atk), false);
+            var pd = p.getPersistentData(); var seen = pd.getList("XenoSeen", net.minecraft.nbt.Tag.TAG_STRING);       // discovery log: every caste scanned once is recorded
+            boolean fresh = true; for (int i = 0; i < seen.size(); i++) if (seen.getString(i).equals(c.id)) fresh = false;
+            if (fresh) { seen.add(net.minecraft.nbt.StringTag.valueOf(c.id)); pd.put("XenoSeen", seen); }
+            p.displayClientMessage(Component.literal((fresh ? "NEW ENTRY! " : "") + "Catalogued " + seen.size() + "/" + com.xenomorph.entity.Caste.values().length).withStyle(fresh ? net.minecraft.ChatFormatting.GOLD : net.minecraft.ChatFormatting.GRAY), false);
+            if (fresh) p.level().playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP, net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.4f);
         }
         return InteractionResult.sidedSuccess(p.level().isClientSide);
     }
