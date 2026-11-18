@@ -82,17 +82,21 @@ public final class Hive {
     /** Every 10 minutes a guarded hive may send a raiding party at the nearest settlement (villager, golem or survival player) 30-160 blocks away. */
     private static void raid(ServerLevel sl) {
         Random r = new Random(sl.getGameTime());
-        for (HiveData.Entry h : HiveData.get(sl).hives) {
-            if (!sl.isLoaded(h.pos()) || r.nextInt(3) != 0) continue;
+        for (HiveData.Entry h : HiveData.get(sl).hives) raidOne(sl, h, r, false);
+    }
+    /** One hive's raid roll; force skips the 1-in-3 chance (used by tests). Returns how many raiders were sent. */
+    static int raidOne(ServerLevel sl, HiveData.Entry h, Random r, boolean force) {
+        {
+            if (!sl.isLoaded(h.pos()) || (!force && r.nextInt(3) != 0)) return 0;
             var box = new net.minecraft.world.phys.AABB(h.pos()).inflate(16);
-            if (sl.getEntitiesOfClass(XenoEntity.class, box).size() < 3) continue;
+            if (sl.getEntitiesOfClass(XenoEntity.class, box).size() < 3) return 0;
             XenoEntity guard = sl.getEntitiesOfClass(XenoEntity.class, box).get(0);
             // any living thing outside the hive's own faction is fair game: villagers, golems, players, other mods' mobs, bosses and rival queens
             var prey = sl.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, new net.minecraft.world.phys.AABB(h.pos()).inflate(160), e -> e.isAlive() && h.pos().distSqr(e.blockPosition()) > 900
                     && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand) && !guard.friendly(e)
                     && !(e instanceof net.minecraft.world.entity.player.Player pl && (pl.isCreative() || pl.isSpectator()))
                     && !(e instanceof net.minecraft.world.entity.animal.Animal && e.getMaxHealth() < 40));   // livestock is not worth a raid unless it is huge
-            if (prey.isEmpty()) continue;
+            if (prey.isEmpty()) return 0;
             // priority: bosses and rival queens first (highest max health within range), otherwise the nearest settlement/creature
             var tgt = prey.stream().filter(e -> e.getMaxHealth() >= 150 || (e instanceof XenoEntity q && q.caste.attacks.contains(com.xenomorph.entity.Attack.LAY))).max(java.util.Comparator.comparingDouble(net.minecraft.world.entity.LivingEntity::getMaxHealth))
                     .orElseGet(() -> prey.stream().min(java.util.Comparator.comparingDouble(e -> h.pos().distSqr(e.blockPosition()))).get());
@@ -111,6 +115,7 @@ public final class Hive {
                 sl.addFreshEntity(m); m.raid(tgt); made++;
             }
             if (made > 0) for (var pl : sl.players()) if (pl.distanceToSqr(tgt) < 4096) pl.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.xenomorph.raid").withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
+            return made;
         }
     }
 

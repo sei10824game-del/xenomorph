@@ -271,4 +271,20 @@ public class XenoGameTests {
         h.runAfterDelay(5, () -> x.startAttack(Attack.SHADOW_STRIKE));
         h.runAfterDelay(50, () -> { if (x.attack() != Attack.NONE) throw new AssertionError("stuck alone: tick=" + x.attackTick + " tc=" + x.tickCount); h.succeed(); });
     }
+
+    /** A hive with three guards raids a faraway Warden-class boss (stand-in for any mod boss): raiders spawn near it and are locked on. */
+    @GameTest(template = "empty", timeoutTicks = 60, batch = "b_raid")
+    public static void raidHitsBoss(GameTestHelper h) {
+        var sl = h.getLevel();
+        BlockPos hive = h.absolutePos(new BlockPos(2, 2, 2)), far = hive.offset(36, 0, 0);
+        sl.getChunkAt(hive); sl.getChunkAt(far);
+        for (int i = 0; i < 3; i++) { var g = XenomorphMod.XENOS.get(Caste.DRONE).get().create(sl); g.moveTo(hive.getX() + i, hive.getY(), hive.getZ(), 0, 0); g.setNoAi(true); sl.addFreshEntity(g); }
+        var boss = EntityType.WARDEN.create(sl); boss.moveTo(far.getX() + .5, far.getY(), far.getZ() + .5, 0, 0); boss.setNoAi(true); boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(100000); sl.addFreshEntity(boss);   // outranks any other test's leftovers
+        int sent = Hive.raidOne(sl, new HiveData.Entry(hive, "classic"), new java.util.Random(1), true);
+        var raiders = sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(far).inflate(45), x -> x.getTarget() == boss);
+        String dbg = sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(hive).inflate(200)).stream().map(x -> x.caste + "@" + x.blockPosition().toShortString() + "->" + x.getTarget()).toList() + " boss@" + boss.blockPosition().toShortString() + " hive=" + hive.toShortString();
+        sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(hive).inflate(200)).forEach(x -> x.discard()); boss.discard();
+        if (sent < 3 || raiders.size() < 3) throw new AssertionError("sent=" + sent + " raiders=" + raiders.size() + " all=" + dbg);
+        h.succeed();
+    }
 }
