@@ -52,6 +52,13 @@ public class XenomorphMod {
         net.minecraft.world.item.ArmorItem.Type[] types = {net.minecraft.world.item.ArmorItem.Type.HELMET, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS};
         for (int i = 0; i < 4; i++) { var ty = types[i]; SUIT.add(ITEMS.register("acidproof_" + names[i], () -> new net.minecraft.world.item.ArmorItem(XenoArmor.MATERIAL, ty, new Item.Properties()))); }
     }
+    public static final RegistryObject<Item> FRAGMENT = ITEMS.register("bone_fragment", () -> new Item(new Item.Properties()));
+    static final List<RegistryObject<Item>> BONE_SET = new ArrayList<>();
+    static {
+        String[] nm = {"helmet", "chestplate", "leggings", "boots"};
+        net.minecraft.world.item.ArmorItem.Type[] ty = {net.minecraft.world.item.ArmorItem.Type.HELMET, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS};
+        for (int i = 0; i < 4; i++) { var t = ty[i]; BONE_SET.add(ITEMS.register("bone_" + nm[i], () -> new net.minecraft.world.item.ArmorItem(XenoArmor.BONE, t, new Item.Properties()))); }
+    }
     static final RegistryObject<Item> KIT = ITEMS.register("surgical_kit", SurgicalKit::new);
     static final RegistryObject<Item> LOCATOR = ITEMS.register("hive_locator", HiveLocator::new);
     static final RegistryObject<Item> JELLY = ITEMS.register("royal_jelly", () -> new Item(new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(6).saturationMod(0.9f).alwaysEat()
@@ -131,7 +138,7 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(SPEAR.get()); out.accept(SKIN_.get()); out.accept(PEDIA.get()); out.accept(MINION.get()); out.accept(HAMMER.get()); out.accept(CLAW.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); out.accept(JELLY.get()); SUIT.forEach(a -> out.accept(a.get())); }).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(SPEAR.get()); out.accept(SKIN_.get()); out.accept(PEDIA.get()); out.accept(MINION.get()); out.accept(HAMMER.get()); out.accept(CLAW.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); out.accept(JELLY.get()); SUIT.forEach(a -> out.accept(a.get())); out.accept(FRAGMENT.get()); BONE_SET.forEach(a -> out.accept(a.get())); }).build());
     }
 
     public XenomorphMod() {

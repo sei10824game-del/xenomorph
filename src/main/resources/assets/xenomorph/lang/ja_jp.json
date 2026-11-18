@@ -264,5 +264,10 @@
  "item.xenomorph.hulk_hammer": "ハルクハンマー",
  "item.xenomorph.void_claw": "ヴォイドクロー",
  "item.xenomorph.minion_egg": "手下の卵",
- "message.xenomorph.minion_limit": "すでに手下が 4 体います"
+ "message.xenomorph.minion_limit": "すでに手下が 4 体います",
+ "item.xenomorph.bone_helmet": "ボーンヘルム",
+ "item.xenomorph.bone_chestplate": "ボーンチェストプレート",
+ "item.xenomorph.bone_leggings": "ボーンレギンス",
+ "item.xenomorph.bone_boots": "ボーンブーツ",
+ "item.xenomorph.bone_fragment": "ボーンの欠片"
 }

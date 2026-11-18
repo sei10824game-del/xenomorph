@@ -264,5 +264,10 @@
  "item.xenomorph.hulk_hammer": "Hulk Hammer",
  "item.xenomorph.void_claw": "Void Claw",
  "item.xenomorph.minion_egg": "Minion Egg",
- "message.xenomorph.minion_limit": "You already command 4 minions"
+ "message.xenomorph.minion_limit": "You already command 4 minions",
+ "item.xenomorph.bone_helmet": "Bone Helmet",
+ "item.xenomorph.bone_chestplate": "Bone Chestplate",
+ "item.xenomorph.bone_leggings": "Bone Leggings",
+ "item.xenomorph.bone_boots": "Bone Boots",
+ "item.xenomorph.bone_fragment": "Bone Fragment"
 }

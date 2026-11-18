@@ -356,4 +356,19 @@ public class XenoGameTests {
         m.discard(); vill.discard(); zombie.discard();
         h.succeed();
     }
+
+    /** The full Bone armour set cuts projectile damage by 40% on top of the armour itself (compared with the same set minus the boots). */
+    @GameTest(template = "empty", timeoutTicks = 20, batch = "b_boneArmor")
+    public static void boneArmorSetBonus(GameTestHelper h) {
+        var slots = new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST, net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET};
+        float[] lost = new float[2];
+        for (int k = 0; k < 2; k++) {
+            var v = (net.minecraft.world.entity.LivingEntity) h.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2 + k * 2, 2, 2));
+            for (int i = 0; i < (k == 0 ? 4 : 3); i++) v.setItemSlot(slots[i], new net.minecraft.world.item.ItemStack(XenomorphMod.BONE_SET.get(i).get()));
+            float hp = v.getHealth(); v.hurt(v.damageSources().arrow(null, null), 10f);
+            lost[k] = hp - v.getHealth(); v.discard();
+        }
+        if (!(lost[0] < lost[1] * 0.8f)) throw new AssertionError("no set bonus: full=" + lost[0] + " minus boots=" + lost[1]);
+        h.succeed();
+    }
 }
