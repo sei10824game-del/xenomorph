@@ -18,7 +18,7 @@ public final class XenoConfig {
         DAMAGE_MULTIPLIER = b.comment("Global multiplier for xeno melee damage.").defineInRange("damageMultiplier", 1.0, 0.1, 10.0);
         FIGHT_OTHER_MONSTERS = b.comment("Xenos and all other hostile mobs (vanilla and other mods) attack each other. Turn off to leave other mods' monsters alone.").define("fightOtherMonsters", true);
         HIVE_CREEP = b.comment("Guarded hives slowly spread resin over nearby stone, dirt and wood (max ~40 blocks per hive). Turn off to leave terrain untouched.").define("hiveCreep", true);
-        HIVE_RAIDS = b.comment("Guarded hives periodically send a raiding party at the nearest villager, iron golem or survival player 30-160 blocks away.").define("hiveRaids", true);
+        HIVE_RAIDS = b.comment("Guarded hives periodically send a raiding party at bosses and rival queens first, otherwise the nearest settlement or creature (villagers, golems, survival players, other mods mobs) 30-160 blocks away.").define("hiveRaids", true);
         SPEC = b.build();
     }
     private XenoConfig() {}

@@ -86,12 +86,20 @@ public final class Hive {
             if (!sl.isLoaded(h.pos()) || r.nextInt(3) != 0) continue;
             var box = new net.minecraft.world.phys.AABB(h.pos()).inflate(16);
             if (sl.getEntitiesOfClass(XenoEntity.class, box).size() < 3) continue;
+            XenoEntity guard = sl.getEntitiesOfClass(XenoEntity.class, box).get(0);
+            // any living thing outside the hive's own faction is fair game: villagers, golems, players, other mods' mobs, bosses and rival queens
             var prey = sl.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, new net.minecraft.world.phys.AABB(h.pos()).inflate(160), e -> e.isAlive() && h.pos().distSqr(e.blockPosition()) > 900
-                    && (e instanceof net.minecraft.world.entity.npc.AbstractVillager || e instanceof net.minecraft.world.entity.animal.IronGolem || (e instanceof net.minecraft.world.entity.player.Player pl && !pl.isCreative() && !pl.isSpectator())));
+                    && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand) && !guard.friendly(e)
+                    && !(e instanceof net.minecraft.world.entity.player.Player pl && (pl.isCreative() || pl.isSpectator()))
+                    && !(e instanceof net.minecraft.world.entity.animal.Animal && e.getMaxHealth() < 40));   // livestock is not worth a raid unless it is huge
             if (prey.isEmpty()) continue;
-            var tgt = prey.stream().min(java.util.Comparator.comparingDouble(e -> h.pos().distSqr(e.blockPosition()))).get();
+            // priority: bosses and rival queens first (highest max health within range), otherwise the nearest settlement/creature
+            var tgt = prey.stream().filter(e -> e.getMaxHealth() >= 150 || (e instanceof XenoEntity q && q.caste.attacks.contains(com.xenomorph.entity.Attack.LAY))).max(java.util.Comparator.comparingDouble(net.minecraft.world.entity.LivingEntity::getMaxHealth))
+                    .orElseGet(() -> prey.stream().min(java.util.Comparator.comparingDouble(e -> h.pos().distSqr(e.blockPosition()))).get());
+            boolean tough = tgt.getMaxHealth() >= 100;
             Caste[] pool = h.kind().startsWith("red") ? new Caste[]{Caste.RED_DRONE, Caste.RED_WARRIOR} : h.kind().startsWith("pathogen") ? new Caste[]{Caste.PATHOGEN_RUNNER} : new Caste[]{Caste.DRONE, Caste.WARRIOR, Caste.RUNNER};
-            int n = 3 + r.nextInt(3), made = 0;
+            if (tough) pool = h.kind().startsWith("red") ? new Caste[]{Caste.RED_WARRIOR} : new Caste[]{Caste.WARRIOR, Caste.PRAETORIAN, Caste.BRUTE, Caste.CRUSHER, Caste.RAVAGER};
+            int n = 3 + r.nextInt(3) + (int) Math.min(5, tgt.getMaxHealth() / 60), made = 0;
             for (int i = 0; i < n * 3 && made < n; i++) {
                 double an = r.nextDouble() * Math.PI * 2, rad = 26 + r.nextInt(8);
                 BlockPos f = floor(sl, (int) (tgt.getX() + Math.cos(an) * rad), tgt.getBlockY(), (int) (tgt.getZ() + Math.sin(an) * rad));
