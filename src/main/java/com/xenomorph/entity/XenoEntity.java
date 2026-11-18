@@ -57,6 +57,8 @@ public class XenoEntity extends Monster {
         this.caste = caste;
         this.xpReward = (int) (caste.hp / 4);
         this.setMaxUpStep(1.1f);
+        if (getNavigation() instanceof net.minecraft.world.entity.ai.navigation.GroundPathNavigation gn) gn.setCanOpenDoors(true);
+        goalSelector.addGoal(2, caste.weight() >= 1.4f ? new net.minecraft.world.entity.ai.goal.BreakDoorGoal(this, 40, d -> true) : new net.minecraft.world.entity.ai.goal.OpenDoorGoal(this, false));   // heavy castes smash wooden doors, the rest open them
         if (caste.stance == 2) entityData.set(BIPED, true);
         if (caste.hp >= 250) boss = new net.minecraft.server.level.ServerBossEvent(getDisplayName(), caste == Caste.TRUE_KING ? net.minecraft.world.BossEvent.BossBarColor.PURPLE : caste.red() ? net.minecraft.world.BossEvent.BossBarColor.RED : net.minecraft.world.BossEvent.BossBarColor.WHITE, net.minecraft.world.BossEvent.BossBarOverlay.PROGRESS);
         if (caste == Caste.KING)                 // artificial queen-killer: every queen is prey number one
@@ -88,7 +90,7 @@ public class XenoEntity extends Monster {
     public boolean isHanging() { return entityData.get(HANG); }
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
-    private int musicT;
+    private int musicT, callUntil;
     private void stopMusic() { musicT = 0; if (boss != null) for (var pl : boss.getPlayers()) pl.connection.send(new net.minecraft.network.protocol.game.ClientboundStopSoundPacket(XenomorphMod.BOSS_THEME.getId(), net.minecraft.sounds.SoundSource.MUSIC)); }
     private net.minecraft.server.level.ServerBossEvent boss;   // only for the giants (hp >= 250)
     private boolean landed;
@@ -735,6 +737,12 @@ public class XenoEntity extends Monster {
             sl.sendParticles(ParticleTypes.SMOKE, getX(), getY() + getBbHeight() * 0.5, getZ(), 2, 0.15, 0.1, 0.15, 0.01);
             if (amount >= 4) sl.sendParticles(ParticleTypes.DRIPPING_DRIPSTONE_WATER, getX(), getY() + getBbHeight() * 0.6, getZ(), 3, 0.2, 0.2, 0.2, 0);
             if (random.nextFloat() < 0.3f) playSound(XenomorphMod.SIZZLE.get(), 0.4f, 1.3f);
+        }
+        if (r && level() instanceof ServerLevel cs && src.getEntity() instanceof LivingEntity caller && !friendly(caller) && tickCount > callUntil && getHealth() < getMaxHealth() * 0.6f) {   // wounded: screech for the hive
+            callUntil = tickCount + 400;
+            playSound(XenomorphMod.SCREECH.get(), 2f, 1.2f * getVoicePitch());
+            for (XenoEntity ally : cs.getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(28, 10, 28), o -> o != this && o.isAlive() && friendly(o) && o.getTarget() == null && !(o.caste.hp >= 250 && caste.hp < 250)))
+                if (ally.canAttack(caller)) { ally.setTarget(caller); ally.getNavigation().stop(); }
         }
         if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !friendly(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, caste.red() && faction(att) == 1 ? 6 : 1 + random.nextInt(2));
         return r;
