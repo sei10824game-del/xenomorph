@@ -220,6 +220,10 @@ public class XenoEntity extends Monster {
             bipedAmtO = bipedAmt;
             float goal = isBiped() ? 1 : 0;
             bipedAmt += Mth.clamp(goal - bipedAmt, -0.06f, 0.06f);
+            if ((isAggressive() || attack() != Attack.NONE) && !caste.id.startsWith("newborn") && random.nextInt(12) == 0) {   // saliva drips from the jaws
+                Vec3 f = fwd(); double sc = caste.scale;
+                level().addParticle(ParticleTypes.FALLING_WATER, getX() + f.x * 0.7 * sc + (random.nextDouble() - 0.5) * 0.1, getY() + getEyeHeight() - 0.25 * sc, getZ() + f.z * 0.7 * sc + (random.nextDouble() - 0.5) * 0.1, 0, 0, 0);
+            }
             return;
         }
         if (cooldown > 0) cooldown--;
