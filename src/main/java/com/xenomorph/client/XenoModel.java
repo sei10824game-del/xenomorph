@@ -331,11 +331,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
             PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
             float fl = 3.8f * sp.clawL;
             CubeListBuilder h = box(-1.6f * L, 0, -2.5f, 3.2f * L, 1.6f, 4.5f);
-            for (int k = 0; k < 4; k++) {   // four long, thin fingers + hooked tips + knuckles
-                float fx = (k - 1.5f) * 0.85f * L - 0.27f, f2 = fl * (k == 0 || k == 3 ? 1.05f : 1.3f);
-                add(h, fx, 0.3f, -2.4f - f2, 0.55f, 0.7f, f2); if (!sp.singleNail || k == 1) add(h, fx + 0.05f, 0.5f, -3.2f - f2, 0.4f, 0.4f, 1.1f); add(h, fx - 0.1f, -0.5f, -2.8f, 0.75f, 0.6f, 0.9f);
+            for (int k = 0; k < 3; k++) {   // canon hand: three long two-jointed fingers (curled, splayed tips) + opposed thumb
+                float fx = (k - 1) * 1.05f * L - 0.3f, f2 = fl * (k == 1 ? 1.45f : 1.25f), sp2 = (k - 1) * 0.3f, p1 = f2 * 0.55f, p2 = f2 - p1;
+                add(h, fx, 0.3f, -2.4f - p1, 0.6f, 0.7f, p1); add(h, fx - 0.1f, -0.45f, -2.7f, 0.8f, 0.7f, 1.0f);                 // proximal + knuckle
+                add(h, fx + sp2 * 0.5f, 0.55f, -2.4f - f2 + 0.1f, 0.5f, 0.55f, p2 + 0.4f);                                       // distal, drooping + splayed
+                if (!sp.singleNail || k == 1) add(h, fx + sp2 + 0.05f, 0.85f, -3.1f - f2, 0.35f, 0.4f, 1.2f);                     // hooked tip
             }
-            add(h, sx > 0 ? 1.4f * L : -1.9f * L, 0.2f, -1.8f, 0.55f, 0.6f, 2.4f);          // thumb
+            float tx = sx > 0 ? 1.45f * L : -2.05f * L;
+            add(h, tx, 0.2f, -1.6f, 0.6f, 0.65f, 1.8f); add(h, tx + (sx > 0 ? 0.25f : -0.25f), 0.5f, -3.0f - fl * 0.3f, 0.45f, 0.5f, fl * 0.3f + 1.4f);   // thumb, two joints
             f.addOrReplaceChild("hand", h, PartPose.offset(0, 10f, 0));
             PartDefinition a2 = chest.addOrReplaceChild("arm2" + n, box(-1, -1, -1, 2, 5, 2), PartPose.offset(sx * 3.6f * T, -3.5f, -2.5f));
             a2.addOrReplaceChild("fore", add(box(-0.8f, 0, -0.8f, 1.6f, 5, 1.6f), -1.2f, 5, -2.2f, 2.4f, 1, 3), PartPose.offset(0, 4.5f, 0));
