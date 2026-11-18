@@ -29,6 +29,11 @@ public class XenoAttackGoal extends Goal {
         } else if (--repath <= 0) {
             repath = 4 + x.getRandom().nextInt(4);
             double sp = d > 6 && !x.isBiped() ? 1.5 : 1.15;
+            // pack tactics: with an ally on the same prey, split left/right and close in from the sides
+            if (d > 5 && d < 16 && x.caste.weight() < 1.5f && !x.level().getEntitiesOfClass(XenoEntity.class, x.getBoundingBox().inflate(12), o -> o != x && o.getTarget() == t && !o.isClimbing() && x.friendly(o)).isEmpty()) {
+                double dx = t.getX() - x.getX(), dz = t.getZ() - x.getZ(), len = Math.max(0.01, Math.sqrt(dx * dx + dz * dz)), side = (x.getId() & 1) == 0 ? 1 : -1, off = Math.min(5, d * 0.45);
+                if (x.getNavigation().moveTo(t.getX() - dz / len * off * side, t.getY(), t.getZ() + dx / len * off * side, sp)) return;
+            }
             // no path (big body, odd terrain, unreachable): steer straight at the target instead of standing still
             if (!x.getNavigation().moveTo(t, sp) || x.getNavigation().isDone() && d > x.reach())
                 x.getMoveControl().setWantedPosition(t.getX(), t.getY(), t.getZ(), sp);
