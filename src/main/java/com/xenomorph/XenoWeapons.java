@@ -66,4 +66,17 @@ public final class XenoWeapons {
             }
         }
     }
+
+    /** Spear tipped with a xenomorph acid gland: extra acid damage, poison, and it eats at the target's armour. xenomorphs themselves are immune to the acid. */
+    public static class AcidSpear extends net.minecraft.world.item.SwordItem {
+        public AcidSpear() { super(net.minecraft.world.item.Tiers.IRON, 2, -2.2f, new Item.Properties().durability(180)); }
+        @Override public boolean hurtEnemy(ItemStack st, LivingEntity target, LivingEntity attacker) {
+            if (!(target instanceof com.xenomorph.entity.XenoEntity)) {
+                target.hurt(attacker.damageSources().magic(), 3f);
+                target.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 60, 0));
+            }
+            if (attacker.level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.ITEM_SLIME, target.getX(), target.getY() + target.getBbHeight() * 0.6, target.getZ(), 8, 0.2, 0.3, 0.2, 0.05);
+            return super.hurtEnemy(st, target, attacker);
+        }
+    }
 }

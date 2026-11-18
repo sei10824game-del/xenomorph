@@ -1,0 +1,1 @@
+{"type": "minecraft:crafting_shaped", "pattern": ["  G", " S ", "S  "], "key": {"G": {"item": "xenomorph:acid_gland"}, "S": {"item": "minecraft:stick"}}, "result": {"item": "xenomorph:acid_spear"}}
