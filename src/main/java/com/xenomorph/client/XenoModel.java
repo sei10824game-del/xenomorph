@@ -404,6 +404,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
     public void setupAnim(XenoEntity e, float limbSwing, float amt, float age, float headYaw, float headPitch) {
         float pt = Minecraft.getInstance().getFrameTime();
         pose(e.caste, Mth.lerp(pt, e.bipedAmtO, e.bipedAmt), e.attack(), e.attackTick + pt, limbSwing, amt, age, headYaw, headPitch, Mth.lerp(pt, e.climbAmtO, e.climbAmt), Mth.lerp(pt, e.hangAmtO, e.hangAmt));
+        if (e.deathTime > 0) {                      // death throes: small castes keel over onto their side, giants sag at the knees and slump forward
+            float d = Mth.clamp((e.deathTime + pt) / 20f, 0, 1), eased = d * d * (3 - 2 * d);
+            if (e.caste.weight() < 1.2f) { hips.zRot += 1.4f * eased; hips.y += 5 * eased; head.zRot += 0.4f * eased; }
+            else { hips.y += 7 * eased; chest.xRot += 0.55f * eased; neck.xRot += 0.45f * eased; head.xRot += 0.35f * eased; for (int s = 0; s < 2; s++) arm[s].xRot += 0.4f * eased; }
+            for (int i = 0; i < TAIL; i++) tail[i].xRot += 0.08f * eased;
+        }
     }
 
     /** Pure pose function (also used by the offline preview tool). b = biped blend, t = ticks into attack. */
