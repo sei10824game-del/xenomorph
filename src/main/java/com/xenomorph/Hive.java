@@ -56,10 +56,24 @@ public final class Hive {
     @SubscribeEvent
     public static void tick(TickEvent.LevelTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !(e.level instanceof ServerLevel sl)) return;
+        if (sl.getGameTime() % 6000 == 3000) regrow(sl);
         Job j = JOBS.peek();
         if (j == null || j.level != sl || j.due > sl.getGameTime()) return;
         JOBS.poll();
         try { build(sl, j.cx, j.cz, null); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive build failed", ex); }
+    }
+
+    /** Hives slowly regrow: every 5 min, a hive with a player nearby that has fewer than 6 eggs around lays a fresh one. */
+    private static void regrow(ServerLevel sl) {
+        Random r = new Random(sl.getGameTime());
+        for (HiveData.Entry h : HiveData.get(sl).hives) {
+            if (sl.getNearestPlayer(h.pos().getX(), h.pos().getY(), h.pos().getZ(), 80, false) == null || !sl.isLoaded(h.pos())) continue;
+            var box = new net.minecraft.world.phys.AABB(h.pos()).inflate(16);
+            if (sl.getEntitiesOfClass(XenoEggEntity.class, box).size() >= 6 || sl.getEntitiesOfClass(XenoEntity.class, box).isEmpty()) continue;   // only while some xeno still guards it
+            BlockPos f = floor(sl, h.pos().getX() + r.nextInt(11) - 5, h.pos().getY(), h.pos().getZ() + r.nextInt(11) - 5);
+            XenoEggEntity egg = XenomorphMod.EGG.get().create(sl);
+            if (f != null && egg != null) { egg.setRed(h.kind().equals("red")); egg.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0); sl.addFreshEntity(egg); }
+        }
     }
 
     public static void build(ServerLevel sl, int cx, int cz, Integer forceY) { build(sl, cx, cz, forceY, false); }
