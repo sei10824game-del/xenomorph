@@ -90,7 +90,8 @@ public class XenoEntity extends Monster {
     public boolean isHanging() { return entityData.get(HANG); }
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
-    private int musicT, callUntil;
+    private int musicT, callUntil, memT;
+    private net.minecraft.world.phys.Vec3 lastSeen;
     private void stopMusic() { musicT = 0; if (boss != null) for (var pl : boss.getPlayers()) pl.connection.send(new net.minecraft.network.protocol.game.ClientboundStopSoundPacket(XenomorphMod.BOSS_THEME.getId(), net.minecraft.sounds.SoundSource.MUSIC)); }
     private net.minecraft.server.level.ServerBossEvent boss;   // only for the giants (hp >= 250)
     private boolean landed;
@@ -250,6 +251,12 @@ public class XenoEntity extends Monster {
         else if (!isHanging() && canHang() && getTarget() == null && attack() == Attack.NONE && --hangTimer <= 0) {
             hangTimer = 120 + random.nextInt(240);
             if (random.nextInt(3) == 0 && level().getMaxLocalRawBrightness(blockPosition()) < 8) tryHang();
+        }
+        if (getTarget() != null) { lastSeen = getTarget().position(); memT = 200; }             // pursuit memory: lost prey is hunted to where it was last seen
+        else if (memT > 0 && lastSeen != null && !isHanging() && attack() == Attack.NONE) {
+            memT--;
+            if (distanceToSqr(lastSeen) < 6.25) memT = 0;
+            else if (tickCount % 10 == 0 && !getNavigation().moveTo(lastSeen.x, lastSeen.y, lastSeen.z, 1.2)) getMoveControl().setWantedPosition(lastSeen.x, lastSeen.y, lastSeen.z, 1.2);
         }
         if (getTarget() == null && !isHanging() && attack() == Attack.NONE && tickCount % 80 == 17 && getNavigation().isDone() && level().getMaxLocalRawBrightness(blockPosition()) >= 12) {   // idle xenos drift out of bright light into shadow
             BlockPos best = null; int bb = 99;
