@@ -26,7 +26,7 @@ public class XenoAttackGoal extends Goal {
         x.getLookControl().setLookAt(t, 30, 30);
         // stalking: a patient hunter freezes in place while the prey stares straight at it, creeping on once the gaze breaks (or after 2 s)
         if (stalkT > 0) stalkT--;
-        if (d > 7 && d < 26 && t instanceof net.minecraft.world.entity.player.Player && x.caste.ferocity() < 0.5f && !x.isClimbing() && x.getHealth() >= x.getMaxHealth() * 0.7f && stalkCool <= 0) {
+        if (d > 7 && d < 26 && x.caste.ferocity() < 0.5f && !x.isClimbing() && x.getHealth() >= x.getMaxHealth() * 0.7f && stalkCool <= 0) {
             net.minecraft.world.phys.Vec3 look = t.getLookAngle(), to = x.getEyePosition().subtract(t.getEyePosition()).normalize();
             if (look.dot(to) > 0.92) {
                 if (stalkT == 0) stalkT = 40;

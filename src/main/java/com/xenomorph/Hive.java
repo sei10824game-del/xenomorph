@@ -58,6 +58,7 @@ public final class Hive {
         if (e.phase != TickEvent.Phase.END || !(e.level instanceof ServerLevel sl)) return;
         if (sl.getGameTime() % 6000 == 3000) regrow(sl);
         if (sl.getGameTime() % 20 == 0) warnTerritory(sl);
+        if (sl.getGameTime() % 12000 == 6000 && XenoConfig.HIVE_RAIDS.get()) raid(sl);
         Job j = JOBS.peek();
         if (j == null || j.level != sl || j.due > sl.getGameTime()) return;
         JOBS.poll();
@@ -75,6 +76,33 @@ public final class Hive {
                 p.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.xenomorph.territory").withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
                 p.playNotifySound(net.minecraft.sounds.SoundEvents.WARDEN_HEARTBEAT, net.minecraft.sounds.SoundSource.AMBIENT, 1f, 0.8f);
             } else if (!in) INSIDE.remove(p.getUUID());
+        }
+    }
+
+    /** Every 10 minutes a guarded hive may send a raiding party at the nearest settlement (villager, golem or survival player) 30-160 blocks away. */
+    private static void raid(ServerLevel sl) {
+        Random r = new Random(sl.getGameTime());
+        for (HiveData.Entry h : HiveData.get(sl).hives) {
+            if (!sl.isLoaded(h.pos()) || r.nextInt(3) != 0) continue;
+            var box = new net.minecraft.world.phys.AABB(h.pos()).inflate(16);
+            if (sl.getEntitiesOfClass(XenoEntity.class, box).size() < 3) continue;
+            var prey = sl.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, new net.minecraft.world.phys.AABB(h.pos()).inflate(160), e -> e.isAlive() && h.pos().distSqr(e.blockPosition()) > 900
+                    && (e instanceof net.minecraft.world.entity.npc.AbstractVillager || e instanceof net.minecraft.world.entity.animal.IronGolem || (e instanceof net.minecraft.world.entity.player.Player pl && !pl.isCreative() && !pl.isSpectator())));
+            if (prey.isEmpty()) continue;
+            var tgt = prey.stream().min(java.util.Comparator.comparingDouble(e -> h.pos().distSqr(e.blockPosition()))).get();
+            Caste[] pool = h.kind().startsWith("red") ? new Caste[]{Caste.RED_DRONE, Caste.RED_WARRIOR} : h.kind().startsWith("pathogen") ? new Caste[]{Caste.PATHOGEN_RUNNER} : new Caste[]{Caste.DRONE, Caste.WARRIOR, Caste.RUNNER};
+            int n = 3 + r.nextInt(3), made = 0;
+            for (int i = 0; i < n * 3 && made < n; i++) {
+                double an = r.nextDouble() * Math.PI * 2, rad = 26 + r.nextInt(8);
+                BlockPos f = floor(sl, (int) (tgt.getX() + Math.cos(an) * rad), tgt.getBlockY(), (int) (tgt.getZ() + Math.sin(an) * rad));
+                if (f == null) continue;
+                XenoEntity m = XenomorphMod.XENOS.get(pool[r.nextInt(pool.length)]).get().create(sl);
+                if (m == null) continue;
+                m.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0);
+                m.finalizeSpawn(sl, sl.getCurrentDifficultyAt(f), MobSpawnType.EVENT, null, null);
+                sl.addFreshEntity(m); m.raid(tgt); made++;
+            }
+            if (made > 0) for (var pl : sl.players()) if (pl.distanceToSqr(tgt) < 4096) pl.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.xenomorph.raid").withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
         }
     }
 
@@ -164,6 +192,23 @@ public final class Hive {
             BlockPos f = floor(sl, x0 + r.nextInt(11) - 5, y0, z0 + r.nextInt(11) - 5);
             XenoEggEntity egg = XenomorphMod.EGG.get().create(sl);
             if (f != null && egg != null) { egg.setRed(red); egg.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, r.nextFloat() * 360, 0); sl.addFreshEntity(egg); }
+        }
+        // hive dressing: a ring of eggs around the queen's chamber (classic/red) and resin stalactites hanging from the ceiling
+        if (!pathogen && !proto && !neo) for (int i = 0; i < 6; i++) {
+            double an = i * Math.PI / 3; BlockPos f = floor(sl, x0 + (int) Math.round(Math.cos(an) * 4), y0, z0 + (int) Math.round(Math.sin(an) * 4));
+            XenoEggEntity egg = XenomorphMod.EGG.get().create(sl);
+            if (f != null && egg != null) { egg.setRed(red); egg.moveTo(f.getX() + .5, f.getY(), f.getZ() + .5, (float) Math.toDegrees(an), 0); sl.addFreshEntity(egg); }
+        }
+        for (int i = 0, nq = red ? 22 : 14; i < nq; i++) {
+            int sx = x0 + r.nextInt(15) - 7, sz = z0 + r.nextInt(15) - 7;
+            for (int y = y0 + 1; y < y0 + 9; y++) {
+                BlockPos c = new BlockPos(sx, y, sz);
+                if (sl.getBlockState(c).isSolid() && sl.getBlockState(c.below()).isAir()) {
+                    int len = 1 + r.nextInt(3);
+                    for (int k = 1; k <= len && sl.getBlockState(c.below(k)).isAir(); k++) sl.setBlock(c.below(k), XenomorphMod.RESIN.get().defaultBlockState(), 2);
+                    break;
+                }
+            }
         }
     }
 

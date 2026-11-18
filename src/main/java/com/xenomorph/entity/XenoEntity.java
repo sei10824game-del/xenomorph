@@ -57,6 +57,7 @@ public class XenoEntity extends Monster {
         this.caste = caste;
         this.xpReward = (int) (caste.hp / 4);
         this.setMaxUpStep(1.1f);
+        if (caste == Caste.WORKER) goalSelector.addGoal(4, new WorkerResinGoal(this));   // here, not registerGoals(): caste is still unset while the super constructor runs
         if (getNavigation() instanceof net.minecraft.world.entity.ai.navigation.GroundPathNavigation gn) gn.setCanOpenDoors(true);
         goalSelector.addGoal(2, caste.weight() >= 1.4f ? new net.minecraft.world.entity.ai.goal.BreakDoorGoal(this, 40, d -> true) : new net.minecraft.world.entity.ai.goal.OpenDoorGoal(this, false));   // heavy castes smash wooden doors, the rest open them
         if (caste.stance == 2) entityData.set(BIPED, true);
@@ -90,7 +91,9 @@ public class XenoEntity extends Monster {
     public boolean isHanging() { return entityData.get(HANG); }
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
-    private int musicT, callUntil, memT;
+    private int musicT, callUntil, memT, cmdT;
+    /** Hive raid: hunt this target from far away, remembering where it is for two minutes. */
+    public void raid(LivingEntity t) { setTarget(t); lastSeen = t.position(); memT = 2400; }
     private net.minecraft.world.phys.Vec3 lastSeen;
     private void stopMusic() { musicT = 0; if (boss != null) for (var pl : boss.getPlayers()) pl.connection.send(new net.minecraft.network.protocol.game.ClientboundStopSoundPacket(XenomorphMod.BOSS_THEME.getId(), net.minecraft.sounds.SoundSource.MUSIC)); }
     private net.minecraft.server.level.ServerBossEvent boss;   // only for the giants (hp >= 250)
@@ -251,6 +254,15 @@ public class XenoEntity extends Monster {
         else if (!isHanging() && canHang() && getTarget() == null && attack() == Attack.NONE && --hangTimer <= 0) {
             hangTimer = 120 + random.nextInt(240);
             if (random.nextInt(3) == 0 && level().getMaxLocalRawBrightness(blockPosition()) < 8) tryHang();
+        }
+        if (caste.attacks.contains(Attack.LAY) && getTarget() != null && --cmdT <= 0 && level() instanceof ServerLevel qs) {         // queen's orders: screech to send the brood at her prey, or rally it to her side when hurt
+            cmdT = 160;
+            boolean hurt = getHealth() < getMaxHealth() * 0.45f;
+            playSound(XenomorphMod.SCREECH.get(), 2.2f, (hurt ? 0.85f : 1.1f) * getVoicePitch());
+            for (XenoEntity ally : qs.getEntitiesOfClass(XenoEntity.class, getBoundingBox().inflate(32, 12, 32), o -> o != this && o.isAlive() && friendly(o) && !o.caste.attacks.contains(Attack.LAY))) {
+                if (ally.getTarget() == null && ally.canAttack(getTarget())) ally.setTarget(getTarget());
+                if (hurt && ally.distanceToSqr(this) > 64) ally.getNavigation().moveTo(getX(), getY(), getZ(), 1.4);
+            }
         }
         if (getTarget() != null) { lastSeen = getTarget().position(); memT = 200; }             // pursuit memory: lost prey is hunted to where it was last seen
         else if (memT > 0 && lastSeen != null && !isHanging() && attack() == Attack.NONE) {
