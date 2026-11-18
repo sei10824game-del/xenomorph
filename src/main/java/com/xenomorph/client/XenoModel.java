@@ -196,9 +196,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 0; i < 6; i++) add(chestB, -0.9f - (i % 2) * 0.25f, -8.4f + i * 1.4f, 3.8f, 1.8f + (i % 2) * 0.5f, 1.1f, 1.5f + (i % 2) * 0.7f);   // vertebrae
         add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
         for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
+        CubeListBuilder quillB = CubeListBuilder.create();
         if (c == Caste.SPIKER) for (int i = 0; i < 16; i++) {   // quill field: long swept-back spikes across the back and shoulders
             float qx = -4.2f * T + (i % 4) * 2.8f * T, qy = -8.5f + (i / 4) * 2.4f, ql = 7 + (i * 5 % 4) * 2.2f;
-            add(chestB, qx, qy, 4.6f, 0.9f, 0.9f, ql); add(chestB, qx + 0.15f, qy + 0.15f, 4.6f + ql, 0.6f, 0.6f, 2.2f);
+            add(quillB, qx, qy, 4.6f, 0.9f, 0.9f, ql); add(quillB, qx + 0.15f, qy + 0.15f, 4.6f + ql, 0.6f, 0.6f, 2.2f);
         }
         for (int i = 0; i < sp.plates; i++) {
             add(chestB, -5.6f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f); add(chestB, 2.4f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f);   // pauldrons
@@ -207,6 +208,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.carapace) { add(chestB, -4.4f * T, -9.2f, 3.6f, 8.8f * T, 10.5f, 2.2f); add(chestB, -5f * T, -9.8f, 3.2f, 10f * T, 1.6f, 3f); }
         if (sp.belly) add(chestB, -4.4f * T, -2.5f, -4.8f, 8.8f * T, 3.5f, 2f);
         PartDefinition chest = body.addOrReplaceChild("chest", chestB, PartPose.offset(0, -8.5f, 0));
+        if (c == Caste.SPIKER) chest.addOrReplaceChild("quills", quillB, PartPose.offset(0, 4f, 0));
         CubeListBuilder neckB = box(-2 * L, -5, -2 * L, 4 * L, 6, 4 * L);
         for (int i = 0; i < 3; i++) add(neckB, -2.35f * L, -4.4f + i * 2f, -2.35f * L, 4.7f * L, 0.7f, 4.7f * L);   // cartilage rings
         if (sp.rider) {   // a small rider xenomorph perched between the shoulders
@@ -1001,6 +1003,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
             arm2[s].zRot = sg * -0.25f; fore2[s].xRot = -1.0f + Mth.sin(age * 0.09f + s) * 0.15f;
         }
 
+        if (c == Caste.SPIKER) {                       // quills flare on the volley wind-up, then hang spent and short until they regrow
+            float fl = 0;
+            if (at == Attack.VOLLEY) fl = kf(t, 0, 0, Math.max(1, at.hit - 4), 1, at.hit, 1, at.hit + 3, -0.5f, at.duration, -0.2f);
+            ModelPart q = chest.getChild("quills"); q.xScale = 1 + 0.3f * fl; q.yScale = 1 + 0.35f * fl; q.zScale = 1 + 0.4f * fl;
+        }
         // tail counter-motion on every melee strike: tip cocks up on wind-up, then a whip wave runs down the tail after impact
         if (at != Attack.NONE && at.hit > 0 && at != Attack.TAIL_STAB && at != Attack.TAIL_SWEEP && !climbing && !hang) {
             for (int i = 1; i < TAIL; i++) {
