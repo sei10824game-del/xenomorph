@@ -193,8 +193,8 @@ public class XenoEntity extends Monster {
         attackTick = 0; held = null; impaled = false; landed = false;
         LivingEntity t = getTarget();
         if (t != null) { vx = t.getX() - getX(); vz = t.getZ() - getZ(); double l = Math.sqrt(vx * vx + vz * vz); if (l > 1e-4) { vx /= l; vz /= l; } }
-        if (a == Attack.SCREECH) playSound(XenomorphMod.SCREECH.get(), 3f, 1.7f);
-        else if (a != Attack.NONE && a != Attack.LAY) playSound(XenomorphMod.ATTACK.get(), 1.2f, 0.9f + random.nextFloat() * 0.2f);
+        if (a == Attack.SCREECH) playSound(XenomorphMod.SCREECH.get(), 3f, 1.35f * getVoicePitch());
+        else if (a != Attack.NONE && a != Attack.LAY) playSound(XenomorphMod.ATTACK.get(), 1.2f, 0.85f * getVoicePitch());
     }
     private void endAttack() {
         releaseHeld(false);
@@ -246,7 +246,7 @@ public class XenoEntity extends Monster {
         updateStance();
         if (caste.ferocity() >= 0.5f && getHealth() < getMaxHealth() * 0.4f && !hasEffect(MobEffects.DAMAGE_BOOST)) {
             addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 1));
-            playSound(XenomorphMod.ATTACK.get(), 2f, 0.6f);
+            playSound(XenomorphMod.ATTACK.get(), 2f, 0.55f * getVoicePitch());
         }
         Attack a = attack();
         if (a != Attack.NONE) {
@@ -348,7 +348,7 @@ public class XenoEntity extends Monster {
             case GRAB -> tickGrab(a, target);
             case IMPALE -> tickImpale(a, target);
             case POUNCE -> {
-                if (t == a.hit) { setDeltaMovement(vx * 1.15, 0.55, vz * 1.15); hasImpulse = true; playSound(XenomorphMod.ATTACK.get(), 1.2f, 1.4f); }
+                if (t == a.hit) { setDeltaMovement(vx * 1.15, 0.55, vz * 1.15); hasImpulse = true; playSound(XenomorphMod.ATTACK.get(), 1.2f, 1.3f * getVoicePitch()); }
                 else if (t > a.hit && t < a.hit + 14 && target != null && getBoundingBox().inflate(0.4).intersects(target.getBoundingBox())) {
                     if (strike(target, 1.3f, 4, 0.6)) { target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2)); attackTick = Math.max(attackTick, a.hit + 14); }
                 }
