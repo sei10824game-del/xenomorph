@@ -223,5 +223,17 @@
  "entity.xenomorph.bloodburster": "ブラッドバースター",
  "item.xenomorph.bloodburster_spawn_egg": "ブラッドバースター スポーンエッグ",
  "entity.xenomorph.goreburster": "ゴアバースター",
- "item.xenomorph.goreburster_spawn_egg": "ゴアバースター スポーンエッグ"
+ "item.xenomorph.goreburster_spawn_egg": "ゴアバースター スポーンエッグ",
+ "advancement.xenomorph.tracker.title": "動体反応あり",
+ "advancement.xenomorph.tracker.desc": "動体検知器を作る。",
+ "advancement.xenomorph.scholar.title": "フィールドノート",
+ "advancement.xenomorph.scholar.desc": "ゼノペディアを作る。",
+ "advancement.xenomorph.molt.title": "脱皮",
+ "advancement.xenomorph.molt.desc": "ゼノモーフの抜け殻を拾う。",
+ "advancement.xenomorph.spear.title": "毒を以て毒を制す",
+ "advancement.xenomorph.spear.desc": "酸の槍を作る。",
+ "advancement.xenomorph.king_slayer.title": "王殺し",
+ "advancement.xenomorph.king_slayer.desc": "キング、またはトゥルーキングを倒す。",
+ "advancement.xenomorph.legend.title": "絶滅級",
+ "advancement.xenomorph.legend.desc": "クイーンマザー、トゥルーキング、タイタンを、それぞれ倒す。"
 }

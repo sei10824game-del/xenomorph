@@ -1,0 +1,55 @@
+{
+ "display": {
+  "icon": {
+   "item": "xenomorph:flamethrower"
+  },
+  "title": {
+   "translate": "advancement.xenomorph.legend.title"
+  },
+  "description": {
+   "translate": "advancement.xenomorph.legend.desc"
+  },
+  "frame": "challenge",
+  "show_toast": true,
+  "announce_to_chat": true,
+  "hidden": false
+ },
+ "criteria": {
+  "a": {
+   "trigger": "minecraft:player_killed_entity",
+   "conditions": {
+    "entity": {
+     "type": "xenomorph:queen_mother"
+    }
+   }
+  },
+  "b": {
+   "trigger": "minecraft:player_killed_entity",
+   "conditions": {
+    "entity": {
+     "type": "xenomorph:true_king"
+    }
+   }
+  },
+  "c": {
+   "trigger": "minecraft:player_killed_entity",
+   "conditions": {
+    "entity": {
+     "type": "xenomorph:titan_xeno"
+    }
+   }
+  }
+ },
+ "requirements": [
+  [
+   "a"
+  ],
+  [
+   "b"
+  ],
+  [
+   "c"
+  ]
+ ],
+ "parent": "xenomorph:king_slayer"
+}

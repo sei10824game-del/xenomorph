@@ -1,0 +1,37 @@
+{
+ "display": {
+  "icon": {
+   "item": "xenomorph:xenopedia"
+  },
+  "title": {
+   "translate": "advancement.xenomorph.scholar.title"
+  },
+  "description": {
+   "translate": "advancement.xenomorph.scholar.desc"
+  },
+  "frame": "task",
+  "show_toast": true,
+  "announce_to_chat": true,
+  "hidden": false
+ },
+ "criteria": {
+  "c": {
+   "trigger": "minecraft:inventory_changed",
+   "conditions": {
+    "items": [
+     {
+      "items": [
+       "xenomorph:xenopedia"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "requirements": [
+  [
+   "c"
+  ]
+ ],
+ "parent": "xenomorph:root"
+}

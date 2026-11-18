@@ -1,0 +1,37 @@
+{
+ "display": {
+  "icon": {
+   "item": "xenomorph:motion_tracker"
+  },
+  "title": {
+   "translate": "advancement.xenomorph.tracker.title"
+  },
+  "description": {
+   "translate": "advancement.xenomorph.tracker.desc"
+  },
+  "frame": "task",
+  "show_toast": true,
+  "announce_to_chat": true,
+  "hidden": false
+ },
+ "criteria": {
+  "c": {
+   "trigger": "minecraft:inventory_changed",
+   "conditions": {
+    "items": [
+     {
+      "items": [
+       "xenomorph:motion_tracker"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "requirements": [
+  [
+   "c"
+  ]
+ ],
+ "parent": "xenomorph:root"
+}

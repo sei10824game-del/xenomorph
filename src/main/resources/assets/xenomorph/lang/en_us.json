@@ -223,5 +223,17 @@
  "entity.xenomorph.bloodburster": "Bloodburster",
  "item.xenomorph.bloodburster_spawn_egg": "Bloodburster Spawn Egg",
  "entity.xenomorph.goreburster": "Goreburster",
- "item.xenomorph.goreburster_spawn_egg": "Goreburster Spawn Egg"
+ "item.xenomorph.goreburster_spawn_egg": "Goreburster Spawn Egg",
+ "advancement.xenomorph.tracker.title": "Game Over, Man",
+ "advancement.xenomorph.tracker.desc": "Craft a motion tracker.",
+ "advancement.xenomorph.scholar.title": "Field Notes",
+ "advancement.xenomorph.scholar.desc": "Craft a Xenopedia.",
+ "advancement.xenomorph.molt.title": "Shedding",
+ "advancement.xenomorph.molt.desc": "Pick up a shed xenomorph skin.",
+ "advancement.xenomorph.spear.title": "Fight Fire With Acid",
+ "advancement.xenomorph.spear.desc": "Craft an acid spear.",
+ "advancement.xenomorph.king_slayer.title": "Regicide",
+ "advancement.xenomorph.king_slayer.desc": "Kill a King or the True King.",
+ "advancement.xenomorph.legend.title": "Extinction Event",
+ "advancement.xenomorph.legend.desc": "Kill a Queen Mother, the True King and a Titan."
 }

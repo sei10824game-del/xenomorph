@@ -1,0 +1,42 @@
+{
+ "display": {
+  "icon": {
+   "item": "xenomorph:acid_spear"
+  },
+  "title": {
+   "translate": "advancement.xenomorph.king_slayer.title"
+  },
+  "description": {
+   "translate": "advancement.xenomorph.king_slayer.desc"
+  },
+  "frame": "challenge",
+  "show_toast": true,
+  "announce_to_chat": true,
+  "hidden": false
+ },
+ "criteria": {
+  "a": {
+   "trigger": "minecraft:player_killed_entity",
+   "conditions": {
+    "entity": {
+     "type": "xenomorph:true_king"
+    }
+   }
+  },
+  "b": {
+   "trigger": "minecraft:player_killed_entity",
+   "conditions": {
+    "entity": {
+     "type": "xenomorph:king"
+    }
+   }
+  }
+ },
+ "requirements": [
+  [
+   "a",
+   "b"
+  ]
+ ],
+ "parent": "xenomorph:queen_slayer"
+}
