@@ -40,6 +40,8 @@ public class ChestbursterEntity extends Monster {
         if (!level().isClientSide && age >= (form == Caste.RED_QUEEN_MOTHER ? 1500 : GROW) && level() instanceof ServerLevel sl) {
             XenoEntity x = XenomorphMod.XENOS.get(form).get().create(sl);
             if (x != null) { x.moveTo(getX(), getY(), getZ(), getYRot(), 0); sl.addFreshEntity(x); }
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, getX(), getY() + 0.2, getZ(), 6, 0.2, 0.1, 0.2, 0.02);   // molt: the old skin is left behind
+            net.minecraft.world.entity.item.ItemEntity sk = new net.minecraft.world.entity.item.ItemEntity(sl, getX(), getY() + 0.2, getZ(), new net.minecraft.world.item.ItemStack(XenomorphMod.SKIN.get())); sl.addFreshEntity(sk);
             discard();
         }
     }

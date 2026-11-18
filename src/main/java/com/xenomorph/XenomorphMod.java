@@ -44,7 +44,8 @@ public class XenomorphMod {
     });
     static final RegistryObject<Item> RIFLE = ITEMS.register("pulse_rifle", XenoWeapons.PulseRifle::new), FLAMER = ITEMS.register("flamethrower", XenoWeapons.Flamethrower::new),
             GLAND = ITEMS.register("acid_gland", () -> new Item(new Item.Properties())),
-            SPEAR = ITEMS.register("acid_spear", XenoWeapons.AcidSpear::new);
+            SPEAR = ITEMS.register("acid_spear", XenoWeapons.AcidSpear::new), SKIN_ = ITEMS.register("shed_skin", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SKIN = SKIN_;
     static final List<RegistryObject<Item>> SUIT = new ArrayList<>();
     static {
         String[] names = {"helmet", "chestplate", "leggings", "boots"};
@@ -130,7 +131,7 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(SPEAR.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); out.accept(JELLY.get()); SUIT.forEach(a -> out.accept(a.get())); }).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(SPEAR.get()); out.accept(SKIN_.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); out.accept(JELLY.get()); SUIT.forEach(a -> out.accept(a.get())); }).build());
     }
 
     public XenomorphMod() {
