@@ -246,5 +246,19 @@
  "entity.xenomorph.void_xeno": "ヴォイド・ゼノモーフ",
  "item.xenomorph.void_xeno_spawn_egg": "ヴォイド・ゼノモーフ スポーンエッグ",
  "entity.xenomorph.frost_xeno": "フロスト・ゼノモーフ",
- "item.xenomorph.frost_xeno_spawn_egg": "フロスト・ゼノモーフ スポーンエッグ"
+ "item.xenomorph.frost_xeno_spawn_egg": "フロスト・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.wither_xeno": "ウィザー・ゼノモーフ",
+ "item.xenomorph.wither_xeno_spawn_egg": "ウィザー・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.blaze_xeno": "ブレイズ・ゼノモーフ",
+ "item.xenomorph.blaze_xeno_spawn_egg": "ブレイズ・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.shulker_xeno": "シュルカー・ゼノモーフ",
+ "item.xenomorph.shulker_xeno_spawn_egg": "シュルカー・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.husk_xeno": "ハスク・ゼノモーフ",
+ "item.xenomorph.husk_xeno_spawn_egg": "ハスク・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.hog_xeno": "ホグリン・ゼノモーフ",
+ "item.xenomorph.hog_xeno_spawn_egg": "ホグリン・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.frozen_xeno": "フローズン・ゼノモーフ",
+ "item.xenomorph.frozen_xeno_spawn_egg": "フローズン・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.jungle_xeno": "ジャングル・ゼノモーフ",
+ "item.xenomorph.jungle_xeno_spawn_egg": "ジャングル・ゼノモーフ スポーンエッグ"
 }

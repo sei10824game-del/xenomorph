@@ -42,6 +42,19 @@ public class EmbryoEffect extends MobEffect {
 
     /** DNA reflex: the burster inherits traits of the host species. */
     static Caste hostForm(LivingEntity h) {
+        var rr = h.getRandom();                                                                                 // mutant lineage: the host's mutant counterpart, one birth in six
+        if (rr.nextInt(6) == 0) {
+            if (h instanceof net.minecraft.world.entity.monster.Husk) return Caste.HUSK_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.Zombie z && !(h instanceof net.minecraft.world.entity.monster.ZombieVillager)) return h.level().getBiome(h.blockPosition()).value().coldEnoughToSnow(h.blockPosition()) ? Caste.FROZEN_XENO : h.level().getBiome(h.blockPosition()).is(net.minecraft.tags.BiomeTags.IS_JUNGLE) ? Caste.JUNGLE_XENO : Caste.HULK_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.WitherSkeleton) return Caste.WITHER_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.AbstractSkeleton) return Caste.BONE_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.Creeper) return Caste.BLAST_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.EnderMan) return Caste.VOID_XENO;
+            if (h instanceof net.minecraft.world.entity.animal.SnowGolem) return Caste.FROST_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.Blaze) return Caste.BLAZE_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.Shulker) return Caste.SHULKER_XENO;
+            if (h instanceof net.minecraft.world.entity.monster.hoglin.Hoglin) return Caste.HOG_XENO;
+        }
         if (h instanceof net.minecraft.world.entity.animal.Cow) return Caste.BULL_ALIEN;
         if (h instanceof net.minecraft.world.entity.animal.Ocelot || h instanceof net.minecraft.world.entity.animal.Cat) return Caste.PANTHER;
         if (h instanceof net.minecraft.world.entity.animal.goat.Goat) return Caste.GOAT;

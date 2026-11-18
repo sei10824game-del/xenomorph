@@ -28,7 +28,8 @@ final class MutantAttacks {
 
     static int lock(Attack a) {
         return switch (a) { case SEISMIC -> 70; case HURL -> 160; case ROAR_BLAST -> 400; case BONE_SHOT -> 40; case BONE_BARRAGE -> 160; case RIB_CRUSH -> 80; case BLAST_CHARGE -> 300;
-            case MINION_BURST -> 260; case TELE_SMASH -> 140; case THROW_BLOCK -> 60; case CLONE_SPLIT -> 600; default -> 0; };
+            case MINION_BURST -> 260; case TELE_SMASH -> 140; case THROW_BLOCK -> 60; case CLONE_SPLIT -> 600; case WITHER_SLASH -> 50; case WITHER_BOMB -> 120; case FIRE_VOLLEY -> 100; case SHULKER_STORM -> 160; case SHELL_GUARD -> 500; case QUICKSAND -> 240;
+            case ICE_SMASH -> 120; case ICICLE_VOLLEY -> 120; case THORN_PATCH -> 240; case GUST -> 140; default -> 0; };
     }
 
     static void run(XenoEntity x, Attack a, int t, LivingEntity target, double r) {
@@ -151,8 +152,12 @@ final class MutantAttacks {
             }
             case THROW_BLOCK -> {
                 if (t == a.hit && target != null) {
-                    BlockState bs = x.caste == Caste.FROST_XENO ? (x.getRandom().nextInt(4) == 0 ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState())
-                            : x.getRandom().nextBoolean() ? Blocks.STONE.defaultBlockState() : Blocks.DIRT.defaultBlockState();
+                    BlockState bs = switch (x.caste) {
+                        case FROST_XENO -> x.getRandom().nextInt(4) == 0 ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState();
+                        case FROZEN_XENO -> x.getRandom().nextBoolean() ? Blocks.SNOW_BLOCK.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState();   // giant snowballs / ice cubes
+                        case HUSK_XENO -> Blocks.SAND.defaultBlockState();                                                                       // sand boulder
+                        default -> x.getRandom().nextBoolean() ? Blocks.STONE.defaultBlockState() : Blocks.DIRT.defaultBlockState();
+                    };
                     Vec3 p = x.position().add(x.fwd().scale(0.9 * x.caste.scale)).add(0, x.getBbHeight() * 0.8, 0);
                     FallingBlockEntity fb = FallingBlockEntity.fall(sl, BlockPos.containing(p), bs);     // lands as a block entity that hurts what it hits
                     fb.setPos(p.x, p.y, p.z); fb.setHurtsEntities(Math.max(2f, x.caste.dmg * 0.8f * (float) XenoConfig.dmg()), 60); fb.dropItem = false;
@@ -178,7 +183,103 @@ final class MutantAttacks {
                     x.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.2f, 0.4f);
                 }
             }
+            case WITHER_SLASH -> {                                                     // crescent wave: everything in a 12-block lane takes damage and withers
+                if (t == a.hit - 3) x.playSound(SoundEvents.WITHER_SHOOT, 1f, 1.4f);
+                if (t >= a.hit && t < a.hit + 8) {
+                    int d = (t - a.hit) * 2 + 2;
+                    Vec3 f = x.fwd(), c = x.position().add(f.scale(d)), side = new Vec3(-f.z, 0, f.x);
+                    for (int k = -3; k <= 3; k++) sl.sendParticles(ParticleTypes.SMOKE, c.x + side.x * k * 0.5, x.getY() + 1.0 + Math.abs(k) * 0.12, c.z + side.z * k * 0.5, 1, 0.05, 0.05, 0.05, 0.01);
+                    sl.sendParticles(ParticleTypes.SWEEP_ATTACK, c.x, x.getY() + 1.0, c.z, 1, 0, 0, 0, 0);
+                    for (LivingEntity e : sl.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(c.x - 2, x.getY() - 1, c.z - 2, c.x + 2, x.getY() + 3, c.z + 2), e -> e != x && !x.friendly(e) && e.isAlive()))
+                        if (!x.sweptHit(e)) { x.markSwept(e); x.strike(e, 1.1f, 99, 0.5); e.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1)); }
+                }
+                if (t == a.hit) x.clearSwept();
+            }
+            case WITHER_BOMB -> {
+                if (t == a.hit && target != null) {
+                    var st = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPLASH_POTION);
+                    net.minecraft.world.item.alchemy.PotionUtils.setCustomEffects(st, java.util.List.of(new MobEffectInstance(MobEffects.WITHER, 160, 1), new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1)));
+                    var pot = new net.minecraft.world.entity.projectile.ThrownPotion(sl, x); pot.setItem(st);
+                    pot.setPos(x.getX() + x.fwd().x, x.getY() + x.getBbHeight() * 0.8, x.getZ() + x.fwd().z);
+                    Vec3 d = target.position().subtract(pot.position()); double dist = d.length();
+                    pot.shoot(d.x, d.y + dist * 0.25, d.z, 1.1f, 0.5f); sl.addFreshEntity(pot);
+                    x.playSound(SoundEvents.WITHER_SHOOT, 1f, 0.6f);
+                }
+            }
+            case FIRE_VOLLEY -> {
+                if (target != null && (t == a.hit || t == a.hit + 5 || t == a.hit + 10 || t == a.hit + 15)) {
+                    Vec3 d = target.position().add(0, target.getBbHeight() * 0.5, 0).subtract(x.getX(), x.getY() + x.getBbHeight() * 0.7, x.getZ());
+                    var fb = new net.minecraft.world.entity.projectile.SmallFireball(sl, x, d.x + (x.getRandom().nextDouble() - 0.5) * 2, d.y, d.z + (x.getRandom().nextDouble() - 0.5) * 2);
+                    fb.setPos(x.getX() + x.fwd().x, x.getY() + x.getBbHeight() * 0.7, x.getZ() + x.fwd().z); sl.addFreshEntity(fb);
+                    x.playSound(SoundEvents.BLAZE_SHOOT, 1.2f, 0.7f);
+                }
+            }
+            case SHULKER_STORM -> {
+                if (target != null && (t == a.hit || t == a.hit + 6 || t == a.hit + 12)) {
+                    for (int i = 0; i < 2; i++) {
+                        var sb = new net.minecraft.world.entity.projectile.ShulkerBullet(sl, x, target, net.minecraft.core.Direction.Axis.Y);
+                        sb.setPos(x.getX() + (i == 0 ? -0.8 : 0.8), x.getY() + x.getBbHeight() * 0.9, x.getZ()); sl.addFreshEntity(sb);
+                    }
+                    x.playSound(SoundEvents.SHULKER_SHOOT, 1.2f, 0.7f);
+                }
+            }
+            case SHELL_GUARD -> {                                                      // clamp up (near-immune), then pop open in a levitation burst
+                if (t == a.hit) { x.shellTicks = 42; x.playSound(SoundEvents.SHULKER_CLOSE, 1.5f, 0.6f); }
+                if (t == a.hit + 44) {
+                    x.shellTicks = 0; x.playSound(SoundEvents.SHULKER_OPEN, 1.5f, 0.6f);
+                    for (LivingEntity e : x.around(7)) { e.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 60, 1)); x.strike(e, 0.5f, 9, 0.6); }
+                    sl.sendParticles(ParticleTypes.END_ROD, x.getX(), x.getY() + 1, x.getZ(), 40, 1.5, 0.8, 1.5, 0.1);
+                }
+            }
+            case QUICKSAND -> cloud(x, a, t, target, net.minecraft.world.level.block.Blocks.SAND.defaultBlockState(), 3.6f, 120, new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 4), new MobEffectInstance(MobEffects.JUMP, 40, 128), new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 1));
+            case THORN_PATCH -> cloud(x, a, t, target, net.minecraft.world.level.block.Blocks.OAK_LEAVES.defaultBlockState(), 3.2f, 160, new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3), new MobEffectInstance(MobEffects.POISON, 40, 1));
+            case ICE_SMASH -> {
+                if (target == null) return;
+                if (t == 4 && x.distanceTo(target) < r + 2) { target.setTicksFrozen(target.getTicksRequiredToFreeze() + 120); target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 5)); x.playSound(SoundEvents.PLAYER_HURT_FREEZE, 1.2f, 0.7f); }
+                if (t == a.hit && x.strike(target, 1.3f * (target.isFullyFrozen() ? 2f : 1f), r + 1, 0.6)) {
+                    target.setTicksFrozen(0); target.setDeltaMovement(target.getDeltaMovement().add(0, 0.6, 0)); target.hurtMarked = true;
+                    x.playSound(SoundEvents.GLASS_BREAK, 1.5f, 0.5f);
+                    sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, Blocks.ICE.defaultBlockState()), target.getX(), target.getY() + 1, target.getZ(), 40, 0.4, 0.6, 0.4, 0.2);
+                }
+            }
+            case ICICLE_VOLLEY -> {
+                if (target != null && (t == a.hit || t == a.hit + 4 || t == a.hit + 8)) {
+                    for (int i = 0; i < 3; i++) {
+                        Arrow ar = arrow(x, target, 2.0f, 4f);
+                        ar.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 3)); ar.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0));
+                        sl.addFreshEntity(ar);
+                    }
+                    x.playSound(SoundEvents.GLASS_BREAK, 0.8f, 1.6f);
+                }
+            }
+            case GUST -> {
+                if (t >= a.hit && t < a.hit + 10 && t % 2 == 0) {
+                    Vec3 f = x.fwd();
+                    sl.sendParticles(ParticleTypes.CLOUD, x.getX() + f.x * 3, x.getY() + 1.2, x.getZ() + f.z * 3, 8, 1.2, 0.5, 1.2, 0.2);
+                    sl.sendParticles(ParticleTypes.COMPOSTER, x.getX() + f.x * 4, x.getY() + 1.2, x.getZ() + f.z * 4, 6, 1.5, 0.6, 1.5, 0.2);
+                    for (LivingEntity e : x.around(9)) {
+                        Vec3 d = e.position().subtract(x.position()).multiply(1, 0, 1);
+                        if (d.lengthSqr() < 1e-4 || d.normalize().dot(f) < 0.4) continue;
+                        d = d.normalize(); e.setDeltaMovement(e.getDeltaMovement().add(d.x * 0.45, 0.08, d.z * 0.45)); e.hurtMarked = true;
+                        if (t == a.hit) x.strike(e, 0.4f, 12, 0);
+                    }
+                }
+                if (t == a.hit) x.playSound(SoundEvents.PHANTOM_FLAP, 2f, 0.4f);
+            }
             default -> {}
+        }
+    }
+
+    /** Lingering ground effect under the prey: the quicksand / sentry-vine attacks. */
+    private static void cloud(XenoEntity x, Attack a, int t, LivingEntity target, BlockState particle, float radius, int ticks, MobEffectInstance... effects) {
+        if (!(x.level() instanceof ServerLevel sl) || target == null) return;
+        if (t == a.hit - 4) sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, particle), target.getX(), target.getY() + 0.1, target.getZ(), 30, 0.8, 0.1, 0.8, 0.1);
+        if (t == a.hit) {
+            var c = new net.minecraft.world.entity.AreaEffectCloud(sl, target.getX(), target.getY(), target.getZ());
+            c.setOwner(x); c.setRadius(radius); c.setDuration(ticks); c.setWaitTime(0); c.setRadiusPerTick(-radius / ticks * 0.6f);
+            c.setParticle(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, particle));
+            for (MobEffectInstance e : effects) c.addEffect(e);
+            sl.addFreshEntity(c); x.playSound(SoundEvents.SAND_BREAK, 1.5f, 0.5f);
         }
     }
 

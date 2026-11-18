@@ -50,7 +50,18 @@ public enum Attack {
     MINION_BURST(30, 12, 0, 32),    // spit out explosive minions (Creeper Minions)
     TELE_SMASH(30, 18, 3, 22),      // yank prey in and smash it (Mutant Enderman)
     THROW_BLOCK(30, 13, 5, 24),     // hurl a block: dirt/stone from the void lineage, ice from the frost lineage
-    CLONE_SPLIT(60, 20, 0, 28);     // shed fleeting copies of itself (Endersoul clones)      // ceiling ambush: drop onto prey (only chosen from the hanging state)
+    CLONE_SPLIT(60, 20, 0, 28),     // shed fleeting copies of itself (Endersoul clones)
+    // --- Mutant More lineage (Wither / Blaze / Shulker / Husk / Hoglin / Frozen / Jungle xenos)
+    WITHER_SLASH(28, 12, 3, 12),    // crescent wave of withering energy
+    WITHER_BOMB(30, 13, 5, 20),     // lobbed bomb that bursts into a wither cloud
+    FIRE_VOLLEY(40, 14, 4, 22),     // volley of blaze fireballs
+    SHULKER_STORM(40, 14, 4, 26),   // homing levitation bullets
+    SHELL_GUARD(60, 10, 0, 18),     // clamp the shell (near-immune), then burst: levitation pulse
+    QUICKSAND(32, 14, 3, 18),       // churn the ground under the prey into quicksand
+    ICE_SMASH(34, 22, 0, 4.2),      // freeze solid, then smash the ice
+    ICICLE_VOLLEY(38, 16, 5, 26),   // freezing icicle barrage
+    THORN_PATCH(30, 12, 3, 18),     // sentry vines burst from the ground
+    GUST(30, 12, 0, 9);             // leaf-blower gust that shoves everything away      // ceiling ambush: drop onto prey (only chosen from the hanging state)
 
     public final int duration, hit;
     public final double min, max;

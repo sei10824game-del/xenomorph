@@ -39,7 +39,8 @@ public final class Hive {
     private static final Caste[] PROTO = {Caste.PROTOMORPH};   // own faction: never shares a hive with classic xenos
     private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER, Caste.THRASHER, Caste.GOREBURSTER};
     /** The mutant lineage (Mutant Monsters-style apex castes): rare guardians of classic hives. */
-    private static final Caste[] MUTANTS = {Caste.HULK_XENO, Caste.BONE_XENO, Caste.BLAST_XENO, Caste.VOID_XENO, Caste.FROST_XENO};
+    private static final Caste[] MUTANTS = {Caste.HULK_XENO, Caste.BONE_XENO, Caste.BLAST_XENO, Caste.VOID_XENO, Caste.FROST_XENO,
+            Caste.WITHER_XENO, Caste.BLAZE_XENO, Caste.SHULKER_XENO, Caste.HUSK_XENO, Caste.HOG_XENO, Caste.FROZEN_XENO, Caste.JUNGLE_XENO};
     private static final Caste[] NEO = {Caste.NEOMORPH, Caste.NEOMORPH, Caste.BLOODBURSTER};   // own faction
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {

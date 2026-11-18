@@ -277,14 +277,18 @@ public class XenoGameTests {
     public static void raidHitsBoss(GameTestHelper h) {
         var sl = h.getLevel();
         BlockPos hive = h.absolutePos(new BlockPos(2, 2, 2)), far = hive.offset(36, 0, 0);
-        sl.getChunkAt(hive); sl.getChunkAt(far);
+        for (int cx = -3; cx <= 3; cx++) for (int cz = -3; cz <= 3; cz++) sl.getChunkAt(far.offset(cx * 16, 0, cz * 16));   // raiders spawn up to 34 blocks around the boss: those chunks must be loaded
+        sl.getChunkAt(hive);
+        for (int dx = -40; dx <= 40; dx++) for (int dz = -40; dz <= 40; dz++) { sl.setBlock(far.offset(dx, -1, dz), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2); for (int dy = 0; dy < 4; dy++) sl.setBlock(far.offset(dx, dy, dz), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2); } sl.getChunkSource().getChunk(far.getX() >> 4, far.getZ() >> 4, true);   // a platform for the raiders to spawn on
         for (int i = 0; i < 3; i++) { var g = XenomorphMod.XENOS.get(Caste.DRONE).get().create(sl); g.moveTo(hive.getX() + i, hive.getY(), hive.getZ(), 0, 0); g.setNoAi(true); sl.addFreshEntity(g); }
         var boss = EntityType.WARDEN.create(sl); boss.moveTo(far.getX() + .5, far.getY(), far.getZ() + .5, 0, 0); boss.setNoAi(true); boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(100000); sl.addFreshEntity(boss);   // outranks any other test's leftovers
+        String big = sl.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, new net.minecraft.world.phys.AABB(hive).inflate(160), e -> e.getMaxHealth() >= 500).stream().map(e -> e.getType().toShortString() + ":" + e.getMaxHealth() + "@" + e.blockPosition().toShortString()).toList().toString();
         int sent = Hive.raidOne(sl, new HiveData.Entry(hive, "classic"), new java.util.Random(1), true);
         var raiders = sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(far).inflate(45), x -> x.getTarget() == boss);
+        boolean alive = boss.isAlive(); String near = sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(far).inflate(45)).stream().map(x -> x.caste + "->" + (x.getTarget() == null ? null : x.getTarget().getType().toShortString())).toList().toString();
         String dbg = sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(hive).inflate(200)).stream().map(x -> x.caste + "@" + x.blockPosition().toShortString() + "->" + x.getTarget()).toList() + " boss@" + boss.blockPosition().toShortString() + " hive=" + hive.toShortString();
         sl.getEntitiesOfClass(XenoEntity.class, new net.minecraft.world.phys.AABB(hive).inflate(200)).forEach(x -> x.discard()); boss.discard();
-        if (sent < 3 || raiders.size() < 3) throw new AssertionError("sent=" + sent + " raiders=" + raiders.size() + " all=" + dbg);
+        if (sent < 3 || raiders.size() < 3) throw new AssertionError("sent=" + sent + " raiders=" + raiders.size()  + " alive=" + alive + " near=" + near + " big=" + big + " bossHp=" + boss.getMaxHealth());
         h.succeed();
     }
 
@@ -321,6 +325,23 @@ public class XenoGameTests {
         if (!sl.getBlockState(mid.below()).is(XenomorphMod.RESIN.get())) throw new AssertionError("no resin floor in tunnel at " + mid.below() + " core=" + core + " surfaceE10=" + sl.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, core.getX() + 10, core.getZ()) + " states: " + sl.getBlockState(mid.below()) + " / " + sl.getBlockState(mid.below().above()) + " / " + sl.getBlockState(mid.below(2)));
         for (int y = 0; y < 4; y++) if (!sl.getBlockState(mid.above(y)).isAir()) throw new AssertionError("tunnel blocked at height " + y);
         if (!sl.getBlockState(core.offset(18, 10, 0)).isAir()) throw new AssertionError("tunnel does not reach the top");
+        h.succeed();
+    }
+
+    /** Mutant lineage passives: blaze shield layers soak damage, the Blast xeno shrugs off explosions, hoglin rage kicks in after rapid hits. */
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "b_mutantPassives")
+    public static void mutantPassives(GameTestHelper h) {
+        var attacker = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(1, 2, 1));
+        var blaze = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.BLAZE_XENO).get(), new BlockPos(3, 2, 3));
+        float hp = blaze.getHealth(); blaze.hurt(blaze.damageSources().mobAttack((net.minecraft.world.entity.LivingEntity) attacker), 20f);
+        if (blaze.getHealth() < hp) throw new AssertionError("blaze shield did not absorb 20 damage");
+        var blast = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.BLAST_XENO).get(), new BlockPos(5, 2, 3));
+        hp = blast.getHealth(); blast.hurt(blast.damageSources().explosion(null, null), 50f);
+        if (blast.getHealth() < hp) throw new AssertionError("blast xeno took explosion damage");
+        var hog = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.HOG_XENO).get(), new BlockPos(7, 2, 3));
+        for (int i = 0; i < 4; i++) hog.hurt(hog.damageSources().mobAttack((net.minecraft.world.entity.LivingEntity) attacker), 1f);
+        if (!hog.hasEffect(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST)) throw new AssertionError("hoglin xeno did not enrage");
+        blaze.discard(); blast.discard(); hog.discard(); attacker.discard();
         h.succeed();
     }
 }

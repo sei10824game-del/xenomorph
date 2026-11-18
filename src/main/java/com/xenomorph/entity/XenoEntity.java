@@ -94,7 +94,9 @@ public class XenoEntity extends Monster {
     private int hangTimer = 100, climbGrace;
     private int musicT, callUntil, memT, cmdT;
     /** > 0 for the fleeting copies shed by CLONE_SPLIT: frail, drop nothing, vanish when the timer runs out. */
-    public int cloneTicks;
+    public int cloneTicks, shellTicks;
+    private float shieldHp = 90;     // blaze layers: 3 x 30 absorb before the body is touched
+    private int shieldIdle, enrage, lastHitTick;
     @Override protected boolean shouldDropLoot() { return cloneTicks == 0 && super.shouldDropLoot(); }
     @Override public int getExperienceReward() { return cloneTicks > 0 ? 0 : super.getExperienceReward(); }
     public void makeClone(int ticks) { cloneTicks = ticks; var mh = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH); if (mh != null) { mh.setBaseValue(24); setHealth(24); } setPersistenceRequired(); }
@@ -270,6 +272,8 @@ public class XenoEntity extends Monster {
                 if (hurt && ally.distanceToSqr(this) > 64) ally.getNavigation().moveTo(getX(), getY(), getZ(), 1.4);
             }
         }
+        if (shellTicks > 0) shellTicks--;
+        if (caste == Caste.BLAZE_XENO) { float max = 90; if (shieldHp < max && ++shieldIdle > 120 && tickCount % 10 == 0) shieldHp = Math.min(max, shieldHp + 6); }
         if (cloneTicks > 0 && --cloneTicks == 0) { if (level() instanceof ServerLevel cl) cl.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 25, 0.3, 0.8, 0.3, 0.3); discard(); return; }
         if (getTarget() != null) { lastSeen = getTarget().position(); memT = 200; }             // pursuit memory: lost prey is hunted to where it was last seen
         else if (memT > 0 && lastSeen != null && !isHanging() && attack() == Attack.NONE) {
@@ -756,7 +760,16 @@ public class XenoEntity extends Monster {
 
     // ---------- acid blood ----------
     @Override public boolean hurt(DamageSource src, float amount) {
+        if (caste == Caste.SHULKER_XENO && shellTicks > 0) { amount *= 0.1f; playSound(SoundEvents.SHULKER_HURT_CLOSED, 1f, 1f); }               // shell shut: almost nothing gets through
+        if (caste == Caste.BLAZE_XENO && shieldHp > 0 && !src.is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR)) {   // orbiting blaze shields soak damage first, one layer at a time
+            float before = shieldHp; shieldHp -= amount; shieldIdle = 0; playSound(SoundEvents.GLASS_BREAK, 0.8f, 1.5f);
+            if (level() instanceof ServerLevel bs) bs.sendParticles(ParticleTypes.FLAME, getX(), getY() + getBbHeight() * 0.6, getZ(), 8, 0.4, 0.4, 0.4, 0.05);
+            if (shieldHp > 0) return false;
+            amount = -shieldHp; shieldHp = 0; if (before <= 0) return super.hurt(src, amount);
+        }
+        if (caste == Caste.HOG_XENO && src.getEntity() != null) { if (tickCount - lastHitTick < 30 && ++enrage >= 3 && !hasEffect(MobEffects.DAMAGE_BOOST)) { addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 240, 2)); addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 240, 1)); playSound(SoundEvents.HOGLIN_ANGRY, 2f, 0.5f); enrage = 0; } else if (tickCount - lastHitTick >= 30) enrage = 0; lastHitTick = tickCount; }   // hit it too fast and it snaps
         if (caste == Caste.BLAST_XENO && src.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) return false;                       // born of the Mutant Creeper: blasts only feed it
+                       // born of the Mutant Creeper: blasts only feed it
         if (caste == Caste.FROST_XENO) { if (src.is(net.minecraft.tags.DamageTypeTags.IS_FREEZING)) return false; if (src.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) amount *= 2f; }
         if (caste == Caste.VOID_XENO && cloneTicks == 0 && !level().isClientSide && attack() == Attack.NONE && src.getEntity() != null && random.nextInt(6) == 0) {     // Enderman reflex: blink away from a hit
             for (int i = 0; i < 12; i++) {

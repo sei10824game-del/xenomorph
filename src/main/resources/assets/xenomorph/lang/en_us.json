@@ -246,5 +246,19 @@
  "entity.xenomorph.void_xeno": "Void Xenomorph",
  "item.xenomorph.void_xeno_spawn_egg": "Void Xenomorph Spawn Egg",
  "entity.xenomorph.frost_xeno": "Frost Xenomorph",
- "item.xenomorph.frost_xeno_spawn_egg": "Frost Xenomorph Spawn Egg"
+ "item.xenomorph.frost_xeno_spawn_egg": "Frost Xenomorph Spawn Egg",
+ "entity.xenomorph.wither_xeno": "Wither Xenomorph",
+ "item.xenomorph.wither_xeno_spawn_egg": "Wither Xenomorph Spawn Egg",
+ "entity.xenomorph.blaze_xeno": "Blaze Xenomorph",
+ "item.xenomorph.blaze_xeno_spawn_egg": "Blaze Xenomorph Spawn Egg",
+ "entity.xenomorph.shulker_xeno": "Shulker Xenomorph",
+ "item.xenomorph.shulker_xeno_spawn_egg": "Shulker Xenomorph Spawn Egg",
+ "entity.xenomorph.husk_xeno": "Husk Xenomorph",
+ "item.xenomorph.husk_xeno_spawn_egg": "Husk Xenomorph Spawn Egg",
+ "entity.xenomorph.hog_xeno": "Hoglin Xenomorph",
+ "item.xenomorph.hog_xeno_spawn_egg": "Hoglin Xenomorph Spawn Egg",
+ "entity.xenomorph.frozen_xeno": "Frozen Xenomorph",
+ "item.xenomorph.frozen_xeno_spawn_egg": "Frozen Xenomorph Spawn Egg",
+ "entity.xenomorph.jungle_xeno": "Jungle Xenomorph",
+ "item.xenomorph.jungle_xeno_spawn_egg": "Jungle Xenomorph Spawn Egg"
 }
