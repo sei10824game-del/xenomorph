@@ -47,5 +47,14 @@
    "xenomorph:xeno/sizzle1"
   ],
   "subtitle": "subtitles.xenomorph.xeno.sizzle"
+ },
+ "xeno.boss_theme": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/boss_theme",
+    "stream": true
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.boss_theme"
  }
 }

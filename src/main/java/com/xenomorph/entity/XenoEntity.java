@@ -88,6 +88,8 @@ public class XenoEntity extends Monster {
     public boolean isHanging() { return entityData.get(HANG); }
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
+    private int musicT;
+    private void stopMusic() { musicT = 0; if (boss != null) for (var pl : boss.getPlayers()) pl.connection.send(new net.minecraft.network.protocol.game.ClientboundStopSoundPacket(XenomorphMod.BOSS_THEME.getId(), net.minecraft.sounds.SoundSource.MUSIC)); }
     private net.minecraft.server.level.ServerBossEvent boss;   // only for the giants (hp >= 250)
     private boolean landed;
     @Override protected net.minecraft.world.entity.ai.navigation.PathNavigation createNavigation(Level l) { return new net.minecraft.world.entity.ai.navigation.WallClimberNavigation(this, l); }
@@ -229,7 +231,13 @@ public class XenoEntity extends Monster {
         if (cooldown > 0) cooldown--;
         lockout.replaceAll((k, v) -> v - 1);
         lockout.values().removeIf(v -> v <= 0);
-        if (boss != null) boss.setProgress(getHealth() / getMaxHealth());
+        if (boss != null) {
+            boss.setProgress(getHealth() / getMaxHealth());
+            if (musicT > 0) musicT--;
+            if (getTarget() != null && isAlive()) {                                  // boss theme loop (24 s) for everyone watching the bar
+                if (musicT <= 0) { musicT = 480; for (var pl : boss.getPlayers()) pl.playNotifySound(XenomorphMod.BOSS_THEME.get(), net.minecraft.sounds.SoundSource.MUSIC, 0.7f, 1f); }
+            } else if (musicT > 0) stopMusic();
+        }
         if (getTarget() != null && friendly(getTarget())) setTarget(null);
         {
             if (getTarget() != null) climbGrace = 40; else if (climbGrace > 0) climbGrace--;     // brief target loss mid-wall must not drop us
@@ -739,7 +747,7 @@ public class XenoEntity extends Monster {
     /** Corpses dissolve in their own acid instead of lying there for a second. */
     @Override public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer p) { super.startSeenByPlayer(p); if (boss != null) boss.addPlayer(p); }
     @Override public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer p) { super.stopSeenByPlayer(p); if (boss != null) boss.removePlayer(p); }
-    @Override public void remove(RemovalReason r) { if (boss != null) boss.removeAllPlayers(); super.remove(r); }
+    @Override public void remove(RemovalReason r) { if (boss != null) { stopMusic(); boss.removeAllPlayers(); } super.remove(r); }
 
     @Override protected void tickDeath() {
         if (level() instanceof ServerLevel sl) {

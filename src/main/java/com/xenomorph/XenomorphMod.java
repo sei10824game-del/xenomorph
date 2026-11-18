@@ -59,7 +59,7 @@ public class XenomorphMod {
     static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
     private static RegistryObject<net.minecraft.sounds.SoundEvent> snd(String n) { return SOUNDS.register(n, () -> net.minecraft.sounds.SoundEvent.createVariableRangeEvent(new net.minecraft.resources.ResourceLocation(ID, n))); }
     public static final RegistryObject<net.minecraft.sounds.SoundEvent> HISS = snd("xeno.hiss"), SCREECH = snd("xeno.screech"), HURT = snd("xeno.hurt"), DEATH = snd("xeno.death"),
-            ATTACK = snd("xeno.attack"), SKITTER = snd("xeno.skitter"), SIZZLE = snd("xeno.sizzle");
+            ATTACK = snd("xeno.attack"), SKITTER = snd("xeno.skitter"), SIZZLE = snd("xeno.sizzle"), BOSS_THEME = snd("xeno.boss_theme");
     static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ID);
     static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ID);
 
