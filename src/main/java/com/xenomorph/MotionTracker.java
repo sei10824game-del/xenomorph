@@ -22,6 +22,17 @@ public class MotionTracker extends Item {
 
     public MotionTracker() { super(new Item.Properties().stacksTo(1)); }
 
+    /** Held in a hand it pings by itself: the closer the nearest contact, the faster and higher the beeps (like the film's tracker). */
+    @Override public void inventoryTick(ItemStack st, Level level, net.minecraft.world.entity.Entity ent, int slot, boolean selected) {
+        if (level.isClientSide || !(ent instanceof Player p) || !(selected || p.getOffhandItem() == st) || p.getCooldowns().isOnCooldown(this)) return;
+        var hits = level.getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(30, 16, 30), e -> XenoEntity.faction(e) != 0 && XenoEntity.faction(e) != 3 && e.isAlive());
+        if (hits.isEmpty()) return;
+        double d = Math.sqrt(hits.stream().mapToDouble(p::distanceToSqr).min().getAsDouble());
+        int gap = (int) Mth.clamp(d * 1.6, 6, 50);
+        if (level.getGameTime() % gap != 0) return;
+        level.playSound(null, p.blockPosition(), SoundEvents.NOTE_BLOCK_HAT.value(), SoundSource.PLAYERS, 0.6f, (float) Mth.clamp(2.0 - d / 25.0, 0.8, 2.0));
+    }
+
     @Override public InteractionResultHolder<ItemStack> use(Level level, Player p, InteractionHand hand) {
         ItemStack st = p.getItemInHand(hand);
         if (!level.isClientSide) {
