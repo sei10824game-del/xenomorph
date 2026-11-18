@@ -164,8 +164,8 @@ public class XenoEntity extends Monster {
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this, FacehuggerEntity.class, ChestbursterEntity.class).setAlertOthers());
-        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, pl -> caste != Caste.BIODRONE));
+        targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, 10, true, false, vl -> caste != Caste.BIODRONE));
         targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
         // enemy faction xenos and every other hostile mob (husks, mutant zombies, other mods' monsters)
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,

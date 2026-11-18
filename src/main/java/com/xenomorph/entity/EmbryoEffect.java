@@ -20,7 +20,7 @@ public class EmbryoEffect extends MobEffect {
         if (!(host.level() instanceof ServerLevel sl)) return;
         ChestbursterEntity b = XenomorphMod.BURSTER.get().create(sl);
         if (b != null) {
-            b.form = praeto ? Caste.STALKER : red ? (host.getMaxHealth() >= 40 ? Caste.RED_QUEEN_MOTHER : host.getRandom().nextBoolean() ? Caste.RED_WARRIOR : Caste.RED_DRONE) : host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : Caste.DEACON) : hostForm(host);
+            b.form = praeto ? Caste.STALKER : red ? (host.getMaxHealth() >= 40 ? Caste.RED_QUEEN_MOTHER : host.getRandom().nextBoolean() ? Caste.RED_WARRIOR : Caste.RED_DRONE) : host instanceof HunterEntity h ? (h.kind == HunterEntity.Kind.PREDATOR ? (host.getRandom().nextInt(4) == 0 ? Caste.BERSERKER : Caste.PREDALIEN) : (host.getRandom().nextInt(4) == 0 ? Caste.ULTRAMORPH : Caste.DEACON)) : hostForm(host);
             b.moveTo(host.getX(), host.getY() + host.getBbHeight() * 0.6, host.getZ(), host.getYRot(), 0);
             sl.addFreshEntity(b);
         }

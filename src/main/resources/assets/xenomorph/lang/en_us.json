@@ -204,5 +204,9 @@
  "entity.xenomorph.thrasher": "Thrasher",
  "item.xenomorph.thrasher_spawn_egg": "Thrasher Spawn Egg",
  "item.xenomorph.praeto_facehugger_spawn_egg": "Praeto-Facehugger",
- "effect.xenomorph.praeto_embryo": "Praeto Embryo"
+ "effect.xenomorph.praeto_embryo": "Praeto Embryo",
+ "entity.xenomorph.ultramorph": "Ultramorph",
+ "item.xenomorph.ultramorph_spawn_egg": "Ultramorph Spawn Egg",
+ "entity.xenomorph.biodrone": "Biodrone (docile)",
+ "item.xenomorph.biodrone_spawn_egg": "Biodrone (docile) Spawn Egg"
 }

@@ -204,5 +204,9 @@
  "entity.xenomorph.thrasher": "スラッシャー",
  "item.xenomorph.thrasher_spawn_egg": "スラッシャー スポーンエッグ",
  "item.xenomorph.praeto_facehugger_spawn_egg": "プレト・フェイスハガー",
- "effect.xenomorph.praeto_embryo": "プレト胚"
+ "effect.xenomorph.praeto_embryo": "プレト胚",
+ "entity.xenomorph.ultramorph": "ウルトラモーフ",
+ "item.xenomorph.ultramorph_spawn_egg": "ウルトラモーフ スポーンエッグ",
+ "entity.xenomorph.biodrone": "バイオドローン（従順）",
+ "item.xenomorph.biodrone_spawn_egg": "バイオドローン（従順） スポーンエッグ"
 }
