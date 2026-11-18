@@ -1,10 +1,14 @@
 # Xenomorph (Minecraft 1.20.1 / Forge 47.3)
 
-18 castes + Facehugger / Chestburster / Egg, all procedural (no external deps, no geo files).
+80 xenomorph castes (+ Predator, Engineer, facehuggers, chestbursters, eggs). Procedural models/textures, no external deps.
 
-- **Stance**: Drone, Warrior, Praetorian, Spitter, Ravager, Lurker, Sentinel, Carrier, Predalien, Deacon, Boiler, Protomorph, Stalker switch biped⇄quadruped live (quad when sprinting at range, biped in melee). Queen, Neomorph, Newborn are biped-only; Runner (dog xeno) and Crusher are quadruped-only.
-- **Attacks** (per caste, see `Caste.java`): claw swipes, double claw, tail stab, tail sweep, inner-jaw bite, grab→lift→jaw execution→throw, pounce, acid spit, screech, charge, queen tail impale, slam, egg laying.
-- Acid blood (retaliation + armor corrosion + death splash), facehugger → Embryo effect → chestburster → drone/runner.
-- Animation: `XenoModel.pose()` (2-bone IK gait, keyframed attacks). Everything spawns from creative tab "Xenomorph".
+## Play
+- Creative tab **Xenomorph**: spawn eggs, resin, tools. Build: JDK 17, `./gradlew build` (or `gradlew.bat`). Smoke tests: `./gradlew runGameTestServer`.
+- **Hives** generate underground in new overworld chunks (resin cave, eggs, queen, brood, cocooned hosts). Kinds: classic, pathogen, protomorph, neomorph, red, K-Series, clone. Find them: `/xenomorph hive [list|tp]` (op) or the **Hive Locator**. **Motion Tracker** pings xenos within 48 blocks.
+- **Factions** fight each other (classic, red, pathogen, neomorph, protomorph, deacon, clone, K-Series, white hybrid, rogue king, Predator/Engineer) and every other hostile mob.
+- **Life cycle**: egg → facehugger → embryo → chestburster; the form depends on the host species (DNA reflex). Cut embryos out with the **Surgical Kit**.
+- **Gear**: Pulse Rifle, Flamethrower, Acid-Neutralizing Suit (resin), Acid Gland / Royal Jelly drops. Xenos burn (except fire-resistant castes).
+- **Behaviour**: unique attacks per caste, weight/ferocity, wall climbing, ceiling ambush, melting corpses, boss bars for giants.
+- Config: `config/xenomorph-common.toml` (hive rarity, acid armor damage, ceiling ambush, damage multiplier).
 
-Dev: JDK17, `./gradlew build`, `./gradlew runGameTestServer` (smoke test of every attack).
+Source notes and gaps: `docs/RESEARCH.md`.
