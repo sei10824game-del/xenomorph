@@ -10,7 +10,7 @@ import java.util.List;
 /** Chases the target and picks a fitting attack by distance, caste and cooldown. */
 public class XenoAttackGoal extends Goal {
     private final XenoEntity x;
-    private int repath, stuck;
+    private int repath, stuck, stalkT, stalkCool;
     private net.minecraft.world.phys.Vec3 lastPos = net.minecraft.world.phys.Vec3.ZERO;
 
     public XenoAttackGoal(XenoEntity x) { this.x = x; setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK)); }
@@ -24,6 +24,17 @@ public class XenoAttackGoal extends Goal {
         if (t == null || x.attack() != Attack.NONE) return;
         double d = Math.sqrt(x.distanceToSqr(t));
         x.getLookControl().setLookAt(t, 30, 30);
+        // stalking: a patient hunter freezes in place while the prey stares straight at it, creeping on once the gaze breaks (or after 2 s)
+        if (stalkT > 0) stalkT--;
+        if (d > 7 && d < 26 && t instanceof net.minecraft.world.entity.player.Player && x.caste.ferocity() < 0.5f && !x.isClimbing() && x.getHealth() >= x.getMaxHealth() * 0.7f && stalkCool <= 0) {
+            net.minecraft.world.phys.Vec3 look = t.getLookAngle(), to = x.getEyePosition().subtract(t.getEyePosition()).normalize();
+            if (look.dot(to) > 0.92) {
+                if (stalkT == 0) stalkT = 40;
+                if (stalkT > 1) { x.getNavigation().stop(); x.setSprinting(false); return; }
+                stalkCool = 120;                               // held long enough: charge in regardless
+            }
+        }
+        if (stalkCool > 0) stalkCool--;
         if (x.isClimbing()) {                                  // on a wall: keep pressing toward the prey, don't let path recalcs pull it back down
             x.getNavigation().stop(); x.getMoveControl().setWantedPosition(t.getX(), t.getY(), t.getZ(), 1.3);
         } else if (--repath <= 0) {
