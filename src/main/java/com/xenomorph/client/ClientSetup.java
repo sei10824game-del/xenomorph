@@ -63,6 +63,15 @@ public final class ClientSetup {
                 final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex("gloss"));
                 @Override public net.minecraft.client.renderer.RenderType renderType() { return type; }
             });
+            addLayer(new net.minecraft.client.renderer.entity.layers.RenderLayer<XenoEntity, XenoModel>(this) {      // battle damage: acid-corroded cracks glow through as health drops
+                final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex("wound"));
+                @Override public void render(PoseStack ps, MultiBufferSource buf, int light, XenoEntity e, float ls, float lsa, float pt, float age, float yaw, float pitch) {
+                    float hp = e.getHealth() / e.getMaxHealth();
+                    if (hp > 0.7f || e.isInvisible()) return;
+                    float a = Math.min(1f, (0.7f - hp) / 0.5f);
+                    getParentModel().renderToBuffer(ps, buf.getBuffer(type), 0xF000F0, OverlayTexture.NO_OVERLAY, a, a, a, 1f);
+                }
+            });
             if (c.glows()) addLayer(new net.minecraft.client.renderer.entity.layers.EyesLayer<XenoEntity, XenoModel>(this) {
                 final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex(c.id + "_glow"));
                 @Override public net.minecraft.client.renderer.RenderType renderType() { return type; }
