@@ -305,4 +305,22 @@ public class XenoGameTests {
         h.assertBlock(new BlockPos(6, 2, 5), b -> b == XenomorphMod.RESIN.get(), () -> "stone next to the resin was not coated");
         h.succeed();
     }
+
+    /** The tunnel from a buried hive climbs through solid rock to open sky: resin floor, clear 3x4 passage. */
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "b_tunnel")
+    public static void hiveTunnelReachesSurface(GameTestHelper h) {
+        var sl = h.getLevel();
+        BlockPos core = h.absolutePos(new BlockPos(4, 2, 4)).above(4);
+        var stone = net.minecraft.world.level.block.Blocks.STONE.defaultBlockState();
+        for (int d = 0; d < 4; d++) for (int i = -3; i < 40; i++) for (int w = -3; w <= 3; w++) for (int y = core.getY() - 6; y <= core.getY() + 10; y++) {
+            int dx = d == 0 ? i : d == 1 ? -i : w, dz = d == 2 ? i : d == 3 ? -i : w;
+            sl.setBlock(core.offset(dx, y - core.getY(), dz), stone, 2);
+        }
+        Hive.tunnel(sl, core, (x, z) -> core.getY() + 10);   // the shared test world has no real terrain heightmap, so the surface is injected
+        BlockPos mid = core.offset(10, -4 + 6, 0);           // 10 blocks along +x the floor has risen 6
+        if (!sl.getBlockState(mid.below()).is(XenomorphMod.RESIN.get())) throw new AssertionError("no resin floor in tunnel at " + mid.below() + " core=" + core + " surfaceE10=" + sl.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, core.getX() + 10, core.getZ()) + " states: " + sl.getBlockState(mid.below()) + " / " + sl.getBlockState(mid.below().above()) + " / " + sl.getBlockState(mid.below(2)));
+        for (int y = 0; y < 4; y++) if (!sl.getBlockState(mid.above(y)).isAir()) throw new AssertionError("tunnel blocked at height " + y);
+        if (!sl.getBlockState(core.offset(18, 10, 0)).isAir()) throw new AssertionError("tunnel does not reach the top");
+        h.succeed();
+    }
 }

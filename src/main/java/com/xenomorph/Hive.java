@@ -119,6 +119,36 @@ public final class Hive {
         }
     }
 
+    /** Digs a 3-wide, 4-high ramp from the hive up to open sky (resin floor), along whichever compass direction reaches the surface soonest. */
+    static void tunnel(ServerLevel sl, BlockPos core) { tunnel(sl, core, (x, z) -> sl.getHeight(Heightmap.Types.WORLD_SURFACE, x, z)); }
+    static void tunnel(ServerLevel sl, BlockPos core, java.util.function.IntBinaryOperator surface) {
+        int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int bestDir = 0, bestLen = 999;
+        for (int d = 0; d < 4; d++) {
+            for (int i = 4; i < 90; i++) {
+                int x = core.getX() + dirs[d][0] * i, z = core.getZ() + dirs[d][1] * i;
+                if (core.getY() - 4 + (i - 4) >= surface.applyAsInt(x, z)) { if (i < bestLen) { bestLen = i; bestDir = d; } break; }
+            }
+        }
+        int dx = dirs[bestDir][0], dz = dirs[bestDir][1], px = dz != 0 ? 1 : 0, pz = dx != 0 ? 1 : 0;
+        var resin = XenomorphMod.RESIN.get().defaultBlockState();
+        var air = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        for (int i = 4; i < Math.min(bestLen + 4, 96); i++) {
+            int cx = core.getX() + dx * i, cz = core.getZ() + dz * i, fy = core.getY() - 4 + (i - 4);   // the hive floor sits about 4 below its core
+            for (int w = -1; w <= 1; w++) {
+                int x = cx + px * w, z = cz + pz * w;
+                BlockPos floor = new BlockPos(x, fy - 1, z);
+                if (sl.getBlockState(floor).getDestroySpeed(sl, floor) >= 0) sl.setBlock(floor, resin, 2);
+                for (int h = 0; h < 4; h++) {
+                    BlockPos q = new BlockPos(x, fy + h, z);
+                    var st = sl.getBlockState(q);
+                    if (st.getDestroySpeed(sl, q) < 0) continue;                  // never touch bedrock
+                    sl.setBlock(q, st.getFluidState().isEmpty() ? air : resin, 2);   // water/lava is sealed off with resin instead of flooding the tunnel
+                }
+            }
+        }
+    }
+
     /** Resin creeps over natural stone/dirt/wood touching open air near the hive core, a few blocks per pass, capped at ~40 resin in range. */
     private static void creep(ServerLevel sl, BlockPos c, Random r) {
         var resin = XenomorphMod.RESIN.get();
@@ -143,6 +173,7 @@ public final class Hive {
         for (HiveData.Entry h : HiveData.get(sl).hives) {
             if (sl.getNearestPlayer(h.pos().getX(), h.pos().getY(), h.pos().getZ(), 80, false) == null || !sl.isLoaded(h.pos())) continue;
             var box = new net.minecraft.world.phys.AABB(h.pos()).inflate(16);
+            if (!HiveData.get(sl).isTunneled(h.pos())) { try { tunnel(sl, h.pos()); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive tunnel failed", ex); } HiveData.get(sl).markTunneled(h.pos()); }   // hives built before tunnels existed get theirs on the next pass
             if (XenoConfig.HIVE_CREEP.get() && !sl.getEntitiesOfClass(XenoEntity.class, box).isEmpty()) creep(sl, h.pos(), r);
             if (sl.getEntitiesOfClass(XenoEggEntity.class, box).size() >= 6 || sl.getEntitiesOfClass(XenoEntity.class, box).isEmpty()) continue;   // only while some xeno still guards it
             BlockPos f = floor(sl, h.pos().getX() + r.nextInt(11) - 5, h.pos().getY(), h.pos().getZ() + r.nextInt(11) - 5);
@@ -181,6 +212,7 @@ public final class Hive {
         Caste q = kser ? Caste.K_QUEEN : clone ? Caste.CLONE_QUEEN : red ? Caste.RED_QUEEN_MOTHER : neo ? Caste.NEOMORPH : proto ? Caste.PROTOMORPH : pathogen ? Caste.PATHOGEN_QUEEN : QUEENS[r.nextInt(100) < 70 ? 0 : 1 + r.nextInt(QUEENS.length - 1)];
         spawn(sl, q, x0 + 0.5, y0 - 3, z0 + 0.5, r);
         HiveData.get(sl).add(new BlockPos(x0, y0, z0), q.id);
+        try { tunnel(sl, new BlockPos(x0, y0, z0)); HiveData.get(sl).markTunneled(new BlockPos(x0, y0, z0)); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive tunnel failed", ex); }
         if (!proto && !neo && !red && !kser && !clone && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);
         if (!proto && !neo && !red && !kser && !clone && !pathogen && r.nextInt(20) == 0) spawn(sl, Caste.TRUE_KING, x0 - 2.5, y0 - 3, z0 + 2.5, r);   // the apex caste, very rare
         int n = 5 + r.nextInt(5);
