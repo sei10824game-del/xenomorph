@@ -260,5 +260,7 @@
  "entity.xenomorph.frozen_xeno": "フローズン・ゼノモーフ",
  "item.xenomorph.frozen_xeno_spawn_egg": "フローズン・ゼノモーフ スポーンエッグ",
  "entity.xenomorph.jungle_xeno": "ジャングル・ゼノモーフ",
- "item.xenomorph.jungle_xeno_spawn_egg": "ジャングル・ゼノモーフ スポーンエッグ"
+ "item.xenomorph.jungle_xeno_spawn_egg": "ジャングル・ゼノモーフ スポーンエッグ",
+ "item.xenomorph.hulk_hammer": "ハルクハンマー",
+ "item.xenomorph.void_claw": "ヴォイドクロー"
 }
