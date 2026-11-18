@@ -236,5 +236,15 @@
  "advancement.xenomorph.king_slayer.title": "Regicide",
  "advancement.xenomorph.king_slayer.desc": "Kill a King or the True King.",
  "advancement.xenomorph.legend.title": "Extinction Event",
- "advancement.xenomorph.legend.desc": "Kill a Queen Mother, the True King and a Titan."
+ "advancement.xenomorph.legend.desc": "Kill a Queen Mother, the True King and a Titan.",
+ "entity.xenomorph.hulk_xeno": "Hulk Xenomorph",
+ "item.xenomorph.hulk_xeno_spawn_egg": "Hulk Xenomorph Spawn Egg",
+ "entity.xenomorph.bone_xeno": "Bone Xenomorph",
+ "item.xenomorph.bone_xeno_spawn_egg": "Bone Xenomorph Spawn Egg",
+ "entity.xenomorph.blast_xeno": "Blast Xenomorph",
+ "item.xenomorph.blast_xeno_spawn_egg": "Blast Xenomorph Spawn Egg",
+ "entity.xenomorph.void_xeno": "Void Xenomorph",
+ "item.xenomorph.void_xeno_spawn_egg": "Void Xenomorph Spawn Egg",
+ "entity.xenomorph.frost_xeno": "Frost Xenomorph",
+ "item.xenomorph.frost_xeno_spawn_egg": "Frost Xenomorph Spawn Egg"
 }

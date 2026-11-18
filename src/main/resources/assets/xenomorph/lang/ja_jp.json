@@ -236,5 +236,15 @@
  "advancement.xenomorph.king_slayer.title": "王殺し",
  "advancement.xenomorph.king_slayer.desc": "キング、またはトゥルーキングを倒す。",
  "advancement.xenomorph.legend.title": "絶滅級",
- "advancement.xenomorph.legend.desc": "クイーンマザー、トゥルーキング、タイタンを、それぞれ倒す。"
+ "advancement.xenomorph.legend.desc": "クイーンマザー、トゥルーキング、タイタンを、それぞれ倒す。",
+ "entity.xenomorph.hulk_xeno": "ハルク・ゼノモーフ",
+ "item.xenomorph.hulk_xeno_spawn_egg": "ハルク・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.bone_xeno": "ボーン・ゼノモーフ",
+ "item.xenomorph.bone_xeno_spawn_egg": "ボーン・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.blast_xeno": "ブラスト・ゼノモーフ",
+ "item.xenomorph.blast_xeno_spawn_egg": "ブラスト・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.void_xeno": "ヴォイド・ゼノモーフ",
+ "item.xenomorph.void_xeno_spawn_egg": "ヴォイド・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.frost_xeno": "フロスト・ゼノモーフ",
+ "item.xenomorph.frost_xeno_spawn_egg": "フロスト・ゼノモーフ スポーンエッグ"
 }

@@ -84,6 +84,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
     static Sp spec(Caste c) {
         Sp p = new Sp();
         switch (c) {
+            case HULK_XENO -> { p.style = 5; p.domeL = 9; p.domeW = 6.4f; p.domeH = 5.6f; p.torso = 1.55f; p.limb = 1.45f; p.armK = 1.35f; p.plates = 2; p.spines = 9; p.ribs = 3; p.elbow = true; p.knee = true; p.carapace = true; p.tailEnd = 2; p.tailT = 1.2f; p.cheek = true; p.brow = true; p.clawL = 1.2f; }   // Mutant Zombie: hulking slab of muscle, giant fists
+            case BONE_XENO -> { p.domeL = 14; p.domeW = 3.4f; p.limb = 0.78f; p.torso = 0.9f; p.armK = 1.3f; p.legK = 1.15f; p.neckK = 1.2f; p.ribs = 9; p.spines = 7; p.tubeLen = 0; p.elbow = true; p.knee = true; p.mand = true; p.clawL = 1.5f; p.tailEnd = 1; p.bare = true; }   // Mutant Skeleton: exposed rib cage and long bone limbs
+            case BLAST_XENO -> { p.style = 4; p.sac = true; p.domeW = 5.6f; p.domeH = 4.8f; p.torso = 1.25f; p.limb = 1.1f; p.spines = 5; p.ribs = 2; p.plates = 1; p.cheek = true; p.tubeLen = 0; p.tailEnd = 4; p.clawL = 1.1f; }   // Mutant Creeper: swollen, charged body
+            case VOID_XENO -> { p.style = 2; p.fan = 13; p.domeL = 16; p.domeH = 4.4f; p.limb = 0.92f; p.torso = 1.05f; p.armK = 1.5f; p.legK = 1.35f; p.neckK = 1.3f; p.upright = 0.12f; p.dreads = true; p.mand = true; p.ribs = 5; p.spines = 4; p.tubeLen = 0; p.clawL = 1.8f; p.tailEnd = 3; p.horns = 2; }   // Mutant Enderman: tall, long-armed, extra limbs trailing
+            case FROST_XENO -> { p.style = 3; p.horns = 4; p.domeL = 10; p.domeW = 5f; p.carapace = true; p.plates = 2; p.spines = 8; p.ribs = 2; p.torso = 1.3f; p.limb = 1.2f; p.armK = 1.15f; p.tubeLen = 6; p.tailEnd = 2; p.clawL = 1.2f; p.cheek = true; }   // Mutant Snow Golem: iced carapace, crystal spikes
             case DRONE -> { p.spines = 1; }
             case RED_DRONE -> { p.spines = 5; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.ribs = 4; p.limb = 1.05f; }
             case RED_WARRIOR -> { p.style = 1; p.spines = 6; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.elbow = true; p.ribs = 5; p.limb = 1.1f; }
@@ -542,7 +547,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     jawOpen += kf(t, 0, 0, 5, 0.3f, 7, 0.7f, 14, 0);
                     tailYaw[0] += -sg * kf(t, 0, 0, 5, 0.5f, 8, -0.4f, 14, 0);
                 }
-                case DOUBLE_CLAW -> {
+                case DOUBLE_CLAW, RIB_CRUSH -> {
                     for (int s = 0; s < 2; s++) {
                         float sg = s == 0 ? 1 : -1; float d = s == 0 ? 0 : 6;
                         A[s][0] = kf(t, 0, -0.6f, 5, -2.5f, 7 + d, -2.2f + (d > 0 ? 0 : 0), 9 + d, -1.3f, 17 + d, -1.2f, 24, -0.6f);
@@ -651,7 +656,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     }
                     tailBaseX = Mth.lerp(air, tailBaseX, 0.05f);
                 }
-                case SPIT -> {
+                case SPIT, BONE_SHOT -> {
                     float gather = kf(t, 0, 0, 10, 1, 12, 0, 20, 0);
                     headX += kf(t, 0, 0, 10, -0.75f, 12, 0.65f, 15, 0.45f, 26, 0);
                     neckX += kf(t, 0, 0, 10, -0.5f, 12, 0.5f, 26, 0);
@@ -665,7 +670,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     for (int s = 0; s < 2; s++) { A[s][0] = kf(t, 0, -0.6f, 10, -1.15f, 26, -0.6f); A[s][1] = (s == 0 ? 1 : -1) * 0.4f; A[s][3] = 1.2f; A[s][5] = aw * 0.8f; }
                     for (int i = 0; i < TAIL; i++) tailPitch[i] -= 0.05f * i * gather;
                 }
-                case SCREECH -> {
+                case SCREECH, ROAR_BLAST -> {
                     float in = kf(t, 0, 0, 10, 1, 16, 1, 40, 1, 44, 0);
                     float shake = Mth.sin(t * 3.1f) * kf(t, 14, 0, 17, 1, 38, 1, 44, 0);
                     headX += kf(t, 0, 0, 10, -0.95f, 16, -0.9f, 40, -0.85f, 44, 0);
@@ -723,7 +728,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                         A[s][1] = sg * kf(t, 0, -.2f, 9, -.9f, 30, -1.1f, 34, -.2f); A[s][2] = sg * -0.4f * aw; A[s][5] = aw;
                     }
                 }
-                case SLAM -> {
+                case SLAM, SEISMIC, TELE_SMASH -> {
                     float up = kf(t, 0, 0, 11, 1, 13, 0.8f, 14, 0, 30, 0);
                     float rear = kf(t, 0, 0, 11, 1, 13, 1, 15, 0, 24, 0);
                     P = Mth.lerp(rear * 0.9f, P, 0.08f);
@@ -817,7 +822,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     float qk = Mth.sin(t * 5f) * kf(t, 17, 1, 30, 0); bodyX += qk * 0.05f; chestZ += qk * 0.04f;
                     for (int i = 0; i < TAIL; i++) tailPitch[i] = kf(t, 0, tailPitch[i], 12, -0.07f * i, 17, 0.04f, 38, tailPitch[i]);
                 }
-                case GRAB_SLAM -> {
+                case GRAB_SLAM, HURL -> {
                     for (int s = 0; s < 2; s++) {
                         float sg = s == 0 ? 1 : -1;
                         A[s][0] = kf(t, 0, -0.6f, 5, -1.7f, 8, -1.65f, 14, -2.9f, 28, -3.0f, 30, -0.9f, 33, -0.9f, 40, -2.9f, 44, -3.0f, 46, -0.8f, 50, -1.5f, 58, -0.6f);
@@ -891,14 +896,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     chestZ += Mth.sin(t * 3) * 0.04f * kf(t, 8, 0, 18, 1, 20, 0);
                     for (int s = 0; s < 2; s++) { float sg = s == 0 ? 1 : -1; A[s][0] = -0.9f; A[s][1] = sg * (-0.2f - 0.9f * sw); A[s][2] = sg * -0.5f * sw; A[s][3] = 0.5f; A[s][5] = aw * Math.min(1, sw * 2); }
                 }
-                case LOB -> {
+                case LOB, THROW_BLOCK -> {
                     headX += kf(t, 0, 0, 9, -1.0f, 12, -0.9f, 14, 0.7f, 22, 0.2f, 30, 0); neckX += kf(t, 0, 0, 9, -0.6f, 13, 0.5f, 30, 0);
                     neckScale = 1 + 0.5f * kf(t, 0, 0, 9, 1, 13, 0, 22, 0); chestX += kf(t, 0, 0, 9, -0.6f, 14, 0.4f, 30, 0);
                     jawOpen += kf(t, 0, 0.1f, 8, 0.7f, 13, 1.4f, 18, 0.3f, 30, 0.1f); crouch += kf(t, 0, 0, 9, -0.5f, 14, 2f, 30, 0);
                     A[0][0] = kf(t, 0, -0.6f, 9, -2.8f, 14, -0.4f, 30, -0.6f); A[0][1] = 0.4f; A[0][3] = 0.5f; A[0][5] = aw;
                     A[1][0] = -1.0f; A[1][1] = -0.4f; A[1][3] = 1.2f; A[1][5] = aw * 0.8f;
                 }
-                case VOLLEY, FIREARM -> {
+                case VOLLEY, FIREARM, BONE_BARRAGE -> {
                     float v = Math.max(0, Mth.sin((t - 8f) * 1.25f)) * kf(t, 8, 0, 9, 1, 25, 1, 27, 0);
                     headX += -0.5f * v - 0.2f * aw; jawOpen += 0.1f + 1.3f * v; neckScale = 1 + 0.35f * v; chestScale = 1 + 0.07f * v; chestX += -0.2f * v; crouch += 1.2f * aw;
                     for (int s = 0; s < 2; s++) { A[s][0] = -1.0f; A[s][1] = (s == 0 ? 1 : -1) * 0.4f; A[s][3] = 1.2f; A[s][5] = aw * 0.8f; }
@@ -909,13 +914,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     chestScale = 1 + 0.12f * pulse; neckScale = 1 + 0.4f * up + 0.2f * pulse; crouch += 1.2f * up;
                     for (int s = 0; s < 2; s++) { A[s][0] = -0.9f; A[s][1] = (s == 0 ? 1 : -1) * 0.6f; A[s][3] = 0.8f; A[s][5] = aw * 0.8f; }
                 }
-                case DETONATE -> {
+                case DETONATE, BLAST_CHARGE -> {
                     float sw = kf(t, 0, 0, 34, 1, 36, 1), shake = Mth.sin(t * 2.9f) * sw * sw;
                     chestScale = 1 + 0.9f * sw; neckScale = 1 + 0.4f * sw; bodyY += shake * 0.12f; chestZ += shake * 0.08f; headZ += shake * 0.2f; jawOpen += 0.1f + 1.4f * sw;
                     crouch += 1.5f * sw + shake * 0.6f; innerExt += 3 * sw;
                     for (int s = 0; s < 2; s++) { A[s][0] = -1.0f + shake * 0.5f; A[s][1] = (s == 0 ? 1 : -1) * 0.7f; A[s][3] = 0.5f; A[s][5] = aw; }
                 }
-                case SUMMON -> {
+                case SUMMON, CLONE_SPLIT -> {
                     float up = kf(t, 0, 0, 10, 1, 50, 1, 58, 0);
                     P = Mth.lerp(up * b, P, 0.1f);
                     chestX += -0.55f * up; headX += -0.9f * up; neckX += -0.5f * up; jawOpen += 0.1f + 1.4f * up * (0.6f + 0.4f * Mth.sin(t * 0.9f)); innerExt += 5 * up;
@@ -927,7 +932,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     }
                     for (int i = 0; i < TAIL; i++) { tailPitch[i] = -0.09f * i * up + Mth.sin(t * 1.2f - i) * 0.05f * up; tailYaw[i] *= (1 - up); }
                 }
-                case FACE_TOSS -> {
+                case FACE_TOSS, MINION_BURST -> {
                     chestScale = 1 + 0.15f * kf(t, 0, 0, 8, 1, 24, 1, 30, 0);
                     chestX += kf(t, 0, 0, 11, -0.55f, 14, 0.5f, 19, -0.55f, 22, 0.5f, 32, 0); headX += kf(t, 0, 0, 11, -0.3f, 14, 0.4f, 19, -0.3f, 22, 0.4f, 32, 0);
                     jawOpen += kf(t, 0, 0.1f, 11, 1f, 14, 0.4f, 19, 1f, 22, 0.4f, 32, 0.1f); crouch += kf(t, 0, 0, 8, 1.5f, 24, 1.5f, 32, 0);

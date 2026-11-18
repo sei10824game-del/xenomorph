@@ -93,6 +93,11 @@ public class XenoEntity extends Monster {
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
     private int musicT, callUntil, memT, cmdT;
+    /** > 0 for the fleeting copies shed by CLONE_SPLIT: frail, drop nothing, vanish when the timer runs out. */
+    public int cloneTicks;
+    @Override protected boolean shouldDropLoot() { return cloneTicks == 0 && super.shouldDropLoot(); }
+    @Override public int getExperienceReward() { return cloneTicks > 0 ? 0 : super.getExperienceReward(); }
+    public void makeClone(int ticks) { cloneTicks = ticks; var mh = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH); if (mh != null) { mh.setBaseValue(24); setHealth(24); } setPersistenceRequired(); }
     /** Hive raid: hunt this target from far away, remembering where it is for two minutes. */
     public void raid(LivingEntity t) { setTarget(t); lastSeen = t.position(); memT = 2400; }
     private net.minecraft.world.phys.Vec3 lastSeen;
@@ -211,7 +216,7 @@ public class XenoEntity extends Monster {
         int lock = switch (a) { case POUNCE -> 80; case SPIT -> 50; case SCREECH -> 260; case GRAB -> 120; case CHARGE -> 140; case IMPALE -> 120; case SLAM -> 60; case TAIL_SWEEP -> 50;
             case STOMP -> 100; case GRAB_SLAM -> 160; case SHADOW_STRIKE -> 90; case IMPREGNATE -> 220; case DEATH_ROLL -> 140; case LEAP_SLASH -> 70; case SPORE -> 200;
             case LOB -> 60; case VOLLEY -> 80; case VOMIT -> 100; case SUMMON -> 500; case FACE_TOSS -> 120; case WEB -> 140; case HORN_TOSS -> 80; case CREST_RAM -> 70;
-            case FLAIL -> 90; case FIREARM -> 70; case DROP_STRIKE -> 120; case FRENZY -> 120; case BLADE_FLURRY -> 100; case MULTI_STAB -> 80; default -> 0; };
+            case FLAIL -> 90; case FIREARM -> 70; case DROP_STRIKE -> 120; case FRENZY -> 120; case BLADE_FLURRY -> 100; case MULTI_STAB -> 80; default -> MutantAttacks.lock(a); };
         if (lock > 0) lockout.put(a, lock);
         entityData.set(ATTACK, 0);
         cooldown = (int) ((8 + random.nextInt(14)) * (1 - 0.7f * caste.ferocity()) * (0.7f + 0.3f * caste.weight()));
@@ -265,6 +270,7 @@ public class XenoEntity extends Monster {
                 if (hurt && ally.distanceToSqr(this) > 64) ally.getNavigation().moveTo(getX(), getY(), getZ(), 1.4);
             }
         }
+        if (cloneTicks > 0 && --cloneTicks == 0) { if (level() instanceof ServerLevel cl) cl.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 25, 0.3, 0.8, 0.3, 0.3); discard(); return; }
         if (getTarget() != null) { lastSeen = getTarget().position(); memT = 200; }             // pursuit memory: lost prey is hunted to where it was last seen
         else if (memT > 0 && lastSeen != null && !isHanging() && attack() == Attack.NONE) {
             memT--;
@@ -314,8 +320,8 @@ public class XenoEntity extends Monster {
     }
 
     // ---------- attack effects ----------
-    private LivingEntity tgt() { return getTarget(); }
-    private Vec3 fwd() { return new Vec3(-Mth.sin(yBodyRot * Mth.DEG_TO_RAD), 0, Mth.cos(yBodyRot * Mth.DEG_TO_RAD)); }
+    LivingEntity tgt() { return getTarget(); }
+    Vec3 fwd() { return new Vec3(-Mth.sin(yBodyRot * Mth.DEG_TO_RAD), 0, Mth.cos(yBodyRot * Mth.DEG_TO_RAD)); }
 
     /** Wraps a badly hurt villager in resin and implants it. */
     private void cocoon(net.minecraft.world.entity.npc.AbstractVillager v) {
@@ -330,7 +336,7 @@ public class XenoEntity extends Monster {
         setTarget(null);
     }
 
-    private boolean strike(LivingEntity t, float mult, double reach, double kb) {
+    boolean strike(LivingEntity t, float mult, double reach, double kb) {
         if (t == null || !t.isAlive() || friendly(t)) return false;
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
         if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
@@ -352,7 +358,7 @@ public class XenoEntity extends Monster {
         }
         return ok;
     }
-    private List<LivingEntity> around(double r) {
+    List<LivingEntity> around(double r) {
         return level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(r, 1.0, r), e -> e != this && !friendly(e) && e.isAlive() && distanceTo(e) <= r + e.getBbWidth() / 2);
     }
     private void faceTarget(float lerp) {
@@ -605,7 +611,7 @@ public class XenoEntity extends Monster {
                     playSound(SoundEvents.ANVIL_LAND, 1f, 0.6f);
                 }
             }
-            default -> {}
+            default -> MutantAttacks.run(this, a, t, target, r);
         }
     }
     private Caste[] brood() {
@@ -626,8 +632,8 @@ public class XenoEntity extends Monster {
             default -> new Caste[]{Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT};
         };
     }
-    private void launch(LivingEntity e, double up, double fw) { Vec3 f = fwd(); e.setDeltaMovement(f.x * fw, up, f.z * fw); e.hurtMarked = true; }
-    private void dust(double x, double y, double z, int n) { if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.POOF, x, y + 0.5, z, n, 0.5, 0.3, 0.5, 0.05); }
+    void launch(LivingEntity e, double up, double fw) { Vec3 f = fwd(); e.setDeltaMovement(f.x * fw, up, f.z * fw); e.hurtMarked = true; }
+    void dust(double x, double y, double z, int n) { if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.POOF, x, y + 0.5, z, n, 0.5, 0.3, 0.5, 0.05); }
     private void spitAt(LivingEntity t, float speed, float inacc, boolean splash) { spitAt(t, speed, inacc, splash, false); }
     private void spitAt(LivingEntity t, float speed, float inacc, boolean splash, boolean plasma) {
         AcidSpit s = new AcidSpit(level(), this, caste.dmg * 0.8f); s.splash = splash; s.plasma = plasma;
@@ -679,8 +685,10 @@ public class XenoEntity extends Monster {
         if (t == 48) releaseHeld(true);
     }
     private final java.util.Set<Integer> sweptIds = new java.util.HashSet<>();
+    boolean sweptHit(LivingEntity e) { return sweptIds.contains(e.getId()); }
+    void clearSwept() { sweptIds.clear(); }
     private boolean sweptAlready(LivingEntity e) { return sweptIds.contains(e.getId()); }
-    private void markSwept(LivingEntity e) { sweptIds.add(e.getId()); }
+    void markSwept(LivingEntity e) { sweptIds.add(e.getId()); }
 
     private boolean inFront(LivingEntity t, Vec3 f) {
         if (t == null) return false;
@@ -748,6 +756,14 @@ public class XenoEntity extends Monster {
 
     // ---------- acid blood ----------
     @Override public boolean hurt(DamageSource src, float amount) {
+        if (caste == Caste.BLAST_XENO && src.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) return false;                       // born of the Mutant Creeper: blasts only feed it
+        if (caste == Caste.FROST_XENO) { if (src.is(net.minecraft.tags.DamageTypeTags.IS_FREEZING)) return false; if (src.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) amount *= 2f; }
+        if (caste == Caste.VOID_XENO && cloneTicks == 0 && !level().isClientSide && attack() == Attack.NONE && src.getEntity() != null && random.nextInt(6) == 0) {     // Enderman reflex: blink away from a hit
+            for (int i = 0; i < 12; i++) {
+                double nx = getX() + (random.nextDouble() - 0.5) * 16, nz = getZ() + (random.nextDouble() - 0.5) * 16;
+                if (randomTeleport(nx, getY() + random.nextInt(3) - 1, nz, false)) { playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.6f); return false; }
+            }
+        }
         if (caste == Caste.BULL_ALIEN && src.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) amount *= 2.5f;          // Bull Aliens cannot take heat
         boolean r = super.hurt(src, amount);
         if (r && level() instanceof ServerLevel sl) {                                    // acid blood sprays out of the wound, away from the attacker

@@ -38,7 +38,19 @@ public enum Attack {
     MULTI_STAB(34, 8, 0, 4.2),      // all legs piston-stab
     CREST_RAM(26, 11, 0, 4),        // crest headbutt, stun
     FIREARM(36, 12, 5, 18),         // intelligent hybrids fire plasma weapons
-    DROP_STRIKE(30, 10, 0, 0);      // ceiling ambush: drop onto prey (only chosen from the hanging state)
+    DROP_STRIKE(30, 10, 0, 0),
+    // --- mutant lineage (abilities ported from the Mutant Monsters mod's five mutants)
+    SEISMIC(30, 14, 0, 11),         // ground slam sending a shockwave line forward (Mutant Zombie)
+    HURL(46, 14, 0, 5),             // fling prey skyward, then dive-bomb it (Mutant Zombie throw)
+    ROAR_BLAST(60, 12, 0, 18),      // area roar: piercing damage + knockback (Mutant Zombie roar / Mutant Enderman scream)
+    BONE_SHOT(36, 22, 6, 34),       // aimed arrow with a random poison / hunger / slow tip (Mutant Skeleton)
+    BONE_BARRAGE(40, 24, 3, 26),    // backflip and loose six arrows at once (Mutant Skeleton multi-shot)
+    RIB_CRUSH(26, 6, 0, 3.6),       // constrict, armour-piercing crush, fling (Mutant Skeleton)
+    BLAST_CHARGE(70, 56, 0, 24),    // swell, then a chain of four explosions; lightning heals (Mutant Creeper)
+    MINION_BURST(30, 12, 0, 32),    // spit out explosive minions (Creeper Minions)
+    TELE_SMASH(30, 18, 3, 22),      // yank prey in and smash it (Mutant Enderman)
+    THROW_BLOCK(30, 13, 5, 24),     // hurl a block: dirt/stone from the void lineage, ice from the frost lineage
+    CLONE_SPLIT(60, 20, 0, 28);     // shed fleeting copies of itself (Endersoul clones)      // ceiling ambush: drop onto prey (only chosen from the hanging state)
 
     public final int duration, hit;
     public final double min, max;

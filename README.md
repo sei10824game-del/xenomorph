@@ -1,6 +1,6 @@
 # Xenomorph (Minecraft 1.20.1 / Forge 47.3)
 
-85 xenomorph castes (+ Predator, Engineer, facehuggers, chestbursters, eggs). Procedural models/textures, no external deps.
+90 xenomorph castes (+ Predator, Engineer, facehuggers, chestbursters, eggs). Procedural models/textures, no external deps.
 
 ## Play
 - Creative tab **Xenomorph**: spawn eggs, resin, tools. Build: JDK 17, `./gradlew build` (or `gradlew.bat`). Smoke tests: `./gradlew runGameTestServer`.
@@ -11,5 +11,7 @@
 - **Behaviour**: unique attacks per caste, weight/ferocity, wall climbing, ceiling ambush, melting corpses, boss bars + boss theme for giants, pack flanking, stalking (freeze under the prey's gaze), drifting out of bright light, acid-blood spray, saliva, hit-stop and attack footwork, embryo symptoms before the burst.
 - **Hives** open to the surface through a resin-floored ramp tunnel (existing hives get one on the next regrow pass), regrow eggs, creep resin over nearby stone/dirt/wood, and hum with drips and hisses.
 - Config: `config/xenomorph-common.toml` (hive rarity, acid armor damage, ceiling ambush, damage multiplier, fight other monsters, hive creep, hive raids, difficulty preset easy/normal/nightmare).
+
+Mutant lineage (Hulk / Bone / Blast / Void / Frost Xenomorphs): xenomorph versions of the Mutant Monsters mutants with their abilities (seismic slam, throw, roar, arrows, rib crush, chain explosions + minions, teleport, clones, tele-smash, block throw). Rare in classic hives.
 
 Source notes and gaps: `docs/RESEARCH.md`.

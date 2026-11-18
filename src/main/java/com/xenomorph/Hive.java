@@ -38,11 +38,13 @@ public final class Hive {
     private static final Caste[] CLONES = {Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_XENOMORPH, Caste.CLONE_WARRIOR, Caste.CLONE_WARRIOR, Caste.CLONE_PRAETORIAN};
     private static final Caste[] PROTO = {Caste.PROTOMORPH};   // own faction: never shares a hive with classic xenos
     private static final Caste[] PATHOGEN = {Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_RUNNER, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BLIGHT, Caste.PATHOGEN_BRUTE, Caste.HARBINGER, Caste.THRASHER, Caste.GOREBURSTER};
+    /** The mutant lineage (Mutant Monsters-style apex castes): rare guardians of classic hives. */
+    private static final Caste[] MUTANTS = {Caste.HULK_XENO, Caste.BONE_XENO, Caste.BLAST_XENO, Caste.VOID_XENO, Caste.FROST_XENO};
     private static final Caste[] NEO = {Caste.NEOMORPH, Caste.NEOMORPH, Caste.BLOODBURSTER};   // own faction
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
         java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);
-        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING}, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON, Caste.ULTRAMORPH}}) r.addAll(java.util.Arrays.asList(a));
+        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING}, MUTANTS, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON, Caste.ULTRAMORPH}}) r.addAll(java.util.Arrays.asList(a));
         return r;
     }
 
@@ -219,6 +221,7 @@ public final class Hive {
         try { tunnel(sl, new BlockPos(x0, y0, z0)); HiveData.get(sl).markTunneled(new BlockPos(x0, y0, z0)); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive tunnel failed", ex); }
         if (!proto && !neo && !red && !kser && !clone && r.nextInt(8) == 0) spawn(sl, Caste.KING, x0 + 2.5, y0 - 3, z0 - 2.5, r);
         if (!proto && !neo && !red && !kser && !clone && !pathogen && r.nextInt(20) == 0) spawn(sl, Caste.TRUE_KING, x0 - 2.5, y0 - 3, z0 + 2.5, r);   // the apex caste, very rare
+        if (!proto && !neo && !red && !kser && !clone && !pathogen && r.nextInt(6) == 0) { BlockPos mf = floor(sl, x0 + r.nextInt(9) - 4, y0, z0 + r.nextInt(9) - 4); if (mf != null) spawn(sl, MUTANTS[r.nextInt(MUTANTS.length)], mf.getX() + .5, mf.getY(), mf.getZ() + .5, r); }
         int n = 5 + r.nextInt(5);
         for (int i = 0; i < n; i++) {
             Caste[] pool = kser ? KSER : clone ? CLONES : red ? RED : neo ? NEO : proto ? PROTO : pathogen ? PATHOGEN : NORMAL;
