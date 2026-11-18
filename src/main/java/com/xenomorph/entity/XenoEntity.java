@@ -711,6 +711,14 @@ public class XenoEntity extends Monster {
     @Override public boolean hurt(DamageSource src, float amount) {
         if (caste == Caste.BULL_ALIEN && src.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) amount *= 2.5f;          // Bull Aliens cannot take heat
         boolean r = super.hurt(src, amount);
+        if (r && level() instanceof ServerLevel sl) {                                    // acid blood sprays out of the wound, away from the attacker
+            Vec3 dir = src.getEntity() != null ? position().subtract(src.getEntity().position()).normalize() : new Vec3(0, 0.3, 0);
+            int n = Mth.clamp((int) (amount * 1.5f) + 3, 3, 24);
+            for (int i = 0; i < n; i++) sl.sendParticles(ParticleTypes.ITEM_SLIME, getX() + (random.nextDouble() - 0.5) * getBbWidth() * 0.6, getY() + getBbHeight() * (0.4 + random.nextDouble() * 0.4), getZ() + (random.nextDouble() - 0.5) * getBbWidth() * 0.6, 0, dir.x * 0.4 + (random.nextDouble() - 0.5) * 0.3, 0.1 + random.nextDouble() * 0.25, dir.z * 0.4 + (random.nextDouble() - 0.5) * 0.3, 1);
+            sl.sendParticles(ParticleTypes.SMOKE, getX(), getY() + getBbHeight() * 0.5, getZ(), 2, 0.15, 0.1, 0.15, 0.01);
+            if (amount >= 4) sl.sendParticles(ParticleTypes.DRIPPING_DRIPSTONE_WATER, getX(), getY() + getBbHeight() * 0.6, getZ(), 3, 0.2, 0.2, 0.2, 0);
+            if (random.nextFloat() < 0.3f) playSound(XenomorphMod.SIZZLE.get(), 0.4f, 1.3f);
+        }
         if (r && !level().isClientSide && src.getEntity() instanceof LivingEntity att && !friendly(att) && distanceTo(att) < 3.5 && random.nextFloat() < 0.6f) acidBurn(att, caste.red() && faction(att) == 1 ? 6 : 1 + random.nextInt(2));
         return r;
     }
