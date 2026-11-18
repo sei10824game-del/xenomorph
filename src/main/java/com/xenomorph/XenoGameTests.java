@@ -287,4 +287,22 @@ public class XenoGameTests {
         if (sent < 3 || raiders.size() < 3) throw new AssertionError("sent=" + sent + " raiders=" + raiders.size() + " all=" + dbg);
         h.succeed();
     }
+
+    /** A worker next to bare stone that touches resin coats it with resin (goal driven by hand so wandering and shared-world leftovers cannot interfere). */
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "b_worker")
+    public static void workerBuildsResin(GameTestHelper h) {
+        floor(h);
+        for (int y = 2; y <= 3; y++) for (int z = 3; z <= 5; z++) h.setBlock(new BlockPos(6, y, z), net.minecraft.world.level.block.Blocks.STONE);
+        h.setBlock(new BlockPos(6, 2, 6), XenomorphMod.RESIN.get());
+        var w = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.WORKER).get(), new BlockPos(4, 2, 4));
+        w.setTarget(null);
+        var goal = new com.xenomorph.entity.WorkerResinGoal(w);
+        boolean started = false;
+        for (int i = 0; i < 60 && !started; i++) if (goal.canUse()) { goal.start(); started = true; }
+        if (!started) throw new net.minecraft.gametest.framework.GameTestAssertException("worker found no job next to resin");
+        for (int i = 0; i < 70 && goal.canContinueToUse(); i++) { var st = goal.standPos(); w.setPos(st.getX() + .5, st.getY(), st.getZ() + .5); goal.tick(); }
+        w.discard();
+        h.assertBlock(new BlockPos(6, 2, 5), b -> b == XenomorphMod.RESIN.get(), () -> "stone next to the resin was not coated");
+        h.succeed();
+    }
 }
