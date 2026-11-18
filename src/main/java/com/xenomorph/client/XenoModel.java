@@ -164,6 +164,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case ARACHNID -> { p.style = 2; p.fan = 9; p.domeL = 9; p.domeH = 3.6f; p.mand = true; p.spines = 4; p.limb = 1.1f; p.tubeLen = 0; p.clawL = 1.3f; p.ribs = 2; p.tailEnd = 0; }
             default -> {}
         }
+        // strain-wide family traits, applied to every rank so a faction reads as one family
+        if (c.red()) { p.blade = true; p.cheek = true; p.clawL *= 1.25f; p.spines += 3; p.elbow = true; }                       // killers: blades, long claws, spiky
+        if (c.kSeries()) { p.plates = Math.max(p.plates, 1); p.elbow = true; p.knee = true; p.limb *= 1.1f; p.torso *= 1.08f; p.ribs = Math.max(p.ribs, 3); }   // armoured
+        if (c.cloneStrain() || c == Caste.CLONE_XENOMORPH) { p.ribs = Math.max(p.ribs, 5); p.spines = Math.max(p.spines, 4); p.brow = true; p.cheek = true; p.tailT *= 0.9f; }   // lab clones: sinewy, human-ish brow
+        if (c.id.startsWith("pathogen") || c == Caste.HARBINGER || c == Caste.THRASHER) { p.mand = true; p.spines = Math.max(p.spines, 4); }                         // mutated: arthropod mandibles, quills
         return p;
     }
 
