@@ -116,10 +116,11 @@ final class MutantAttacks {
                 if (t < a.hit && t % 14 == 0) x.playSound(SoundEvents.CREEPER_PRIMED, 1f, 0.6f + t * 0.01f);
                 if (t < a.hit) sl.sendParticles(ParticleTypes.ELECTRIC_SPARK, x.getX(), x.getY() + x.getBbHeight() * 0.5, x.getZ(), 2, 0.4, 0.5, 0.4, 0.1);
                 if (t >= a.hit && (t - a.hit) % 4 == 0 && (t - a.hit) / 4 < 4) {
-                    double rad = 4.5 + x.getRandom().nextInt(2);
+                    boolean charged = x.hasEffect(MobEffects.DAMAGE_BOOST);
+                    double rad = 4.5 + x.getRandom().nextInt(2) + (charged ? 2 : 0);
                     x.playSound(SoundEvents.GENERIC_EXPLODE, 2f, 0.8f + x.getRandom().nextFloat() * 0.3f);
                     sl.sendParticles(ParticleTypes.EXPLOSION, x.getX() + (x.getRandom().nextDouble() - 0.5) * 3, x.getY() + 0.8, x.getZ() + (x.getRandom().nextDouble() - 0.5) * 3, 2, 0.5, 0.3, 0.5, 0);
-                    for (LivingEntity e : x.around(rad)) { x.strike(e, 0.8f, rad + 2, 1.2); }
+                    for (LivingEntity e : x.around(rad)) { x.strike(e, charged ? 1.2f : 0.8f, rad + 2, charged ? 1.8 : 1.2); }
                 }
                 if (t == a.hit + 14 && sl.canSeeSky(x.blockPosition()) && x.getRandom().nextInt(sl.isThundering() ? 2 : 4) == 0) {
                     var bolt = EntityType.LIGHTNING_BOLT.create(sl);

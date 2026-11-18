@@ -371,4 +371,18 @@ public class XenoGameTests {
         if (!(lost[0] < lost[1] * 0.8f)) throw new AssertionError("no set bonus: full=" + lost[0] + " minus boots=" + lost[1]);
         h.succeed();
     }
+
+    /** Lightning charges (does not hurt) a Blast xenomorph. */
+    @GameTest(template = "empty", timeoutTicks = 20, batch = "b_charged")
+    public static void lightningChargesBlast(GameTestHelper h) {
+        var x = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.BLAST_XENO).get(), new BlockPos(2, 2, 2));
+        x.setHealth(40f);
+        var bolt = EntityType.LIGHTNING_BOLT.create(h.getLevel()); bolt.moveTo(x.getX(), x.getY(), x.getZ()); bolt.setVisualOnly(false); h.getLevel().addFreshEntity(bolt);
+        h.runAfterDelay(3, () -> {
+            boolean ok = x.getHealth() >= x.getMaxHealth() - 0.5f && x.hasEffect(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST);
+            x.discard(); bolt.discard();
+            if (!ok) throw new AssertionError("blast xeno was not charged by lightning");
+            h.succeed();
+        });
+    }
 }
