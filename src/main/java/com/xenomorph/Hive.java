@@ -63,12 +63,31 @@ public final class Hive {
         try { build(sl, j.cx, j.cz, null); } catch (RuntimeException ex) { XenomorphMod.LOG.warn("hive build failed", ex); }
     }
 
+    /** Resin creeps over natural stone/dirt/wood touching open air near the hive core, a few blocks per pass, capped at ~40 resin in range. */
+    private static void creep(ServerLevel sl, BlockPos c, Random r) {
+        var resin = XenomorphMod.RESIN.get();
+        int have = 0;
+        for (BlockPos q : BlockPos.betweenClosed(c.offset(-9, -4, -9), c.offset(9, 6, 9))) if (sl.getBlockState(q).is(resin)) have++;
+        if (have >= 40) return;
+        for (int i = 0, done = 0; i < 40 && done < 3; i++) {
+            BlockPos q = c.offset(r.nextInt(19) - 9, r.nextInt(11) - 4, r.nextInt(19) - 9);
+            var st = sl.getBlockState(q);
+            if (!(st.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD) || st.is(net.minecraft.tags.BlockTags.DIRT) || st.is(net.minecraft.tags.BlockTags.LOGS))) continue;
+            boolean exposed = false;
+            for (var d : net.minecraft.core.Direction.values()) if (sl.getBlockState(q.relative(d)).isAir()) { exposed = true; break; }
+            boolean near = false;
+            for (var d : net.minecraft.core.Direction.values()) if (sl.getBlockState(q.relative(d)).is(resin)) { near = true; break; }
+            if (exposed && (near || have == 0)) { sl.setBlock(q, resin.defaultBlockState(), 3); done++; }
+        }
+    }
+
     /** Hives slowly regrow: every 5 min, a hive with a player nearby that has fewer than 6 eggs around lays a fresh one. */
     private static void regrow(ServerLevel sl) {
         Random r = new Random(sl.getGameTime());
         for (HiveData.Entry h : HiveData.get(sl).hives) {
             if (sl.getNearestPlayer(h.pos().getX(), h.pos().getY(), h.pos().getZ(), 80, false) == null || !sl.isLoaded(h.pos())) continue;
             var box = new net.minecraft.world.phys.AABB(h.pos()).inflate(16);
+            if (XenoConfig.HIVE_CREEP.get() && !sl.getEntitiesOfClass(XenoEntity.class, box).isEmpty()) creep(sl, h.pos(), r);
             if (sl.getEntitiesOfClass(XenoEggEntity.class, box).size() >= 6 || sl.getEntitiesOfClass(XenoEntity.class, box).isEmpty()) continue;   // only while some xeno still guards it
             BlockPos f = floor(sl, h.pos().getX() + r.nextInt(11) - 5, h.pos().getY(), h.pos().getZ() + r.nextInt(11) - 5);
             XenoEggEntity egg = XenomorphMod.EGG.get().create(sl);
