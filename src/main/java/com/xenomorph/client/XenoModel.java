@@ -1102,6 +1102,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 pitch = Mth.lerp(w, pitch, A[s][0]); el = Mth.lerp(w, el, A[s][3]); hnd = Mth.lerp(w, hnd, A[s][4]);
                 yaw = Mth.lerp(w, yaw, A[s][1]); roll = Mth.lerp(w, roll, A[s][2]);
             }
+            if (c == Caste.HULK_XENO || c == Caste.HUSK_XENO || c == Caste.HOG_XENO || c == Caste.FROZEN_XENO) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 1.55f; fore[s].xScale = fore[s].zScale = 1.18f; }   // hammer fists
+            if (c == Caste.VOID_XENO || c == Caste.WITHER_XENO) { fore[s].yScale = 1.25f; }                                                                       // longer forearms
             if (c == Caste.PATHOGEN_BRUTE || (c == Caste.PATHOGEN_QUEEN && s == 1)) { hand[s].xScale = hand[s].yScale = hand[s].zScale = 1.9f; fore[s].xScale = fore[s].zScale = 1.25f; }
             arm[s].yScale = sp.armK;
             arm[s].xRot = pitch - body.xRot - chest.xRot; arm[s].yRot = yaw; arm[s].zRot = roll;

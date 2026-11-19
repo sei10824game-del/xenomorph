@@ -136,12 +136,13 @@ public final class Hive {
         int dx = dirs[bestDir][0], dz = dirs[bestDir][1], px = dz != 0 ? 1 : 0, pz = dx != 0 ? 1 : 0;
         var resin = XenomorphMod.RESIN.get().defaultBlockState();
         var air = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        var stair = XenomorphMod.RESIN_STAIRS.get().defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, net.minecraft.core.Direction.fromDelta(dx, 0, dz));
         for (int i = 4; i < Math.min(bestLen + 4, 96); i++) {
             int cx = core.getX() + dx * i, cz = core.getZ() + dz * i, fy = core.getY() - 4 + (i - 4);   // the hive floor sits about 4 below its core
             for (int w = -1; w <= 1; w++) {
                 int x = cx + px * w, z = cz + pz * w;
                 BlockPos floor = new BlockPos(x, fy - 1, z);
-                if (sl.getBlockState(floor).getDestroySpeed(sl, floor) >= 0) sl.setBlock(floor, resin, 2);
+                if (sl.getBlockState(floor).getDestroySpeed(sl, floor) >= 0) sl.setBlock(floor, stair, 2);   // stairs, so the climb needs no jumping
                 for (int h = 0; h < 4; h++) {
                     BlockPos q = new BlockPos(x, fy + h, z);
                     var st = sl.getBlockState(q);

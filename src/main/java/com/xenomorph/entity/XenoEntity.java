@@ -239,6 +239,13 @@ public class XenoEntity extends Monster {
             bipedAmtO = bipedAmt;
             float goal = isBiped() ? 1 : 0;
             bipedAmt += Mth.clamp(goal - bipedAmt, -0.06f, 0.06f);
+            if (caste.mutant() && random.nextInt(4) == 0) {                                                                       // each mutant sheds its own element
+                var pt = switch (caste) {
+                    case FROST_XENO, FROZEN_XENO -> ParticleTypes.SNOWFLAKE; case BLAZE_XENO -> ParticleTypes.FLAME; case VOID_XENO, SHULKER_XENO -> ParticleTypes.PORTAL;
+                    case WITHER_XENO -> ParticleTypes.SMOKE; case JUNGLE_XENO -> ParticleTypes.COMPOSTER; case HUSK_XENO -> ParticleTypes.WHITE_ASH; case BLAST_XENO -> ParticleTypes.ELECTRIC_SPARK;
+                    case HULK_XENO -> ParticleTypes.CRIT; case BONE_XENO -> ParticleTypes.ASH; default -> ParticleTypes.SCULK_SOUL; };
+                level().addParticle(pt, getX() + (random.nextDouble() - 0.5) * getBbWidth(), getY() + random.nextDouble() * getBbHeight(), getZ() + (random.nextDouble() - 0.5) * getBbWidth(), (random.nextDouble() - 0.5) * 0.04, 0.02, (random.nextDouble() - 0.5) * 0.04);
+            }
             if ((isAggressive() || attack() != Attack.NONE) && !caste.id.startsWith("newborn") && random.nextInt(12) == 0) {   // saliva drips from the jaws
                 Vec3 f = fwd(); double sc = caste.scale;
                 level().addParticle(ParticleTypes.FALLING_WATER, getX() + f.x * 0.7 * sc + (random.nextDouble() - 0.5) * 0.1, getY() + getEyeHeight() - 0.25 * sc, getZ() + f.z * 0.7 * sc + (random.nextDouble() - 0.5) * 0.1, 0, 0, 0);

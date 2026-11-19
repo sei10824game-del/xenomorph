@@ -64,6 +64,8 @@ public class XenomorphMod {
     static final RegistryObject<Item> JELLY = ITEMS.register("royal_jelly", () -> new Item(new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(6).saturationMod(0.9f).alwaysEat()
             .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 200, 1), 1f).effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 1200, 0), 1f).build())));
     static final RegistryObject<Item> TRACKER = ITEMS.register("motion_tracker", MotionTracker::new);
+    public static final RegistryObject<net.minecraft.world.level.block.Block> RESIN_STAIRS = BLOCKS.register("resin_stairs", () -> new net.minecraft.world.level.block.StairBlock(() -> RESIN.get().defaultBlockState(), net.minecraft.world.level.block.state.BlockBehaviour.Properties.copy(RESIN.get())));
+    static final RegistryObject<Item> RESIN_STAIRS_ITEM = ITEMS.register("resin_stairs", () -> new net.minecraft.world.item.BlockItem(RESIN_STAIRS.get(), new Item.Properties()));
     static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
     static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
     private static RegistryObject<net.minecraft.sounds.SoundEvent> snd(String n) { return SOUNDS.register(n, () -> net.minecraft.sounds.SoundEvent.createVariableRangeEvent(new net.minecraft.resources.ResourceLocation(ID, n))); }
@@ -138,7 +140,7 @@ public class XenomorphMod {
         }));
         TABS.register("xenomorph", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.xenomorph"))
                 .icon(() -> new ItemStack(EGGS.get(0).get()))
-                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(SPEAR.get()); out.accept(SKIN_.get()); out.accept(PEDIA.get()); out.accept(MUTAGEN.get()); out.accept(MINION.get()); out.accept(HAMMER.get()); out.accept(CLAW.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); out.accept(JELLY.get()); SUIT.forEach(a -> out.accept(a.get())); out.accept(FRAGMENT.get()); BONE_SET.forEach(a -> out.accept(a.get())); }).build());
+                .displayItems((p, out) -> { EGGS.forEach(e -> out.accept(e.get())); out.accept(RESIN_ITEM.get()); out.accept(RESIN_STAIRS_ITEM.get()); out.accept(TRACKER.get()); out.accept(RIFLE.get()); out.accept(FLAMER.get()); out.accept(GLAND.get()); out.accept(SPEAR.get()); out.accept(SKIN_.get()); out.accept(PEDIA.get()); out.accept(MUTAGEN.get()); out.accept(MINION.get()); out.accept(HAMMER.get()); out.accept(CLAW.get()); out.accept(KIT.get()); out.accept(LOCATOR.get()); out.accept(JELLY.get()); SUIT.forEach(a -> out.accept(a.get())); out.accept(FRAGMENT.get()); BONE_SET.forEach(a -> out.accept(a.get())); }).build());
     }
 
     public XenomorphMod() {

@@ -72,7 +72,14 @@ public final class ClientSetup {
                     getParentModel().renderToBuffer(ps, buf.getBuffer(type), 0xF000F0, OverlayTexture.NO_OVERLAY, a, a, a, 1f);
                 }
             });
-            if (c.glows()) addLayer(new net.minecraft.client.renderer.entity.layers.EyesLayer<XenoEntity, XenoModel>(this) {
+            if (c.glows() && c.mutant()) addLayer(new net.minecraft.client.renderer.entity.layers.RenderLayer<XenoEntity, XenoModel>(this) {      // breathing glow
+                final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex(c.id + "_glow"));
+                @Override public void render(PoseStack ps, MultiBufferSource buf, int light, XenoEntity e, float ls, float lsa, float pt, float age, float yaw, float pitch) {
+                    float a = 0.65f + 0.35f * net.minecraft.util.Mth.sin(age * 0.12f + e.getId());
+                    getParentModel().renderToBuffer(ps, buf.getBuffer(type), 0xF000F0, OverlayTexture.NO_OVERLAY, a, a, a, 1f);
+                }
+            });
+            else if (c.glows()) addLayer(new net.minecraft.client.renderer.entity.layers.EyesLayer<XenoEntity, XenoModel>(this) {
                 final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex(c.id + "_glow"));
                 @Override public net.minecraft.client.renderer.RenderType renderType() { return type; }
             });
