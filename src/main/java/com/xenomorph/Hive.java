@@ -146,8 +146,16 @@ public final class Hive {
                     BlockPos q = new BlockPos(x, fy + h, z);
                     var st = sl.getBlockState(q);
                     if (st.getDestroySpeed(sl, q) < 0) continue;                  // never touch bedrock
-                    sl.setBlock(q, st.getFluidState().isEmpty() ? air : resin, 2);   // water/lava is sealed off with resin instead of flooding the tunnel
+                    sl.setBlock(q, air, 2);   // passage is always air; wet or loose neighbours are sealed by the lining below
                 }
+            }
+            // lining: the roof and walls are resin wherever the rock is loose (gravel/sand would fall in) or wet (water/lava would flow in)
+            for (int w = -2; w <= 2; w++) for (int h = -1; h <= 4; h++) {
+                if (Math.abs(w) <= 1 && h >= 0 && h <= 3) continue;           // the passage itself
+                BlockPos q = new BlockPos(cx + px * w, fy + h, cz + pz * w);
+                var st = sl.getBlockState(q);
+                if (st.getDestroySpeed(sl, q) < 0) continue;
+                if (st.getBlock() instanceof net.minecraft.world.level.block.FallingBlock || !st.getFluidState().isEmpty() || (h == 4 && Math.abs(w) <= 1 && !st.isSolid())) sl.setBlock(q, resin, 2);
             }
         }
         // the mouth: two ribbed resin pillars with a lintel mark the entrance so it can be spotted from the surface

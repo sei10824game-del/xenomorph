@@ -398,4 +398,23 @@ public class XenoGameTests {
         if (!ok) throw new AssertionError("mutagen mapping wrong");
         h.succeed();
     }
+
+    /** Gravel overhead and water beside the ramp are sealed off with resin so the tunnel cannot fill in. */
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "b_tunnelSeal")
+    public static void tunnelSealsGravelAndWater(GameTestHelper h) {
+        var sl = h.getLevel();
+        BlockPos core = h.absolutePos(new BlockPos(4, 2, 4)).above(4);
+        var stone = net.minecraft.world.level.block.Blocks.STONE.defaultBlockState();
+        for (int i = -3; i < 40; i++) for (int w = -3; w <= 3; w++) for (int y = core.getY() - 6; y <= core.getY() + 12; y++) sl.setBlock(core.offset(i, y - core.getY(), w), stone, 2);
+        for (int i = 4; i < 16; i++) for (int dy = 0; dy < 3; dy++) {
+            sl.setBlock(core.offset(i, -4 + (i - 4) + 4 + dy, 0), net.minecraft.world.level.block.Blocks.GRAVEL.defaultBlockState(), 2);     // gravel roof directly above the passage
+            sl.setBlock(core.offset(i, -4 + (i - 4) + 1, 2), net.minecraft.world.level.block.Blocks.WATER.defaultBlockState(), 2);           // water in the side wall
+        }
+        Hive.tunnel(sl, core, (x, z) -> core.getY() + 10);
+        BlockPos mid = core.offset(8, -4 + 4, 0);
+        for (int y = 0; y < 4; y++) if (!sl.getBlockState(mid.above(y)).isAir()) throw new AssertionError("tunnel blocked at height " + y + ": " + sl.getBlockState(mid.above(y)));
+        if (sl.getBlockState(mid.above(4)).is(net.minecraft.world.level.block.Blocks.GRAVEL)) throw new AssertionError("gravel left directly over the passage");
+        if (!sl.getBlockState(mid.offset(0, 1, 2)).is(XenomorphMod.RESIN.get())) throw new AssertionError("water in the wall was not sealed: " + sl.getBlockState(mid.offset(0, 1, 2)));
+        h.succeed();
+    }
 }
