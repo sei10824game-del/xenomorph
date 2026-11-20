@@ -1248,7 +1248,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float lk = sp.legK;
             float[] a = ik(tz, ty, 8f * lk, 8f * lk, true);
             thigh[s].yScale = lk;
-            thigh[s].xRot = a[0]; shin[s].xRot = a[1] - a[0];
+            thigh[s].xRot = Mth.clamp(a[0], -2.2f, 2.2f); shin[s].xRot = Mth.clamp(a[1] - a[0], -2.7f, 2.7f);   // knee never folds the shin flat against the thigh
             foot[s].xRot = -a[1] + Mth.lerp(legOv[0], 0.0f, 0.9f) + lift * 0.06f + 0.62f * b * (1 - legOv[0]);   // heel lifted: toe-walking stance like the film suit
             thigh[s].zRot = (s == 0 ? -1 : 1) * 0.06f; 
         }
@@ -1267,7 +1267,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float qPitch = q[0], qEl = q[1] - q[0], qHand = -q[1];
             float wq = 1 - b;
             float pitch = Mth.lerp(wq, A[s][0], qPitch);        // A[][0] is world pitch; IK result is world too
-            float el = Mth.lerp(wq, A[s][3], qEl);
+            float el = Mth.lerp(wq, A[s][3], Math.max(qEl, -2.55f));   // never fold the forearm past ~146 degrees (low crouches used to double it back on itself)
             float hnd = Mth.lerp(wq, A[s][4], qHand);
             float yaw = Mth.lerp(wq, A[s][1], (s == 0 ? 1 : -1) * -0.05f);
             float roll = Mth.lerp(wq, A[s][2], 0);
