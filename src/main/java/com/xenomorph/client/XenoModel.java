@@ -338,6 +338,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder jawB = box(-2 * hw, 0, -6, 4 * hw, 1.5f, 8);
         for (int i = 0; i < (sp.bare ? 0 : 6); i++) { float th = 0.9f + (i % 2) * 0.6f; tooth(jawB, -1.8f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); tooth(jawB, 1.35f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); }
         if (!sp.bare) for (int i = 0; i < 4; i++) tooth(jawB, (i - 1.5f) * 0.85f * hw - 0.2f, -0.9f, -6.15f, 0.4f, 0.9f, 0.4f);
+        if (!sp.bare) for (int i = 0; i < 4; i++) { float th = 0.7f + (i % 2) * 0.4f; tooth(jawB, -1.15f * hw, -th, -4.9f + i * 1.25f, 0.4f, th, 0.4f); tooth(jawB, 0.75f * hw, -th, -4.9f + i * 1.25f, 0.4f, th, 0.4f); }   // second, inner row: the double set of metal teeth
         if (!sp.bare) { box2(jawB, -1.0f * hw, 1.0f, -6.9f, 2.0f * hw, 1.7f, 2.6f); box2(jawB, -0.6f * hw, 2.4f, -7.3f, 1.2f * hw, 1.0f, 1.6f); }   // pointed chin like the reference renders
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
@@ -353,6 +354,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder upT = CubeListBuilder.create();
         for (int i = 0; i < (sp.bare ? 0 : 5); i++) { float th = 1.0f + ((i + 1) % 2) * 0.6f; tooth(upT, -2 * hw, 0.9f, -5.7f + i * 1.2f, 0.45f, th, 0.45f); tooth(upT, 1.55f * hw, 0.9f, -5.7f + i * 1.2f, 0.45f, th, 0.45f); }
         if (sp.mand) { box2(upT, -4f * hw, -0.5f, -8f, 1.3f, 1.3f, 6); box2(upT, 2.7f * hw, -0.5f, -8f, 1.3f, 1.3f, 6); box2(upT, -3.2f * hw, -0.4f, -9.5f, 0.8f, 0.8f, 2); box2(upT, 2.4f * hw, -0.4f, -9.5f, 0.8f, 0.8f, 2); }
+        if (!sp.bare) for (int i = 0; i < 4; i++) { float th = 0.7f + ((i + 1) % 2) * 0.4f; tooth(upT, -1.15f * hw, 0.9f, -4.7f + i * 1.25f, 0.4f, th, 0.4f); tooth(upT, 0.75f * hw, 0.9f, -4.7f + i * 1.25f, 0.4f, th, 0.4f); }
         head.addOrReplaceChild("upperTeeth", upT, PartPose.ZERO);
 
         // back pipes
