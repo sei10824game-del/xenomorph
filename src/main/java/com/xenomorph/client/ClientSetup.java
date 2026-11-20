@@ -59,16 +59,19 @@ public final class ClientSetup {
         XenoRenderer(EntityRendererProvider.Context ctx, Caste c) {
             super(ctx, new XenoModel(ctx.bakeLayer(layer(c))), 0.6f * c.scale);
             texture = tex(c.id);
-            if (c.glossy()) addLayer(new net.minecraft.client.renderer.entity.layers.EyesLayer<XenoEntity, XenoModel>(this) {      // wet sheen on the cranium
+            if (c.glossy()) addLayer(new net.minecraft.client.renderer.entity.layers.RenderLayer<XenoEntity, XenoModel>(this) {      // sheen on the cranium: much stronger when wet
                 final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex("gloss"));
-                @Override public net.minecraft.client.renderer.RenderType renderType() { return type; }
+                @Override public void render(PoseStack ps, MultiBufferSource buf, int light, XenoEntity e, float ls, float lsa, float pt, float age, float yaw, float pitch) {
+                    float a = e.isInWaterRainOrBubble() ? 1.0f : 0.55f + 0.1f * e.seed();
+                    getParentModel().renderToBuffer(ps, buf.getBuffer(type), 0xF000F0, OverlayTexture.NO_OVERLAY, a, a, a, 1f);
+                }
             });
             addLayer(new net.minecraft.client.renderer.entity.layers.RenderLayer<XenoEntity, XenoModel>(this) {      // battle damage: acid-corroded cracks glow through as health drops
                 final net.minecraft.client.renderer.RenderType type = net.minecraft.client.renderer.RenderType.eyes(tex("wound"));
                 @Override public void render(PoseStack ps, MultiBufferSource buf, int light, XenoEntity e, float ls, float lsa, float pt, float age, float yaw, float pitch) {
                     float hp = e.getHealth() / e.getMaxHealth();
-                    if (hp > 0.7f || e.isInvisible()) return;
-                    float a = Math.min(1f, (0.7f - hp) / 0.5f);
+                    float a = Math.max(hp > 0.7f ? 0f : Math.min(1f, (0.7f - hp) / 0.5f), 0.28f * e.veteran());   // battle damage plus the permanent scars of a veteran
+                    if (a <= 0.01f || e.isInvisible()) return;
                     getParentModel().renderToBuffer(ps, buf.getBuffer(type), 0xF000F0, OverlayTexture.NO_OVERLAY, a, a, a, 1f);
                 }
             });
@@ -85,7 +88,7 @@ public final class ClientSetup {
             });
         }
         @Override public ResourceLocation getTextureLocation(XenoEntity e) { return texture; }
-        @Override protected void scale(XenoEntity e, PoseStack ps, float pt) { float s = e.caste.scale; float melt = e.deathTime > 0 ? 1f - 0.75f * Math.min(1f, (e.deathTime + pt) / 20f) : 1f; ps.scale(s * (1 + (1 - melt) * 0.25f), s * melt, s * (1 + (1 - melt) * 0.25f)); }   // slump and spread as it dissolves
+        @Override protected void scale(XenoEntity e, PoseStack ps, float pt) { float s = e.caste.scale * (1 + (e.seed() - 0.5f) * 0.1f + 0.045f * e.veteran());   float melt = e.deathTime > 0 ? 1f - 0.75f * Math.min(1f, (e.deathTime + pt) / 20f) : 1f; ps.scale(s * (1 + (1 - melt) * 0.25f), s * melt, s * (1 + (1 - melt) * 0.25f)); }   // slump and spread as it dissolves
         @Override protected float getFlipDegrees(XenoEntity e) { return 0f; }
     }
 

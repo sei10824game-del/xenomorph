@@ -39,6 +39,7 @@ public class XenoEntity extends Monster {
     private static final EntityDataAccessor<Boolean> BIPED = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CLIMB = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HANG = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> VET = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.INT);   // veterancy 0..3, grows with kills
     private static final EntityDataAccessor<Integer> ATTACK = SynchedEntityData.defineId(XenoEntity.class, EntityDataSerializers.INT);
 
     public final Caste caste;
@@ -87,12 +88,16 @@ public class XenoEntity extends Monster {
         entityData.define(ATTACK, 0);
         entityData.define(CLIMB, false);
         entityData.define(HANG, false);
+        entityData.define(VET, 0);
     }
     public boolean isClimbing() { return entityData.get(CLIMB); }
     public boolean isHanging() { return entityData.get(HANG); }
     public boolean canHang() { return XenoConfig.ENABLE_CEILING_AMBUSH.get() && caste.attacks.contains(Attack.DROP_STRIKE); }
     private int hangTimer = 100, climbGrace;
-    private int musicT, callUntil, memT, cmdT;
+    private int musicT, callUntil, memT, cmdT, kills;
+    /** Individual look seed in [0,1): stable per entity (UUID), identical on client and server. */
+    public float seed() { long h = getUUID().getLeastSignificantBits() * 0x9E3779B97F4A7C15L ^ getUUID().getMostSignificantBits(); h ^= h >>> 29; h *= 0xBF58476D1CE4E5B9L; h ^= h >>> 32; return (h & 0xFFFFFF) / (float) 0x1000000; }
+    public int veteran() { return entityData.get(VET); }
     /** > 0 for the fleeting copies shed by CLONE_SPLIT: frail, drop nothing, vanish when the timer runs out. */
     public int cloneTicks, shellTicks;
     public int shieldLayers() { return caste == Caste.BLAZE_XENO ? (int) Math.ceil(shieldHp / 30f) : 0; }
@@ -374,6 +379,7 @@ public class XenoEntity extends Monster {
         if (distanceTo(t) > reach + t.getBbWidth() * 0.5) return false;
         if (caste == Caste.KING && t instanceof XenoEntity q && q.caste.attacks.contains(Attack.LAY)) mult *= 1.6f;   // built to kill queens
         boolean ok = t.hurt(damageSources().mobAttack(this), caste.dmg * (float) XenoConfig.dmg() * mult);
+        if (ok && !t.isAlive() && ++kills % 3 == 0 && veteran() < 3) { entityData.set(VET, veteran() + 1); if (level() instanceof ServerLevel vs) vs.sendParticles(ParticleTypes.ANGRY_VILLAGER, getX(), getY() + getBbHeight(), getZ(), 4, 0.3, 0.2, 0.3, 0); }   // a hardened veteran
         float wt = caste.weight();
         if (ok && t instanceof net.minecraft.world.entity.npc.AbstractVillager v && !caste.red() && faction(this) != 8 && v.getHealth() < v.getMaxHealth() * 0.35f
                 && !v.hasEffect(XenomorphMod.EMBRYO.get()) && !v.hasEffect(XenomorphMod.RED_EMBRYO.get())) cocoon(v);   // captured, not killed: the hive needs hosts
@@ -896,6 +902,6 @@ public class XenoEntity extends Monster {
         return e != MobEffects.POISON && e != MobEffects.WITHER && e != MobEffects.CONFUSION && e != MobEffects.HUNGER && super.canBeAffected(i);
     }
 
-    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putBoolean("Biped", isBiped()); tag.putBoolean("Hang", isHanging()); if (owner != null) tag.putUUID("Owner", owner); }
-    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); if (tag.contains("Biped") && caste.stance == 1) entityData.set(BIPED, tag.getBoolean("Biped")); if (tag.hasUUID("Owner")) { owner = tag.getUUID("Owner"); setPersistenceRequired(); } if (tag.getBoolean("Hang")) { entityData.set(HANG, true); entityData.set(BIPED, false); setNoGravity(true); } }
+    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putBoolean("Biped", isBiped()); tag.putBoolean("Hang", isHanging()); tag.putInt("Vet", veteran()); tag.putInt("Kills", kills); if (owner != null) tag.putUUID("Owner", owner); }
+    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); entityData.set(VET, tag.getInt("Vet")); kills = tag.getInt("Kills"); if (tag.contains("Biped") && caste.stance == 1) entityData.set(BIPED, tag.getBoolean("Biped")); if (tag.hasUUID("Owner")) { owner = tag.getUUID("Owner"); setPersistenceRequired(); } if (tag.getBoolean("Hang")) { entityData.set(HANG, true); entityData.set(BIPED, false); setNoGravity(true); } }
 }

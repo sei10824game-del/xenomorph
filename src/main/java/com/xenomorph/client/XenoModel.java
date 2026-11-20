@@ -23,6 +23,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     ModelPart ovi;   // queen ovipositor, only on castes that lay eggs
     ModelPart[] shields, vines, xarms, sacs, crystals, lids, tusks;   // mutant-lineage extras (null when the caste has none)
     ModelPart cape;
+    float tintR = 1, tintG = 1, tintB = 1;   // per-individual / per-status colour multiplier
     final ModelPart[] arm2 = new ModelPart[2], fore2 = new ModelPart[2];
     final ModelPart[] thigh = new ModelPart[2], shin = new ModelPart[2], foot = new ModelPart[2];
 
@@ -533,6 +534,23 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
     }
 
+
+    /** Individual and status looks: colour drift per entity, veteran claws, freezing / poison / wither tints, and the face's mood. */
+    private void individual(XenoEntity e, float age) {
+        float sd = e.seed(), vet = e.veteran();
+        float drift = (sd - 0.5f) * 0.14f;                                           // +-7% brightness, a little warm or cool
+        tintR = 1 + drift * 1.2f - 0.035f * vet; tintG = 1 + drift - 0.035f * vet; tintB = 1 + drift * 0.8f - 0.035f * vet;
+        if (e.getTicksFrozen() > 40) { float f = Mth.clamp(e.getTicksFrozen() / (float) e.getTicksRequiredToFreeze(), 0, 1); tintR *= 1 - 0.35f * f; tintG *= 1 - 0.1f * f; tintB *= 1 + 0.25f * f; }
+        if (e.hasEffect(net.minecraft.world.effect.MobEffects.POISON)) { tintR *= 0.85f; tintB *= 0.8f; tintG *= 1.12f; }
+        if (e.hasEffect(net.minecraft.world.effect.MobEffects.WITHER)) { tintR *= 0.6f; tintG *= 0.6f; tintB *= 0.62f; }
+        if (e.getHealth() < e.getMaxHealth() * 0.25f) { tintG *= 0.9f; tintB *= 0.9f; }       // flagging
+        for (int s = 0; s < 2; s++) hand[s].zScale *= 1 + 0.09f * vet;                    // veterans grow longer claws
+        if (e.isAggressive() && e.attack() == com.xenomorph.entity.Attack.NONE) {         // hostile face: jaw agape, inner jaw flicking
+            float fl = Mth.sin(age * 0.35f + sd * 6) * 0.5f + 0.5f;
+            jaw.xRot += 0.14f + 0.1f * fl; inner.z -= 1.4f * fl; head.xRot -= 0.05f;
+        }
+    }
+
     /** Per-frame motion of the mutant extras (needs entity state, so it lives outside pose()). */
     private void mutantAnim(XenoEntity e, float age, float pt) {
         float t = age;
@@ -578,6 +596,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             else { hips.y += 7 * eased; chest.xRot += 0.55f * eased; neck.xRot += 0.45f * eased; head.xRot += 0.35f * eased; for (int s = 0; s < 2; s++) arm[s].xRot += 0.4f * eased; }
             for (int i = 0; i < TAIL; i++) tail[i].xRot += 0.08f * eased;
         }
+        individual(e, age);
         mutantAnim(e, age, pt);
     }
 
@@ -630,6 +649,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
         neckY += sway * 0.12f * (1 - spd); headY += Mth.sin(age * 0.031f + 1) * 0.18f * (1 - spd);
         jawOpen += 0.06f + Mth.sin(age * 0.2f) * 0.03f * (1 - spd) + (Mth.sin(age * 0.013f) > 0.97f ? 0.4f : 0);
         innerExt += Math.max(0, Mth.sin(age * 0.07f + 2) - 0.8f) * 6f;      // occasional inner-jaw flick
+        float calm = (1 - aw) * (1 - Mth.clamp(amt * 3f, 0, 1));
+        if (fer >= 0.6f) {                                                                 // fierce: periodic threat display
+            float th = (float) Math.pow(Math.max(0, Mth.sin(age * 0.045f + c.ordinal())), 12);
+            jawOpen += 0.5f * th * calm; headX -= 0.22f * th * calm; chestX -= 0.1f * th * calm; neckY += 0.12f * Mth.sin(age * 0.9f) * th * calm; tailYaw[0] += 0.3f * Mth.sin(age * 0.5f) * th * calm;
+        } else if (fer < 0.35f) {                                                          // wary: slow head sweeps, shy crouch
+            headY += 0.4f * Mth.sin(age * 0.028f + c.ordinal()) * calm; neckY += 0.12f * Mth.sin(age * 0.028f + c.ordinal()) * calm; crouch += 0.8f * calm;
+        }
         float bob = -Mth.abs(Mth.sin(ph)) * 0.9f * spd * (0.4f + b * 0.6f) * wt;
         // spine undulation
         float und = Mth.sin(ph) * 0.22f * spd * (1.2f - 0.6f * b);
@@ -637,6 +663,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         float walkRoll = Mth.sin(ph) * 0.05f * spd;
         float lightK = Mth.clamp((1 - wt) / 0.4f, 0, 1), heavyK = Mth.clamp((wt - 1.2f) / 1.0f, 0, 1);   // gait character: light = springy bounding, heavy = rolling lumber
         bob *= 1 + 1.2f * lightK + 0.8f * heavyK; walkRoll *= 1 + 2.2f * heavyK;
+        neckX += Mth.sin(ph * 2) * 0.05f * spd * (1 + lightK * 1.5f - heavyK * 0.4f); headX += Mth.sin(ph * 2 + 0.6f) * 0.04f * spd * (1 + lightK);   // head bobs with the stride: quick on light castes, stolid on heavy ones
         bodyX += lightK * Mth.sin(ph * 2) * 0.06f * spd; chestY += heavyK * Mth.sin(ph) * 0.1f * spd;
         // tail
         for (int i = 0; i < TAIL; i++) {
@@ -1214,7 +1241,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float stride = Mth.lerp(b, 4.8f, 5.6f) * spd;
             float tz, lift;
             if (u < 0.58f) { tz = Mth.lerp(u / 0.58f, -stride, stride); lift = 0; }
-            else { float k = (u - 0.58f) / 0.42f; tz = Mth.lerp(smooth(k), stride, -stride); lift = Mth.sin(k * Mth.PI) * (1.6f + 1.8f * spd); }
+            else { float k = (u - 0.58f) / 0.42f; tz = Mth.lerp(smooth(k), stride, -stride); lift = Mth.sin(k * Mth.PI) * (1.6f + 1.8f * spd) * (1 - 0.3f * heavyK + 0.35f * lightK); }
             tz += Mth.lerp(b, 0.5f, 1.0f) + stepTz[s];                // keep feet slightly forward of hip, plus attack footwork
             float ty = footH - lift - stepLift[s] - 2.2f * b * (1 - legOv[0]);   // ankle held high: digitigrade stance
             tz = Mth.lerp(legOv[0], tz, legOv[1]); ty = Mth.lerp(legOv[0], ty, legOv[2] + legOv[3] * Mth.sin(cph + s * Mth.PI));
@@ -1270,6 +1297,6 @@ public class XenoModel extends EntityModel<XenoEntity> {
 
     @Override
     public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, float r, float g, float bl, float a) {
-        root.render(ps, vc, light, overlay, r, g, bl, a);
+        root.render(ps, vc, light, overlay, r * tintR, g * tintG, bl * tintB, a);
     }
 }

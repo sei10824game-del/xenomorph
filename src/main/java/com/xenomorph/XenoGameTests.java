@@ -417,4 +417,17 @@ public class XenoGameTests {
         if (!sl.getBlockState(mid.offset(0, 1, 2)).is(XenomorphMod.RESIN.get())) throw new AssertionError("water in the wall was not sealed: " + sl.getBlockState(mid.offset(0, 1, 2)));
         h.succeed();
     }
+
+    /** Individual look seeds are stable per entity but differ between entities; veterancy starts at zero and survives a save/load round trip. */
+    @GameTest(template = "empty", timeoutTicks = 20, batch = "b_individuals")
+    public static void individualLooks(GameTestHelper h) {
+        var a = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(2, 2, 2));
+        var b = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.DRONE).get(), new BlockPos(4, 2, 2));
+        if (a.seed() != a.seed() || a.seed() == b.seed()) throw new AssertionError("seed not stable/distinct: " + a.seed() + " " + b.seed());
+        if (a.veteran() != 0) throw new AssertionError("fresh xeno is a veteran");
+        var tag = new net.minecraft.nbt.CompoundTag(); a.addAdditionalSaveData(tag); tag.putInt("Vet", 2); a.readAdditionalSaveData(tag);
+        boolean ok = a.veteran() == 2; a.discard(); b.discard();
+        if (!ok) throw new AssertionError("veterancy lost on load");
+        h.succeed();
+    }
 }
