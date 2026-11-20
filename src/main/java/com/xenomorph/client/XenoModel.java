@@ -245,7 +245,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float qx = -4.2f * T + (i % 4) * 2.8f * T, qy = -8.5f + (i / 4) * 2.4f, ql = 7 + (i * 5 % 4) * 2.2f;
             add(quillB, qx, qy, 4.6f, 0.9f, 0.9f, ql); add(quillB, qx + 0.15f, qy + 0.15f, 4.6f + ql, 0.6f, 0.6f, 2.2f);
         }
-        if (sp.dreads && !c.mutant()) for (int i = 0; i < 4; i++) { float ry = -5.2f + i * 1.7f, rl = 3.4f - i * 0.4f; add(chestB, 4.6f * T, ry, -1.2f, rl, 0.9f, 0.9f); add(chestB, -4.6f * T - rl, ry, -1.2f, rl, 0.9f, 0.9f); }   // ribs jutting out of the flanks (Predalien)
+        if (sp.dreads && !c.mutant()) for (int i = 0; i < 4; i++) { float ry = -5.6f + i * 1.8f, rl = 5.4f - i * 0.7f; add(chestB, 4.6f * T, ry, -1.2f, rl, 0.9f, 0.9f); add(chestB, -4.6f * T - rl, ry, -1.2f, rl, 0.9f, 0.9f); }   // ribs jutting out of the flanks (Predalien)
         for (int i = 0; i < sp.plates; i++) {
             add(chestB, -5.6f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f); add(chestB, 2.4f * T, -9f, -3.2f + i * 0.4f, 3.2f, 1.6f, 6.4f);   // pauldrons
             if (i == 1) { add(chestB, -6.2f * T, -9.8f, -2.2f, 1.2f, 3f, 1.2f); add(chestB, 5f * T, -9.8f, -2.2f, 1.2f, 3f, 1.2f); }          // shoulder spikes
@@ -323,8 +323,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
         head.addOrReplaceChild("horns", hornB, PartPose.offsetAndRotation(0, -1, -1.5f, -0.1f, 0, 0));
         CubeListBuilder dr = CubeListBuilder.create();
-        if (sp.dreads) for (int i = -5; i <= 5; i++) box2(dr, i * 1.0f - 0.45f, -1, (Math.abs(i) % 3) * 0.5f, 1.0f, 13 + ((i & 1) * 4) + (5 - Math.abs(i)), 1.0f);   // long ropes of dreadlocks, longest toward the middle
-        head.addOrReplaceChild("dreads", dr, PartPose.offsetAndRotation(0, -3.5f, 8, 0.5f, 0, 0));
+        if (sp.dreads) for (int sd = -1; sd <= 1; sd += 2) for (int k = 0; k < 6; k++) box2(dr, sd * (3.6f * hw + k * 0.95f) - 0.5f, -1, (k % 3) * 0.7f - 0.5f, 1.0f, 14 + (k & 1) * 4 + (5 - k) * 1.2f, 1.0f);   // ropes of dreadlocks hang from both sides of the skull, over the shoulders
+        head.addOrReplaceChild("dreads", dr, PartPose.offsetAndRotation(0, -1.5f, 2.5f, -0.18f, 0, 0));
         CubeListBuilder bulbB = CubeListBuilder.create();
         if (sp.glowHead) domeCu = 0;
         if (sp.style == 4) {
