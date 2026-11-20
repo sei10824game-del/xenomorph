@@ -240,6 +240,20 @@ public class XenoEntity extends Monster {
             bipedAmtO = bipedAmt;
             float goal = isBiped() ? 1 : 0;
             bipedAmt += Mth.clamp(goal - bipedAmt, -0.06f, 0.06f);
+            if (caste.mutant() && attack() != Attack.NONE && attackTick < attack().hit) {                                              // wind-up tells: energy gathers before the big moves
+                float k = attackTick / (float) Math.max(1, attack().hit);
+                double fx = fwd().x, fz = fwd().z, cx = getX(), cy = getY() + getBbHeight() * 0.6, cz = getZ();
+                switch (attack()) {
+                    case BLAST_CHARGE -> { for (int i = 0; i < 3; i++) { double an = random.nextDouble() * 6.283, rr = 2.5 * (1 - k); level().addParticle(ParticleTypes.ELECTRIC_SPARK, cx + Math.cos(an) * rr, cy + (random.nextDouble() - 0.5), cz + Math.sin(an) * rr, 0, 0, 0); } }
+                    case SEISMIC, SLAM, ICE_SMASH, QUICKSAND, THORN_PATCH -> { if (k > 0.4) level().addParticle(ParticleTypes.CRIT, cx + fx * 1.5 + (random.nextDouble() - 0.5), cy + 0.6, cz + fz * 1.5 + (random.nextDouble() - 0.5), 0, 0.05, 0); }
+                    case ROAR_BLAST -> { double an = random.nextDouble() * 6.283; level().addParticle(ParticleTypes.CLOUD, cx + Math.cos(an) * 3, cy, cz + Math.sin(an) * 3, -Math.cos(an) * 0.15, 0, -Math.sin(an) * 0.15); }
+                    case FIRE_VOLLEY, WITHER_BOMB, WITHER_SLASH -> level().addParticle(caste == Caste.BLAZE_XENO ? ParticleTypes.FLAME : ParticleTypes.SOUL_FIRE_FLAME, cx + fx + (random.nextDouble() - 0.5) * 0.6, cy, cz + fz + (random.nextDouble() - 0.5) * 0.6, 0, 0.03, 0);
+                    case SHULKER_STORM, CLONE_SPLIT, TELE_SMASH -> level().addParticle(ParticleTypes.PORTAL, cx + (random.nextDouble() - 0.5) * 2, cy + (random.nextDouble() - 0.5), cz + (random.nextDouble() - 0.5) * 2, 0, 0.1, 0);
+                    case ICICLE_VOLLEY -> level().addParticle(ParticleTypes.SNOWFLAKE, cx + fx + (random.nextDouble() - 0.5), cy + (random.nextDouble() - 0.5), cz + fz + (random.nextDouble() - 0.5), 0, 0.02, 0);
+                    case BONE_BARRAGE, BONE_SHOT -> level().addParticle(ParticleTypes.CRIT, cx + fx * 1.2, cy, cz + fz * 1.2, 0, 0.02, 0);
+                    default -> {}
+                }
+            }
             if (caste.mutant() && random.nextInt(4) == 0) {                                                                       // each mutant sheds its own element
                 var pt = switch (caste) {
                     case FROST_XENO, FROZEN_XENO -> ParticleTypes.SNOWFLAKE; case BLAZE_XENO -> ParticleTypes.FLAME; case VOID_XENO, SHULKER_XENO -> ParticleTypes.PORTAL;
@@ -833,6 +847,22 @@ public class XenoEntity extends Monster {
 
     @Override protected void tickDeath() {
         if (level() instanceof ServerLevel sl) {
+            if (caste.mutant() && deathTime % 2 == 0) {
+                double bx = getX(), by = getY() + getBbHeight() * 0.5, bz = getZ(), w = getBbWidth() * 0.5;
+                switch (caste) {
+                    case FROST_XENO, FROZEN_XENO -> { sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.ICE.defaultBlockState()), bx, by, bz, 8, w, 0.6, w, 0.15); if (deathTime == 2) playSound(SoundEvents.GLASS_BREAK, 2f, 0.6f); }          // shatters
+                    case BONE_XENO -> { sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.BONE_BLOCK.defaultBlockState()), bx, by, bz, 8, w, 0.6, w, 0.1); if (deathTime == 2) playSound(SoundEvents.SKELETON_DEATH, 2f, 0.5f); }  // collapses into bones
+                    case HUSK_XENO -> sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.SAND.defaultBlockState()), bx, by, bz, 10, w, 0.6, w, 0.08);   // crumbles to sand
+                    case BLAZE_XENO -> { sl.sendParticles(ParticleTypes.FLAME, bx, by, bz, 8, w, 0.7, w, 0.06); sl.sendParticles(ParticleTypes.LAVA, bx, by, bz, 1, w, 0.5, w, 0); }              // burns out
+                    case WITHER_XENO -> sl.sendParticles(ParticleTypes.SOUL, bx, by, bz, 5, w, 0.7, w, 0.04);
+                    case VOID_XENO, SHULKER_XENO -> { sl.sendParticles(ParticleTypes.PORTAL, bx, by, bz, 20, w, 0.8, w, 0.5); if (deathTime == 2) playSound(SoundEvents.ENDERMAN_DEATH, 2f, 0.5f); }          // blinks out
+                    case BLAST_XENO -> { if (deathTime == 10 || deathTime == 16) { sl.sendParticles(ParticleTypes.EXPLOSION, bx + (random.nextDouble() - 0.5) * w * 2, by, bz + (random.nextDouble() - 0.5) * w * 2, 1, 0, 0, 0, 0); playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, 0.9f); } }   // bursts (visual only)
+                    case JUNGLE_XENO -> sl.sendParticles(ParticleTypes.COMPOSTER, bx, by, bz, 8, w, 0.7, w, 0.1);
+                    case HULK_XENO, HOG_XENO -> sl.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState()), bx, getY(), bz, 8, w, 0.1, w, 0.1);
+                    default -> sl.sendParticles(ParticleTypes.SCULK_SOUL, bx, by, bz, 5, w, 0.7, w, 0.05);
+                }
+            }
+
             if (deathTime == 1) playSound(XenomorphMod.SIZZLE.get(), 1.2f, 0.9f);
             sl.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.2 + getBbHeight() * 0.4 * (1 - deathTime / 20f), getZ(), 3, getBbWidth() * 0.3, 0.2, getBbWidth() * 0.3, 0.02);
             if (deathTime % 4 == 0) sl.sendParticles(ParticleTypes.SMOKE, getX(), getY() + 0.3, getZ(), 2, getBbWidth() * 0.3, 0.1, getBbWidth() * 0.3, 0.01);

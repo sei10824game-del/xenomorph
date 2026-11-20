@@ -71,6 +71,7 @@ final class MutantAttacks {
                         e.setDeltaMovement(d.x * 0.7, 0.3, d.z * 0.7); e.hurtMarked = true;
                     }
                     sl.sendParticles(ParticleTypes.SONIC_BOOM, x.getX(), x.getY() + x.getBbHeight() * 0.7, x.getZ(), 1, 0, 0, 0, 0);
+                    for (int i = 0; i < 24; i++) { double an = i * Math.PI / 12; sl.sendParticles(scream ? ParticleTypes.PORTAL : ParticleTypes.CLOUD, x.getX() + Math.cos(an) * 1.5, x.getY() + 0.3, x.getZ() + Math.sin(an) * 1.5, 0, Math.cos(an) * 0.9, 0.05, Math.sin(an) * 0.9, 1); }   // expanding shock ring
                 }
                 if (!scream && (t == 24 || t == 40) && sl.getEntitiesOfClass(XenoEntity.class, x.getBoundingBox().inflate(24)).size() < 14) {   // the Mutant Zombie's roar raises its dead: drones claw out of the ground
                     for (int i = 0; i < 2; i++) {
@@ -120,6 +121,7 @@ final class MutantAttacks {
                     double rad = 4.5 + x.getRandom().nextInt(2) + (charged ? 2 : 0);
                     x.playSound(SoundEvents.GENERIC_EXPLODE, 2f, 0.8f + x.getRandom().nextFloat() * 0.3f);
                     sl.sendParticles(ParticleTypes.EXPLOSION, x.getX() + (x.getRandom().nextDouble() - 0.5) * 3, x.getY() + 0.8, x.getZ() + (x.getRandom().nextDouble() - 0.5) * 3, 2, 0.5, 0.3, 0.5, 0);
+                    sl.sendParticles(charged ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.FLAME, x.getX(), x.getY() + 0.8, x.getZ(), 30, rad * 0.4, 0.4, rad * 0.4, 0.15);
                     for (LivingEntity e : x.around(rad)) { x.strike(e, charged ? 1.2f : 0.8f, rad + 2, charged ? 1.8 : 1.2); }
                 }
                 if (t == a.hit + 14 && sl.canSeeSky(x.blockPosition()) && x.getRandom().nextInt(sl.isThundering() ? 2 : 4) == 0) {
@@ -228,6 +230,7 @@ final class MutantAttacks {
                 if (t == a.hit) { x.shellTicks = 42; x.playSound(SoundEvents.SHULKER_CLOSE, 1.5f, 0.6f); }
                 if (t == a.hit + 44) {
                     x.shellTicks = 0; x.playSound(SoundEvents.SHULKER_OPEN, 1.5f, 0.6f);
+                    for (int i = 0; i < 20; i++) { double an = i * Math.PI / 10; sl.sendParticles(ParticleTypes.END_ROD, x.getX() + Math.cos(an) * 1.2, x.getY() + 0.5, x.getZ() + Math.sin(an) * 1.2, 0, Math.cos(an) * 0.5, 0.2, Math.sin(an) * 0.5, 1); }
                     for (LivingEntity e : x.around(7)) { e.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 60, 1)); x.strike(e, 0.5f, 9, 0.6); }
                     sl.sendParticles(ParticleTypes.END_ROD, x.getX(), x.getY() + 1, x.getZ(), 40, 1.5, 0.8, 1.5, 0.1);
                 }

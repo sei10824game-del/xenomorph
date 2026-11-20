@@ -190,6 +190,20 @@ public class XenoModel extends EntityModel<XenoEntity> {
             default -> {}
         }
         // strain-wide family traits, applied to every rank so a faction reads as one family
+        switch (c) {   // mutant silhouettes: neck, posture and trunk proportions pushed apart so the line-up reads at a glance
+            case HULK_XENO -> { p.neckK = 0.62f; p.upright = 0f; p.torso *= 1.08f; }
+            case HUSK_XENO -> { p.neckK = 0.7f; p.torso *= 1.05f; }
+            case BONE_XENO -> { p.neckK = 1.55f; p.upright = 0.18f; p.torso *= 0.92f; }
+            case WITHER_XENO -> { p.neckK = 1.3f; p.upright = 0.2f; p.torso *= 0.9f; }
+            case VOID_XENO -> { p.neckK = 1.45f; p.upright = 0.28f; p.legK = Math.max(p.legK, 1.45f); }
+            case BLAST_XENO -> { p.neckK = 0.85f; p.torso *= 1.1f; }
+            case FROST_XENO, FROZEN_XENO -> { p.neckK = 0.8f; p.upright = 0.05f; }
+            case HOG_XENO -> { p.neckK = 0.5f; p.torso *= 1.1f; }
+            case JUNGLE_XENO -> { p.neckK = 1.2f; p.upright = 0.12f; p.armK = Math.max(p.armK, 1.5f); }
+            case SHULKER_XENO -> { p.neckK = 0.7f; }
+            case BLAZE_XENO -> { p.neckK = 0.9f; p.upright = 0.1f; }
+            default -> {}
+        }
         if (c.red()) { p.blade = true; p.cheek = true; p.clawL *= 1.25f; p.spines += 3; p.elbow = true; }                       // killers: blades, long claws, spiky
         if (c.kSeries()) { p.plates = Math.max(p.plates, 1); p.elbow = true; p.knee = true; p.limb *= 1.1f; p.torso *= 1.08f; p.ribs = Math.max(p.ribs, 3); }   // armoured
         if (c.cloneStrain() || c == Caste.CLONE_XENOMORPH) { p.ribs = Math.max(p.ribs, 5); p.spines = Math.max(p.spines, 4); p.brow = true; p.cheek = true; p.tailT *= 0.9f; }   // lab clones: sinewy, human-ish brow
@@ -479,6 +493,42 @@ public class XenoModel extends EntityModel<XenoEntity> {
                 chest.addOrReplaceChild("sacR", box(-2.7f, -2.7f, -2.7f, 5.4f, 5.4f, 5.4f), PartPose.offset(-5.4f * T, -7.5f, 5.5f));
             }
             case WITHER_XENO -> chest.addOrReplaceChild("cape", add(box(-5 * T, 0, 0, 10 * T, 16, 0.8f), -3 * T, 14, 0.2f, 6 * T, 3, 0.6f), PartPose.offsetAndRotation(0, -9, 5.6f, 0.15f, 0, 0));
+            default -> {}
+        }
+    }
+
+    /** Idle personality and attack-specific moves of the mutant lineage, layered on top of the shared pose. */
+    private void mutantMotion(Caste c, Attack at, float t, float age, float aw) {
+        float idle = 1 - aw;
+        float pulse = (float) Math.pow(Math.max(0, Mth.sin(age * 0.063f)), 8);        // a short beat every ~100 ticks
+        switch (c) {
+            case HULK_XENO, HUSK_XENO -> { for (int s = 0; s < 2; s++) { arm[s].xRot -= 0.7f * pulse * idle; fore[s].xRot -= 0.5f * pulse * idle; } chest.xRot += 0.12f * pulse * idle; hips.zRot += 0.03f * Mth.sin(age * 0.04f) * idle; }   // fist pounding, heavy sway
+            case BONE_XENO -> { head.zRot += 0.28f * pulse * idle; jaw.xRot += Math.abs(Mth.sin(age * 1.4f)) * 0.22f * pulse * idle; chest.yRot += 0.05f * Mth.sin(age * 0.05f) * idle; }      // neck crack, jaw clatter
+            case BLAST_XENO -> { float th = 1 + 0.05f * Mth.sin(age * 0.3f) * idle; chest.xScale *= th; chest.zScale *= th; hips.yScale *= 1 + 0.03f * Mth.sin(age * 0.3f + 1) * idle; }              // throbbing
+            case VOID_XENO -> { head.yRot += 0.07f * Mth.sin(age * 1.7f) * Mth.sin(age * 0.23f) * idle; chest.zRot += 0.05f * Mth.sin(age * 0.9f) * Math.max(0, Mth.sin(age * 0.11f)) * idle; }    // flicker
+            case FROST_XENO, FROZEN_XENO -> { for (int s = 0; s < 2; s++) arm[s].zRot += 0.025f * Mth.sin(age * 2.2f + s) * idle; }                                                              // shiver
+            case BLAZE_XENO -> { chest.xRot += 0.035f * Mth.sin(age * 0.2f) * idle; for (int s = 0; s < 2; s++) arm[s].zRot += (s == 0 ? 0.12f : -0.12f) * idle; }                              // heat haze sway, arms flared
+            case WITHER_XENO -> { for (int s = 0; s < 2; s++) { arm[s].zRot += (s == 0 ? 0.18f : -0.18f) * idle; fore[s].xRot -= 0.25f * idle; } hips.zRot += 0.03f * Mth.sin(age * 0.07f) * idle; }  // blades held ready
+            case HOG_XENO -> { head.xRot += 0.22f * pulse * idle; neck.xRot += 0.1f * pulse * idle; }                                                                                              // pawing
+            case JUNGLE_XENO -> { chest.zRot += 0.05f * Mth.sin(age * 0.06f) * idle; head.zRot += 0.04f * Mth.sin(age * 0.06f + 1) * idle; }
+            default -> {}
+        }
+        if (at == Attack.NONE) return;
+        float hit = at.hit;
+        switch (at) {
+            case BONE_BARRAGE -> {                                                       // draw the bow: lead arm out, other hand pulled to the cheek, recoil on release
+                float draw = kf(t, 10, 0, 22, 1, hit + 1, 1, hit + 8, 0.2f, at.duration, 0);
+                arm[0].xRot = Mth.lerp(draw * aw, arm[0].xRot, -1.45f); arm[0].zRot = Mth.lerp(draw * aw, arm[0].zRot, 0.1f); fore[0].xRot = Mth.lerp(draw * aw, fore[0].xRot, 0f);
+                arm[1].xRot = Mth.lerp(draw * aw, arm[1].xRot, -1.0f); fore[1].xRot = Mth.lerp(draw * aw, fore[1].xRot, -2.2f); head.xRot -= 0.15f * draw * aw;
+            }
+            case FIRE_VOLLEY -> { float k = Mth.sin(t * 0.8f) * kf(t, hit - 4, 0, hit, 1, hit + 16, 1, hit + 22, 0); arm[0].xRot -= (0.9f + 0.5f * k) * aw; arm[1].xRot -= (0.9f - 0.5f * k) * aw; chest.xRot -= 0.12f * aw; }   // alternate thrusts
+            case THORN_PATCH -> { float k = kf(t, 0, 0, hit - 3, 1, hit + 6, 0.8f, at.duration, 0); for (int s = 0; s < 2; s++) { arm[s].xRot += 1.5f * k * aw; fore[s].xRot += 0.3f * k * aw; } chest.xRot += 0.35f * k * aw; }       // hands plunge into the ground
+            case GUST -> { float k = kf(t, 0, 0, hit - 2, 1, hit + 14, 1, at.duration, 0); for (int s = 0; s < 2; s++) { arm[s].zRot += (s == 0 ? -1 : 1) * 0.9f * k * aw * Mth.sin(t * 0.7f); arm[s].xRot -= 0.9f * k * aw; } }   // sweeping blower arms
+            case SHELL_GUARD -> { float k = kf(t, 0, 0, 8, 1, hit + 34, 1, hit + 44, 0); chest.xRot += 0.5f * k * aw; head.xRot += 0.5f * k * aw; for (int s = 0; s < 2; s++) { arm[s].zRot += (s == 0 ? -0.6f : 0.6f) * k * aw; arm[s].xRot -= 0.7f * k * aw; } }   // hunker down
+            case CLONE_SPLIT -> { float k = kf(t, 0, 0, hit, 1, hit + 30, 1, at.duration, 0); for (int s = 0; s < 2; s++) arm[s].zRot += (s == 0 ? 1 : -1) * 1.1f * k * aw; head.xRot -= 0.3f * k * aw; }
+            case MINION_BURST -> { float k = kf(t, 0, 0, hit - 2, 1, hit + 4, 0); chest.xScale *= 1 + 0.25f * k * aw; chest.zScale *= 1 + 0.2f * k * aw; head.xRot -= 0.4f * k * aw; jaw.xRot += 0.6f * k * aw; }       // heave and spit
+            case QUICKSAND -> { float k = kf(t, 0, 0, hit - 4, 1, hit + 4, 0.4f, at.duration, 0); for (int s = 0; s < 2; s++) arm[s].xRot += 1.1f * k * aw; chest.xRot += 0.3f * k * aw; }
+            case ICE_SMASH -> { float up = kf(t, 0, 0, hit - 8, 1, hit, 0.1f, at.duration, 0); for (int s = 0; s < 2; s++) { arm[s].xRot -= 1.4f * up * aw; arm[s].zRot += (s == 0 ? 0.2f : -0.2f) * up * aw; } }
             default -> {}
         }
     }
@@ -1215,6 +1265,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             } else if (climbing || hang) curl = 0.9f;
             for (int k = 0; k < 4; k++) { ModelPart fp = hand[s].getChild("f" + k); fp.xRot = 0.1f + curl * 0.5f; fp.getChild("d").xRot = curl * 0.9f + 0.15f; }
         }
+        if (c.mutant() && climbAmt < 0.3f && hangAmt < 0.3f) mutantMotion(c, at, t, age, aw);
     }
 
     @Override
