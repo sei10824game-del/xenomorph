@@ -371,8 +371,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
             PartDefinition a = chest.addOrReplaceChild("arm" + n, ab, PartPose.offset(sx * 5 * T, -6.5f, 0));
             a.addOrReplaceChild("elbow", box(-1.6f * L, -1.6f * L, -1.6f * L, 3.2f * L, 3.2f * L, 3.2f * L), PartPose.offsetAndRotation(0, 8.5f, 0, 0.785f, 0, 0.785f));   // rounded joint caps
             a.addOrReplaceChild("shoulder", box(-1.9f * L, -1.9f * L, -1.9f * L, 3.8f * L, 3.8f * L, 3.8f * L), PartPose.offsetAndRotation(0, -0.4f, 0, 0.785f, 0, 0.785f));
-            CubeListBuilder fb = box(-1.55f * L, 0, -1.55f * L, 3.1f * L, 4.5f, 3.1f * L);     // forearm: muscle belly then slim wrist
-            add(fb, -1.0f * L, 4.0f, -1.0f * L, 2.0f * L, 6.0f, 2.0f * L);
+            CubeListBuilder fb = box(-1.85f * L, 0, -1.85f * L, 3.7f * L, 5.2f, 3.7f * L);     // forearm: heavy muscle belly (as on the reference renders), then a slim wrist
+            add(fb, -1.0f * L, 4.8f, -1.0f * L, 2.0f * L, 5.4f, 2.0f * L);
             add(fb, -0.3f, 1.2f, -1.3f * L - 0.45f, 0.6f, 6.5f, 0.6f);                 // bone ridge
             if (sp.blade) add(fb, -0.4f, 0.5f, 1.1f * L, 0.8f, 10.5f, 1.6f);
             PartDefinition f = a.addOrReplaceChild("fore", fb, PartPose.offset(0, 8.5f, 0));
