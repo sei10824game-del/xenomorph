@@ -235,6 +235,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
         for (int i = 0; i < 6; i++) add(chestB, -0.9f - (i % 2) * 0.25f, -8.4f + i * 1.4f, 3.8f, 1.8f + (i % 2) * 0.5f, 1.1f, 1.5f + (i % 2) * 0.7f);   // vertebrae
         add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
+        if (!c.mutant()) add(chestB, -3.4f * T, -10.8f, 0.2f, 6.8f * T, 3.4f, 5.8f);     // shoulder hump behind the neck, as on the reference renders
         for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
         CubeListBuilder quillB = CubeListBuilder.create();
         if (c == Caste.SPIKER) for (int i = 0; i < 16; i++) {   // quill field: long swept-back spikes across the back and shoulders
@@ -678,10 +679,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float sign = s == 0 ? 1 : -1;
             float swing = Mth.sin(ph + (s == 0 ? Mth.PI : 0));
             // biped: relaxed hang with ready claws, counter swing
-            A[s][0] = -0.3f + swing * 0.55f * spd * b - breathe * 0.04f;
+            A[s][0] = -0.4f + swing * 0.55f * spd * b - breathe * 0.04f;
             A[s][1] = sign * (-0.25f - 0.1f * b);                 // splay outward (yaw)
             A[s][2] = 0;
-            A[s][3] = 0.45f + 0.1f * (1 - spd) - swing * 0.2f * spd;   // arms hang nearly straight, no folded elbows
+            A[s][3] = 0.62f + 0.1f * (1 - spd) - swing * 0.2f * spd;   // arms hang nearly straight, no folded elbows
             A[s][4] = 0.75f;                       // long fingers hang, claws down
             A[s][5] = 0;
         }
