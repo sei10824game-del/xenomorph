@@ -21,6 +21,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
     final ModelPart[] tail = new ModelPart[TAIL];
     final ModelPart[] arm = new ModelPart[2], fore = new ModelPart[2], hand = new ModelPart[2];
     ModelPart ovi;   // queen ovipositor, only on castes that lay eggs
+    ModelPart[] shields, vines, xarms, sacs, crystals, lids, tusks;   // mutant-lineage extras (null when the caste has none)
+    ModelPart cape;
     final ModelPart[] arm2 = new ModelPart[2], fore2 = new ModelPart[2];
     final ModelPart[] thigh = new ModelPart[2], shin = new ModelPart[2], foot = new ModelPart[2];
 
@@ -37,6 +39,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
             thigh[s] = hips.getChild("thigh" + n); shin[s] = thigh[s].getChild("shin"); foot[s] = shin[s].getChild("foot");
         }
         if (hips.hasChild("ovi")) ovi = hips.getChild("ovi");
+        if (chest.hasChild("shield0")) shields = new ModelPart[]{chest.getChild("shield0"), chest.getChild("shield1"), chest.getChild("shield2")};
+        if (chest.hasChild("vineL")) vines = new ModelPart[]{chest.getChild("vineL"), chest.getChild("vineR")};
+        if (chest.hasChild("xarmL")) xarms = new ModelPart[]{chest.getChild("xarmL"), chest.getChild("xarmR")};
+        if (chest.hasChild("sacL")) sacs = new ModelPart[]{chest.getChild("sacL"), chest.getChild("sacR")};
+        if (chest.hasChild("lidL")) lids = new ModelPart[]{chest.getChild("lidL"), chest.getChild("lidR")};
+        if (head.hasChild("tuskL")) tusks = new ModelPart[]{head.getChild("tuskL"), head.getChild("tuskR")};
+        if (chest.hasChild("crystal0")) { crystals = new ModelPart[7]; for (int i = 0; i < 7; i++) crystals[i] = chest.getChild("crystal" + i); }
+        if (chest.hasChild("cape")) cape = chest.getChild("cape");
         tail0 = hips.getChild("tail0");
         ModelPart p = tail0;
         for (int i = 0; i < TAIL; i++) { tail[i] = i == 0 ? tail0 : p.getChild("tail" + i); p = tail[i]; }
@@ -400,6 +410,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             if (i == N - 1) tailEnd(cb, sp.tailEnd, w);
             tp = tp.addOrReplaceChild("tail" + i, cb, PartPose.offset(0, 0, 7));
         }
+        mutantParts(c, chest, head, T, L);
         return LayerDefinition.create(mesh, 256, 128);
     }
 
@@ -421,6 +432,92 @@ public class XenoModel extends EntityModel<XenoEntity> {
     // ------------------------------------------------------------------ animation
     private float P;  // current chest pitch (world, rad)
 
+
+    /** Silhouette extras for the mutant lineage: hulk shoulders, blaze orbiting shields, shulker lids, hog tusks, jungle vines, frost crystals, void spare arms, blast sacs, wither cape. */
+    private static void mutantParts(Caste c, PartDefinition chest, PartDefinition head, float T, float L) {
+        switch (c) {
+            case HULK_XENO, HUSK_XENO -> {
+                chest.addOrReplaceChild("trapL", box(2f * T, -11, -3.5f, 6 * T, 6, 8), PartPose.rotation(0, 0, 0.25f));
+                chest.addOrReplaceChild("trapR", box(-8f * T, -11, -3.5f, 6 * T, 6, 8), PartPose.rotation(0, 0, -0.25f));
+                chest.addOrReplaceChild("hump", add(box(-3.5f, -13.5f, 1, 7, 6, 7), -2f, -15.5f, 2.5f, 4, 3, 4), PartPose.ZERO);
+            }
+            case BLAZE_XENO -> { for (int i = 0; i < 3; i++) chest.addOrReplaceChild("shield" + i, add(box(-3.5f, -6, -13, 7, 12, 1.4f), -2.2f, -4.5f, -14.2f, 4.4f, 9, 1f), PartPose.offset(0, -1, 0)); }
+            case SHULKER_XENO -> {
+                chest.addOrReplaceChild("lidL", add(box(-1, -2, -1, 11, 3, 14), 1, -3.2f, 0, 8, 1.2f, 11), PartPose.offset(0.5f, -10.5f, 2));
+                chest.addOrReplaceChild("lidR", add(box(-10, -2, -1, 11, 3, 14), -9, -3.2f, 0, 8, 1.2f, 11), PartPose.offset(-0.5f, -10.5f, 2));
+            }
+            case HOG_XENO -> {
+                for (int s = -1; s <= 1; s += 2) {
+                    PartDefinition t = head.addOrReplaceChild(s < 0 ? "tuskR" : "tuskL", box(-1f, -1f, -8, 2, 2, 8), PartPose.offsetAndRotation(s * 3.2f, 2.5f, -7f, 0.55f, 0, 0));
+                    t.addOrReplaceChild("tip", box(-0.8f, -0.8f, -6, 1.6f, 1.6f, 6), PartPose.offsetAndRotation(0, 0, -7.5f, 0.8f, 0, 0));
+                }
+                CubeListBuilder mane = CubeListBuilder.create();
+                for (int i = 0; i < 6; i++) add(mane, -0.8f, -13.5f - (i % 2) * 2, -3 + i * 1.8f, 1.6f, 7 + (i % 2) * 2, 1.6f);
+                chest.addOrReplaceChild("maneHog", mane, PartPose.ZERO);
+            }
+            case JUNGLE_XENO -> {
+                for (int s = -1; s <= 1; s += 2) {
+                    PartDefinition v = chest.addOrReplaceChild(s < 0 ? "vineR" : "vineL", box(-0.6f, 0, -0.6f, 1.2f, 7, 1.2f), PartPose.offset(s * (5.2f * T + 1.5f), -8, 0.5f));
+                    PartDefinition v2 = v.addOrReplaceChild("v2", box(-0.5f, 0, -0.5f, 1f, 7, 1f), PartPose.offset(0, 7, 0));
+                    v2.addOrReplaceChild("v3", add(box(-0.4f, 0, -0.4f, 0.8f, 6, 0.8f), -1.6f, 5.5f, -0.1f, 3.2f, 0.3f, 2.4f), PartPose.offset(0, 7, 0));   // leaf at the tip
+                }
+            }
+            case FROST_XENO -> {
+                for (int i = 0; i < 7; i++) {
+                    float len = 8 + (i * 5 % 4) * 2.5f;
+                    chest.addOrReplaceChild("crystal" + i, box(-1.1f, -len, -1.1f, 2.2f, len, 2.2f), PartPose.offsetAndRotation(-4.2f * T + i * 1.4f * T, -6 - (i % 3) * 1.2f, 3.2f + (i % 2) * 0.8f, 0.5f + (i % 3) * 0.12f, 0, -0.3f + i * 0.1f));
+                }
+            }
+            case VOID_XENO -> {
+                for (int s = -1; s <= 1; s += 2) {
+                    PartDefinition a = chest.addOrReplaceChild(s < 0 ? "xarmR" : "xarmL", add(box(-0.6f, 0, -0.6f, 1.2f, 10, 1.2f), -0.9f, 9.2f, -0.9f, 1.8f, 1.6f, 1.8f), PartPose.offsetAndRotation(s * 2.8f, -6.5f, 4.5f, 0.6f, 0, s * 0.7f));
+                    a.addOrReplaceChild("f", add(box(-0.5f, 0, -0.5f, 1f, 10, 1f), -0.8f, 9, -2.2f, 1.6f, 3.5f, 0.8f), PartPose.offset(0, 10, 0));
+                }
+            }
+            case BLAST_XENO -> {
+                chest.addOrReplaceChild("sacL", box(-2.7f, -2.7f, -2.7f, 5.4f, 5.4f, 5.4f), PartPose.offset(5.4f * T, -7.5f, 5.5f));
+                chest.addOrReplaceChild("sacR", box(-2.7f, -2.7f, -2.7f, 5.4f, 5.4f, 5.4f), PartPose.offset(-5.4f * T, -7.5f, 5.5f));
+            }
+            case WITHER_XENO -> chest.addOrReplaceChild("cape", add(box(-5 * T, 0, 0, 10 * T, 16, 0.8f), -3 * T, 14, 0.2f, 6 * T, 3, 0.6f), PartPose.offsetAndRotation(0, -9, 5.6f, 0.15f, 0, 0));
+            default -> {}
+        }
+    }
+
+    /** Per-frame motion of the mutant extras (needs entity state, so it lives outside pose()). */
+    private void mutantAnim(XenoEntity e, float age, float pt) {
+        float t = age;
+        if (shields != null) {
+            int layers = e.shieldLayers();
+            for (int i = 0; i < 3; i++) { shields[i].visible = i < layers; shields[i].yRot = t * 0.07f + i * Mth.TWO_PI / 3f; shields[i].y = -1 + Mth.sin(t * 0.1f + i * 2) * 1.2f; }
+        }
+        if (lids != null) {
+            float open = e.shellTicks > 0 ? 0.02f : 0.5f + 0.12f * Mth.sin(t * 0.05f);
+            if (e.shellTicks > 0 && e.shellTicks < 6) open = 0.9f;           // pops open at the end of the guard
+            lids[0].zRot = -open; lids[1].zRot = open;
+        }
+        if (vines != null) for (int s = 0; s < 2; s++) {
+            float sw = Mth.sin(t * 0.09f + s * 1.7f);
+            vines[s].xRot = arm[s].xRot * 0.8f + 0.1f + sw * 0.12f; vines[s].zRot = (s == 0 ? 0.25f : -0.25f) + sw * 0.1f;
+            vines[s].getChild("v2").xRot = 0.25f + Mth.sin(t * 0.11f + s) * 0.18f; vines[s].getChild("v2").getChild("v3").xRot = 0.3f + Mth.sin(t * 0.13f + s * 2) * 0.22f;
+        }
+        if (xarms != null) {
+            boolean atk = e.attack() != com.xenomorph.entity.Attack.NONE;
+            for (int s = 0; s < 2; s++) {
+                float sg = s == 0 ? 1 : -1, w = Mth.sin(t * 0.08f + s * 2.2f);
+                xarms[s].xRot = (atk ? 1.2f : 0.6f) + w * 0.15f; xarms[s].zRot = sg * ((atk ? 1.0f : 0.7f) + w * 0.12f);
+                xarms[s].getChild("f").xRot = 0.5f + Mth.sin(t * 0.1f + s) * 0.3f;
+            }
+        }
+        if (sacs != null) {
+            boolean charging = e.attack() == com.xenomorph.entity.Attack.BLAST_CHARGE;
+            float sw = 1 + 0.12f * Mth.sin(t * 0.2f) + (charging ? 0.6f * Mth.clamp(e.attackTick / 56f, 0, 1.2f) : 0);
+            for (ModelPart sac : sacs) sac.xScale = sac.yScale = sac.zScale = sw;
+        }
+        if (crystals != null) for (int i = 0; i < 7; i++) crystals[i].zRot = (-0.3f + i * 0.1f) + Mth.sin(t * 0.05f + i) * 0.03f;
+        if (cape != null) { float walk = Mth.clamp(e.walkAnimation.speed() * 2f, 0, 1); cape.xRot = 0.15f + walk * 0.35f + Mth.sin(t * 0.1f) * 0.05f; cape.zRot = Mth.sin(t * 0.07f) * 0.05f; }
+        if (tusks != null) for (ModelPart tk : tusks) tk.xRot = 0.55f + (e.attack() == com.xenomorph.entity.Attack.HORN_TOSS || e.attack() == com.xenomorph.entity.Attack.CHARGE ? 0.3f * Mth.sin(e.attackTick * 0.4f) : 0);
+    }
+
     @Override
     public void setupAnim(XenoEntity e, float limbSwing, float amt, float age, float headYaw, float headPitch) {
         float pt = Minecraft.getInstance().getFrameTime();
@@ -431,6 +528,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             else { hips.y += 7 * eased; chest.xRot += 0.55f * eased; neck.xRot += 0.45f * eased; head.xRot += 0.35f * eased; for (int s = 0; s < 2; s++) arm[s].xRot += 0.4f * eased; }
             for (int i = 0; i < TAIL; i++) tail[i].xRot += 0.08f * eased;
         }
+        mutantAnim(e, age, pt);
     }
 
     /** Pure pose function (also used by the offline preview tool). b = biped blend, t = ticks into attack. */

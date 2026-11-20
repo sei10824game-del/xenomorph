@@ -95,6 +95,7 @@ public class XenoEntity extends Monster {
     private int musicT, callUntil, memT, cmdT;
     /** > 0 for the fleeting copies shed by CLONE_SPLIT: frail, drop nothing, vanish when the timer runs out. */
     public int cloneTicks, shellTicks;
+    public int shieldLayers() { return caste == Caste.BLAZE_XENO ? (int) Math.ceil(shieldHp / 30f) : 0; }
     private float shieldHp = 90;     // blaze layers: 3 x 30 absorb before the body is touched
     private int shieldIdle, enrage, lastHitTick;
     @Override protected boolean shouldDropLoot() { return cloneTicks == 0 && super.shouldDropLoot(); }
