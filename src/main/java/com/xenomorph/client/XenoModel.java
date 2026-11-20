@@ -192,7 +192,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
         // strain-wide family traits, applied to every rank so a faction reads as one family
         if (!c.mutant()) p.domeL = Math.min(26f, p.domeL * 1.3f);
-        if (!c.mutant() && p.style != 4) { p.domeH *= 1.22f; p.domeW *= 1.1f; }   // fuller, higher crown   // reference renders: the cranium runs about as long as the torso
+        if (!c.mutant() && p.style != 4) { p.domeH *= 1.22f; p.domeW *= 1.1f; }
+        if (!c.mutant() && !p.bare && p.style != 4) p.cheek = true;               // cheek bones on every classic face   // fuller, higher crown   // reference renders: the cranium runs about as long as the torso
         switch (c) {   // mutant silhouettes: neck, posture and trunk proportions pushed apart so the line-up reads at a glance
             case HULK_XENO -> { p.neckK = 0.62f; p.upright = 0f; p.torso *= 1.08f; }
             case HUSK_XENO -> { p.neckK = 0.7f; p.torso *= 1.05f; }
@@ -337,6 +338,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder jawB = box(-2 * hw, 0, -6, 4 * hw, 1.5f, 8);
         for (int i = 0; i < (sp.bare ? 0 : 6); i++) { float th = 0.9f + (i % 2) * 0.6f; tooth(jawB, -1.8f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); tooth(jawB, 1.35f * hw, -th, -5.6f + i * 1.1f, 0.45f, th, 0.45f); }
         if (!sp.bare) for (int i = 0; i < 4; i++) tooth(jawB, (i - 1.5f) * 0.85f * hw - 0.2f, -0.9f, -6.15f, 0.4f, 0.9f, 0.4f);
+        if (!sp.bare) { box2(jawB, -1.0f * hw, 1.0f, -6.9f, 2.0f * hw, 1.7f, 2.6f); box2(jawB, -0.6f * hw, 2.4f, -7.3f, 1.2f * hw, 1.0f, 1.6f); }   // pointed chin like the reference renders
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
         // pharyngeal jaw: a telescoping, ribbed tube of four tapering segments ending in a ring of needle teeth around a centre fang
