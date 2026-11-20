@@ -191,7 +191,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
             default -> {}
         }
         // strain-wide family traits, applied to every rank so a faction reads as one family
-        if (!c.mutant()) p.domeL = Math.min(26f, p.domeL * 1.3f);   // reference renders: the cranium runs about as long as the torso
+        if (!c.mutant()) p.domeL = Math.min(26f, p.domeL * 1.3f);
+        if (!c.mutant() && p.style != 4) { p.domeH *= 1.22f; p.domeW *= 1.1f; }   // fuller, higher crown   // reference renders: the cranium runs about as long as the torso
         switch (c) {   // mutant silhouettes: neck, posture and trunk proportions pushed apart so the line-up reads at a glance
             case HULK_XENO -> { p.neckK = 0.62f; p.upright = 0f; p.torso *= 1.08f; }
             case HUSK_XENO -> { p.neckK = 0.7f; p.torso *= 1.05f; }
