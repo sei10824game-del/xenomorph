@@ -87,7 +87,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
     /** Per-caste silhouette parameters. Limb LENGTHS are fixed (IK depends on them); everything else varies. */
     static final class Sp {
         float domeL = 15, domeH = 3.6f, domeW = 4.0f, headW = 1, torso = 1, limb = 1, tailT = 1, clawL = 1, fan = 12, armK = 1, legK = 1, neckK = 1, upright = 0;
-        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 10;
+        int style, tailSegs = 8, tailEnd, ribs = 3, spines, plates, horns, tubeLen = 14;
         boolean singleNail, glowHead, rider, wings, fan2, bare, cheek, mand, carapace, sac, belly, knee, blade, elbow, dreads, brow;
     }
     // style: 0 smooth dome, 1 ridged, 2 crowned fan, 3 frill+horns, 4 bulb (pathogen/neomorph), 5 spiked crest
@@ -622,7 +622,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         tail0.visible = sp.tailSegs > 0;
 
         // ---- stance
-        P = Mth.lerp(b, 1.38f, 0.32f - sp.upright * 0.6f * b);          // film stance: torso close to upright, not a dinosaur lean
+        P = Mth.lerp(b, 1.38f, 0.52f - sp.upright * 0.6f * b);          // reference renders: strongly hunched, head slung forward          // film stance: torso close to upright, not a dinosaur lean
         float H = Mth.lerp(b, 10.5f, 14.7f) * Math.min(1.4f, 1 + (spec(c).legK - 1) * 1.45f);
         float spd = Mth.clamp(amt * 1.6f, 0, 1);
         float wt = c.weight(), fer = c.ferocity();
@@ -1198,8 +1198,8 @@ public class XenoModel extends EntityModel<XenoEntity> {
         neck.xRot += 0.035f * br * iw; head.xRot -= 0.025f * br * iw; head.yRot += 0.05f * Mth.sin(age * 0.047f) * iw;
         neck.xScale = neck.zScale = neckScale;
         root.yRot = rootSpin;
-        tubeL.xRot = 0.25f + breathe * 0.03f - und * 0.2f; tubeR.xRot = tubeL.xRot;
-        tubeL.yRot = 0.1f + und * 0.3f; tubeR.yRot = -tubeL.yRot;
+        tubeL.xRot = Mth.lerp(b, -0.45f, 0.35f) + breathe * 0.03f - und * 0.2f; tubeR.xRot = tubeL.xRot;     // canon: the dorsal pipes rise up and away from the back
+        tubeL.yRot = Mth.lerp(b, 0.1f, 0.34f) + und * 0.3f; tubeR.yRot = -tubeL.yRot;
 
         // extra Queen arms flutter
         for (int s = 0; s < 2; s++) {
