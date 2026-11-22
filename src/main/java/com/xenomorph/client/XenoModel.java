@@ -174,13 +174,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
             case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; p.brow = true; p.cheek = true; }
             case DEACON -> { p.domeL = 17; p.domeH = 3.2f; p.domeW = 3.0f; p.limb = 0.8f; p.armK = 1.15f; p.upright = 0.25f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 3; p.tubeLen = 0; p.headW = 0.85f; p.neckK = 1.15f; }
-            case BOILER -> { p.sac = true; p.domeL = 12; p.torso = 0.95f; p.spines = 9; p.limb = 0.8f; p.tailEnd = 4; p.ribs = 8; p.neckK = 1.2f; }
+            case BOILER -> { p.sac = true; p.domeL = 15; p.domeW = 3.3f; p.torso = 0.8f; p.spines = 9; p.limb = 0.68f; p.armK = 1.25f; p.legK = 1.12f; p.tailEnd = 4; p.ribs = 10; p.neckK = 1.45f; p.upright = 0.12f; }   // gaunt, skeletal frame with a long narrow head
             case PROTOMORPH -> { p.style = 4; p.domeW = 4.4f; p.ribs = 1; p.spines = 5; p.limb = 0.95f; p.tailEnd = 1; p.cheek = true; p.tubeLen = 0; }
             case STALKER -> { p.limb = 1.2f; p.torso = 1.2f; p.tailT = 1.25f; p.spines = 3; p.ribs = 3; p.plates = 1; p.clawL = 1.2f; }
-            case KING -> { p.style = 3; p.horns = 2; p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.2f; p.domeL = 9; p.domeH = 5; p.ribs = 4; p.spines = 5; p.tubeLen = 0; }
+            case KING -> { p.style = 3; p.horns = 6; p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.2f; p.domeL = 9; p.domeH = 5; p.ribs = 4; p.spines = 5; p.tubeLen = 0; }
             case CHARGER -> { p.style = 3; p.horns = 4; p.carapace = true; p.limb = 1.3f; p.tailSegs = 5; p.tailEnd = 2; p.domeL = 6; p.domeH = 5; p.domeW = 5; p.torso = 1.1f; p.tubeLen = 0; p.ribs = 0; }
             case BRUTE -> { p.style = 5; p.domeL = 8; p.domeW = 6.6f; p.domeH = 6; p.plates = 2; p.spines = 4; p.armK = 1.3f; p.torso = 1.4f; p.limb = 1.4f; p.knee = true; p.elbow = true; p.tailEnd = 0; p.tailT = 1.2f; p.ribs = 3; p.clawL = 1.3f; }
-            case BULL_ALIEN -> { p.style = 3; p.horns = 2; p.torso = 1.25f; p.limb = 1.25f; p.cheek = true; p.mand = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 1; p.tailEnd = 1; p.ribs = 4; p.spines = 4; }
+            case BULL_ALIEN -> { p.style = 3; p.horns = 2; p.torso = 1.4f; p.limb = 1.3f; p.armK = 0.95f; p.neckK = 0.6f; p.cheek = true; p.mand = true; p.brow = true; p.domeL = 8; p.domeH = 5; p.domeW = 5; p.plates = 2; p.tailEnd = 1; p.ribs = 4; p.spines = 9; }
             case PATHOGEN_RUNNER -> { p.style = 4; p.limb = 0.8f; p.torso = 0.85f; p.tailSegs = 6; p.spines = 5; p.domeW = 4f; p.tailEnd = 4; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.2f; p.mand = true; p.singleNail = true; }
             case PATHOGEN_BLIGHT -> { p.style = 4; p.sac = true; p.mand = true; p.domeW = 4.8f; p.spines = 4; p.tailEnd = 4; p.tubeLen = 0; p.ribs = 0; p.limb = 1.1f; }
             case PATHOGEN_BRUTE -> { p.style = 4; p.torso = 1.3f; p.limb = 1.2f; p.spines = 4; p.tailSegs = 0; p.domeW = 5f; p.ribs = 0; p.tubeLen = 0; }
