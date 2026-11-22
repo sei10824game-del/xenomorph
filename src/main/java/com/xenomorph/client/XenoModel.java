@@ -238,7 +238,11 @@ public class XenoModel extends EntityModel<XenoEntity> {
         }
         for (int i = 0; i < 6; i++) add(chestB, -0.9f - (i % 2) * 0.25f, -8.4f + i * 1.4f, 3.8f, 1.8f + (i % 2) * 0.5f, 1.1f, 1.5f + (i % 2) * 0.7f);   // vertebrae
         add(chestB, -3.3f * T, -8.9f, -4.0f, 6.6f * T, 0.8f, 0.8f); add(chestB, -0.6f, -7.2f, -4.3f, 1.2f, 6.2f, 0.7f);   // collarbone + sternum
-        if (!c.mutant()) add(chestB, -3.4f * T, -10.8f, 0.2f, 6.8f * T, 3.4f, 5.8f);     // shoulder hump behind the neck, as on the reference renders
+        if (!c.mutant()) add(chestB, -3.4f * T, -10.8f, 0.2f, 6.8f * T, 3.4f, 5.8f);
+        if (c == Caste.BRUTE) for (int i = 0; i < 9; i++) {   // the Brute's mane of tall bone spikes over the shoulders and spine
+            float bx = (-4.8f + i * 1.2f) * T, len = 8 + (i * 7 % 4) * 2.2f;
+            add(chestB, bx - 0.5f, -9.5f - len, 0.4f + (i % 3) * 1.4f, 1.0f, len, 1.0f);
+        }     // shoulder hump behind the neck, as on the reference renders
         for (int i = 0; i < sp.spines; i++) { float y = -8.2f + i * (8.4f / Math.max(1, sp.spines)); add(chestB, -0.5f, y, 5.1f, 1, 1.4f, 2.2f + (i % 2) * 1.2f); }
         CubeListBuilder quillB = CubeListBuilder.create();
         if (c == Caste.SPIKER) for (int i = 0; i < 16; i++) {   // quill field: long swept-back spikes across the back and shoulders
