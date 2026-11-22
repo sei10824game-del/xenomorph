@@ -307,6 +307,10 @@ public class XenoModel extends EntityModel<XenoEntity> {
             float W = Math.max(5f, sp.domeW) + 2.2f;
             box2(hornB, -W / 2, -9.2f, -5.5f, W, 5.2f, 10.5f); box2(hornB, -W * 0.42f, -10.6f, -2f, W * 0.84f, 1.6f, 8f);
             box2(hornB, -W * 0.58f, -4.6f, -7.8f, W * 1.16f, 1.5f, 3.2f);
+            if (c == Caste.CRUSHER || c == Caste.CHARGER) {   // the great shield: a wide plate flaring forward over the face, as on the Colonial Marines Crusher
+                for (int i = 0; i < 4; i++) box2(hornB, -W * (0.8f + 0.28f * i), -9.6f - i * 1.1f, -6.5f - i * 0.5f, W * (1.6f + 0.56f * i), 1.3f, 8.5f);
+                box2(hornB, -W * 1.15f, -9.0f, -10.4f, W * 2.3f, 9.5f, 1.4f); box2(hornB, -W * 0.7f, -11.5f, -10.9f, W * 1.4f, 3.0f, 1.0f);
+            }
             box2(hornB, -W / 2 - 1.2f, -5.6f, -3.5f, 1.2f, 3.2f, 6f); box2(hornB, W / 2, -5.6f, -3.5f, 1.2f, 3.2f, 6f);
             if (sp.horns == 2 || sp.horns == 1) {   // great curved horns (Bull Alien): out, up, then tip
                 for (int sg = -1; sg <= 1; sg += 2) {
