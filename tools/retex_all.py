@@ -77,6 +77,8 @@ def main():
             if r is None: continue
             rs.setdefault(r, []).extend((path, tuple(x)) for x in rl)
         rgb = paint(i, family(i), im[..., :3].copy(), rs)
+        if i == 'deacon':   # tongue colour lives in the lower half of the teeth strip (x0..70, y232..256), clear of the teeth themselves
+            rng = np.random.default_rng(3); rgb[232:256, 0:70] = np.array([205, 110, 125]) * (0.85 + 0.3 * rng.random((24, 70, 1)))
         Image.fromarray(np.concatenate([np.clip(rgb, 0, 255), im[..., 3:]], axis=2).astype('uint8'), 'RGBA').save(os.path.join(ROOT, '..', REL, i + '.png'))
         done += 1
     print('painted', done)

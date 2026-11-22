@@ -172,7 +172,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case GOREBURSTER -> { p.style = 4; p.sac = true; p.domeW = 5f; p.limb = 0.9f; p.tubeLen = 0; p.ribs = 3; p.spines = 5; p.tailSegs = 3; p.tailEnd = 4; p.belly = true; }
             case NEOMORPH -> { p.style = 4; p.domeW = 4.6f; p.armK = 1.25f; p.legK = 1.1f; p.neckK = 1.25f; p.upright = 0.15f; p.limb = 0.7f; p.torso = 0.75f; p.tailSegs = 3; p.tailEnd = 4; p.spines = 6; p.ribs = 0; p.tubeLen = 0; p.clawL = 1.1f; }
             // gaunt, long-limbed, skull-faced humanoid: swept-back smooth cranium, hanging arms, bare ribcage, no tail
-            case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; }
+            case NEWBORN -> { p.style = 0; p.domeL = 10; p.domeH = 3.4f; p.domeW = 3.2f; p.headW = 0.85f; p.limb = 0.6f; p.torso = 0.62f; p.armK = 1.5f; p.legK = 1.25f; p.neckK = 1.6f; p.upright = 0.3f; p.bare = true; p.clawL = 1.6f; p.tailSegs = 0; p.ribs = 8; p.spines = 0; p.tubeLen = 0; p.brow = true; p.cheek = true; }
             case DEACON -> { p.domeL = 17; p.domeH = 3.2f; p.domeW = 3.0f; p.limb = 0.8f; p.armK = 1.15f; p.upright = 0.25f; p.tailSegs = 5; p.tailEnd = 4; p.ribs = 3; p.tubeLen = 0; p.headW = 0.85f; p.neckK = 1.15f; }
             case BOILER -> { p.sac = true; p.domeL = 12; p.torso = 0.95f; p.spines = 9; p.limb = 0.8f; p.tailEnd = 4; p.ribs = 8; p.neckK = 1.2f; }
             case PROTOMORPH -> { p.style = 4; p.domeW = 4.4f; p.ribs = 1; p.spines = 5; p.limb = 0.95f; p.tailEnd = 1; p.cheek = true; p.tubeLen = 0; }
@@ -273,6 +273,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         CubeListBuilder headB = box(-2.2f * hw, -2.4f, -6, 4.4f * hw, 3.4f, 6);                 // low eyeless face; the dome rides over it from the very front
         if (!sp.bare) for (int i = 0; i < 4; i++) tooth(headB, (i - 1.5f) * 0.9f * hw - 0.2f, 0.8f, -6.25f, 0.45f, 1.0f + (i % 3 == 0 ? 0 : 0.4f), 0.4f);   // front fangs
         if (sp.brow) add(headB, -2.5f * hw, -3.2f, -6.3f, 5.0f * hw, 1.0f, 2.5f);
+        if (sp.bare && c == Caste.NEWBORN) { headB.texOffs(0, 96).addBox(-2.0f * hw, -1.9f, -6.35f, 1.5f, 1.3f, 0.5f).addBox(0.5f * hw, -1.9f, -6.35f, 1.5f, 1.3f, 0.5f).addBox(-0.4f, -0.6f, -6.35f, 0.8f, 0.7f, 0.4f); }   // dark eye sockets and nose pit: a skull-like human face
         PartDefinition head = neck.addOrReplaceChild("head", headB, PartPose.offset(0, -4.5f, 0));
         domeCu = 0;
         CubeListBuilder domeB = CubeListBuilder.create();
@@ -349,6 +350,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (!sp.bare) for (int i = 0; i < 4; i++) tooth(jawB, (i - 1.5f) * 0.85f * hw - 0.2f, -0.9f, -6.15f, 0.4f, 0.9f, 0.4f);
         if (!sp.bare) for (int i = 0; i < 4; i++) { float th = 0.7f + (i % 2) * 0.4f; tooth(jawB, -1.15f * hw, -th, -4.9f + i * 1.25f, 0.4f, th, 0.4f); tooth(jawB, 0.75f * hw, -th, -4.9f + i * 1.25f, 0.4f, th, 0.4f); }   // second, inner row: the double set of metal teeth
         if (!sp.bare) { box2(jawB, -1.0f * hw, 1.0f, -6.9f, 2.0f * hw, 1.7f, 2.6f); box2(jawB, -0.6f * hw, 2.4f, -7.3f, 1.2f * hw, 1.0f, 1.6f); }   // pointed chin like the reference renders
+        if (c == Caste.DEACON) jawB.texOffs(0, 116).addBox(-0.7f, -0.4f, -15f, 1.4f, 0.6f, 11f).addBox(-0.5f, -0.2f, -17f, 1.0f, 0.5f, 2.2f);   // long tongue lolling out of the open mouth
         if (sp.sac) box2(jawB, -2.6f, 1.4f, -4.5f, 5.2f, 3.2f, 6);
         head.addOrReplaceChild("jaw", jawB, PartPose.offset(0, 1, 1));
         // pharyngeal jaw: a telescoping, ribbed tube of four tapering segments ending in a ring of needle teeth around a centre fang
