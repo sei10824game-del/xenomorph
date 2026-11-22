@@ -339,6 +339,13 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (sp.style == 4) {
             float bw = sp.domeW + 1.6f;
             if (sp.glowHead) { dome(bulbB, -bw / 2, -7.5f, -4, bw, 8, 8); dome(bulbB, -bw * 0.35f, -9.2f, -1, bw * 0.7f, 2, 5.5f); }   // glowing cellular dome uses the reserved cranium strip
+            else if (c == Caste.NEOMORPH) {   // swept-back, tapering hood like the Covenant neomorph: smooth arc from a narrow muzzle over the back of the skull
+                int seg = 8;
+                for (int i = 0; i < seg; i++) {
+                    float tm = (i + 0.5f) / seg, w = bw * (0.55f + 0.35f * (float) Math.sin(Math.PI * Math.min(1f, tm * 1.15f)) - 0.25f * tm), h = 3.4f + 3.6f * (float) Math.sin(Math.PI * Math.min(1f, tm * 1.2f)) - 1.2f * tm;
+                    box2(bulbB, -w / 2, -2.2f - h - 2.4f * tm * tm, -5.5f + i * 2.1f, w, h, 2.3f);
+                }
+            }
             else { box2(bulbB, -bw / 2, -7.5f, -4, bw, 8, 8); box2(bulbB, -bw * 0.35f, -9.2f, -1, bw * 0.7f, 2, 5.5f); }
             box2(bulbB, -2, -3.4f, -6.5f, 4, 3, 2.5f);
             for (int i = 0; i < sp.horns; i++) { float x = -4 + i * (8f / Math.max(1, sp.horns - 1)); box2(bulbB, x, -11f - (i % 2), 0.5f, 0.9f, 3f, 0.9f); }
