@@ -340,5 +340,7 @@
  "subtitles.xenomorph.xeno.v7.hurt": "ゼノモーフが威嚇する（被弾）",
  "subtitles.xenomorph.xeno.v7.death": "ゼノモーフが威嚇する（死亡）",
  "item.xenomorph.octo_facehugger_spawn_egg": "オクト・フェイスハガー スポーンエッグ",
- "item.xenomorph.flying_facehugger_spawn_egg": "飛行フェイスハガー スポーンエッグ"
+ "item.xenomorph.flying_facehugger_spawn_egg": "飛行フェイスハガー スポーンエッグ",
+ "entity.xenomorph.spider_pig": "スパイダーピッグ",
+ "item.xenomorph.spider_pig_spawn_egg": "スパイダーピッグ スポーンエッグ"
 }

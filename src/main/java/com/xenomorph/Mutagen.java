@@ -45,6 +45,17 @@ public class Mutagen extends Item {
     }
 
     @Override public InteractionResult interactLivingEntity(ItemStack st, Player p, LivingEntity e, InteractionHand h) {
+        if (e instanceof net.minecraft.world.entity.animal.Pig pig && !(e instanceof com.xenomorph.entity.SpiderPigEntity) && pig.getPersistentData().getBoolean("AteSpiderEye")) {   // Chemical X on a pig that ate a fermented spider eye
+            if (!p.level().isClientSide && p.level() instanceof ServerLevel sl) {
+                var sp = XenomorphMod.SPIDER_PIG.get().create(sl);
+                if (sp != null) {
+                    sp.moveTo(e.getX(), e.getY(), e.getZ(), e.getYRot(), 0); sl.addFreshEntity(sp); e.discard();
+                    sl.sendParticles(ParticleTypes.SCULK_SOUL, sp.getX(), sp.getY() + 0.5, sp.getZ(), 25, 0.4, 0.4, 0.4, 0.05);
+                    if (!p.getAbilities().instabuild) st.shrink(1);
+                }
+            }
+            return InteractionResult.sidedSuccess(p.level().isClientSide);
+        }
         Caste c = mutantFor(e);
         if (c == null) return InteractionResult.PASS;
         if (!p.level().isClientSide && p.level() instanceof ServerLevel sl) {

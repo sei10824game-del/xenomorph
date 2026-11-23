@@ -83,6 +83,8 @@ public class XenomorphMod {
 
     public static final Map<Caste, RegistryObject<EntityType<XenoEntity>>> XENOS = new EnumMap<>(Caste.class);
     public static final Map<HunterEntity.Kind, RegistryObject<EntityType<HunterEntity>>> HUNTERS = new EnumMap<>(HunterEntity.Kind.class);
+    public static final RegistryObject<EntityType<SpiderPigEntity>> SPIDER_PIG = ENTITIES.register("spider_pig",
+            () -> EntityType.Builder.of(SpiderPigEntity::new, MobCategory.CREATURE).sized(0.9f, 0.9f).clientTrackingRange(8).build("spider_pig"));
     public static final RegistryObject<EntityType<FacehuggerEntity>> FACEHUGGER = ENTITIES.register("facehugger",
             () -> EntityType.Builder.of(FacehuggerEntity::new, MobCategory.MONSTER).sized(0.7f, 0.4f).clientTrackingRange(8).build("facehugger"));
     public static final RegistryObject<EntityType<ChestbursterEntity>> BURSTER = ENTITIES.register("chestburster",
@@ -131,6 +133,7 @@ public class XenomorphMod {
                 return net.minecraft.world.InteractionResult.sidedSuccess(c.getLevel().isClientSide);
             }
         }));
+        EGGS.add(ITEMS.register("spider_pig_spawn_egg", () -> new ForgeSpawnEggItem(SPIDER_PIG, 0x46303a, 0xe61919, new Item.Properties())));
         EGGS.add(ITEMS.register("facehugger_spawn_egg", () -> new ForgeSpawnEggItem(FACEHUGGER, 0xb59c7a, 0x6a5a40, new Item.Properties())));
         EGGS.add(ITEMS.register("chestburster_spawn_egg", () -> new ForgeSpawnEggItem(BURSTER, 0xd9a9a0, 0x7a2a2a, new Item.Properties())));
         EGGS.add(ITEMS.register("egg_spawn_egg", () -> new Item(new Item.Properties()) {
@@ -161,6 +164,7 @@ public class XenomorphMod {
             XENOS.forEach((c, t) -> e.put(t.get(), XenoEntity.attributes(c).build()));
             HUNTERS.forEach((k, t) -> e.put(t.get(), HunterEntity.attributes(k).build()));
             e.put(FACEHUGGER.get(), FacehuggerEntity.attributes().build());
+            e.put(SPIDER_PIG.get(), SpiderPigEntity.attributes().build());
             e.put(BURSTER.get(), ChestbursterEntity.attributes().build());
         });
     }

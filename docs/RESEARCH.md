@@ -82,3 +82,8 @@ Source for Mutant Monsters (Fuzss, 1.20.1 branch): the public mob classes (Mutan
 | Chimera Queen | (original) | every mutant trait, summons the whole mutant line |
 
 Not ported: item/mutation systems (laboratories, Formula Y/Compound Z), Spider Pig, Mutant Phantom (WIP upstream), Endersoul block carrying, Snow Golem water-ice platforms, zombie resurrection proper (replaced by drones from the ground).
+
+
+## Fifth pass added
+Host-derived: Gorilla, Rhino, Crocodile, Scorpion, Snake, Mantis, Saurian, Lion-worm, Jockey. Aquatic: Dolphin, Shark, Beluga, Swimming. Bursters: Giant Chestburster, Multiburster, Bodyburster, Queen-Burster; Abomination; Larva and Earth Xenomorph (Alien: Earth); Necromorph and Terminator crossovers; Octo- and Flying Facehuggers. Spider Pig and the Derelict Laboratory (Mutant More / Mutant Monsters). Voices: seven synthesized families.
+Still not built: Mutant Phantom (WIP upstream), Xenoborg/Tarkatan/Drukathi/Vurfur/Condra-Morth/Ani-Men/Killer Croc crossovers, Octo-/Flying Facehugger hive generation (they only hatch rarely from eggs), proper swimming animations (aquatic castes reuse the quadruped pose).

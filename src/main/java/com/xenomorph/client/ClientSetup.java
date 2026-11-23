@@ -50,6 +50,7 @@ public final class ClientSetup {
             @Override public ResourceLocation getTextureLocation(HunterEntity x) { return tex(k.name().toLowerCase()); }
             @Override protected void scale(HunterEntity x, PoseStack ps, float pt) { float s = k == HunterEntity.Kind.PREDATOR ? 1.25f : 1.4f; ps.scale(s, s, s); }
         }));
+        e.registerEntityRenderer(XenomorphMod.SPIDER_PIG.get(), ctx -> new net.minecraft.client.renderer.entity.PigRenderer(ctx) { @Override public ResourceLocation getTextureLocation(net.minecraft.world.entity.animal.Pig p) { return tex("spider_pig"); } });
         e.registerEntityRenderer(XenomorphMod.EGG.get(), EggRenderer::new);
         e.registerEntityRenderer(XenomorphMod.SPIT.get(), NoopRenderer::new);
     }

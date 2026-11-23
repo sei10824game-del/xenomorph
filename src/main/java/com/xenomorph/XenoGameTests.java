@@ -430,4 +430,19 @@ public class XenoGameTests {
         if (!ok) throw new AssertionError("veterancy lost on load");
         h.succeed();
     }
+
+    /** The laboratory builder places a walled building with a chest of Mutagen. */
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "b_lab")
+    public static void labHasMutagen(GameTestHelper h) {
+        var sl = h.getLevel();
+        BlockPos o = h.absolutePos(new BlockPos(2, 2, 2));
+        int x0 = o.getX() + 20, z0 = o.getZ() + 20;
+        for (int dx = -2; dx < 12; dx++) for (int dz = -2; dz < 12; dz++) { sl.setBlock(new BlockPos(x0 + dx, o.getY() - 1, z0 + dz), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2); for (int dy = 0; dy < 7; dy++) sl.setBlock(new BlockPos(x0 + dx, o.getY() + dy, z0 + dz), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2); }
+        Lab.buildAt(sl, x0, o.getY() - 1, z0, new java.util.Random(5));
+        var chest = sl.getBlockEntity(new BlockPos(x0 + 6, o.getY(), z0 + 6));
+        boolean ok = chest instanceof net.minecraft.world.level.block.entity.ChestBlockEntity c && java.util.stream.IntStream.range(0, c.getContainerSize()).anyMatch(i -> c.getItem(i).is(XenomorphMod.MUTAGEN.get()));
+        if (!ok) throw new AssertionError("laboratory chest holds no Mutagen");
+        if (!sl.getBlockState(new BlockPos(x0, o.getY() + 1, z0 + 2)).isSolid() && !sl.getBlockState(new BlockPos(x0, o.getY() + 2, z0 + 2)).isSolid()) throw new AssertionError("laboratory has no walls");
+        h.succeed();
+    }
 }

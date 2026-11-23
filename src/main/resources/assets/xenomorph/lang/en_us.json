@@ -340,5 +340,7 @@
  "subtitles.xenomorph.xeno.v7.hurt": "Xenomorph hisses (hurt)",
  "subtitles.xenomorph.xeno.v7.death": "Xenomorph hisses (dies)",
  "item.xenomorph.octo_facehugger_spawn_egg": "Octo-Facehugger Spawn Egg",
- "item.xenomorph.flying_facehugger_spawn_egg": "Flying Facehugger Spawn Egg"
+ "item.xenomorph.flying_facehugger_spawn_egg": "Flying Facehugger Spawn Egg",
+ "entity.xenomorph.spider_pig": "Spider Pig",
+ "item.xenomorph.spider_pig_spawn_egg": "Spider Pig Spawn Egg"
 }

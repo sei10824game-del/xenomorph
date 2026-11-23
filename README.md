@@ -14,4 +14,6 @@
 
 Mutant lineage: xenomorph versions of the Mutant Monsters mutants (Hulk, Bone, Blast, Void, Frost) and Mutant More mutants (Wither, Blaze, Shulker, Husk, Hoglin, Frozen, Jungle), all with the inner-jaw bite, tail, acid blood and DNA-reflex births (a one-in-six chance when the host is the vanilla counterpart), plus their abilities (seismic slam, throw, roar, arrows, rib crush, chain explosions + minions, teleport, clones, tele-smash, block throw). Rare in classic hives.
 
+Also: host-derived strains (gorilla, rhino, crocodile, scorpion, snake, mantis, saurian, lion-worm, jockey), aquatic strains (dolphin, shark, beluga, swimmer: they swim and dry out on land), burster variants (giant, multi, body, queen), Abomination, Larva, Earth xeno, Necromorph and Terminator crossovers, octo and flying facehuggers, seven per-family voices, the Spider Pig (feed a pig a fermented spider eye, then use Mutagen on it) and rare ruined Derelict Laboratories with Mutagen (config `labs`).
+
 Source notes and gaps: `docs/RESEARCH.md`.
