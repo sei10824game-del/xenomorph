@@ -905,9 +905,9 @@ public class XenoEntity extends Monster {
     }
 
     @Override public int getAmbientSoundInterval() { return 220; }
-    @Override protected SoundEvent getAmbientSound() { return XenomorphMod.HISS.get(); }
-    @Override protected SoundEvent getHurtSound(DamageSource s) { return XenomorphMod.HURT.get(); }
-    @Override protected SoundEvent getDeathSound() { return XenomorphMod.DEATH.get(); }
+    @Override protected SoundEvent getAmbientSound() { int v = caste.voice(); return v == 0 ? XenomorphMod.HISS.get() : XenomorphMod.VOICES[v][0].get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { int v = caste.voice(); return v == 0 ? XenomorphMod.HURT.get() : XenomorphMod.VOICES[v][1].get(); }
+    @Override protected SoundEvent getDeathSound() { int v = caste.voice(); return v == 0 ? XenomorphMod.DEATH.get() : XenomorphMod.VOICES[v][2].get(); }
     @Override public float getVoicePitch() { return Mth.clamp(1.25f / (float) Math.pow(Math.max(0.6f, caste.scale), 0.55) + (random.nextFloat() - 0.5f) * 0.12f, 0.6f, 1.5f); }
     @Override protected void playStepSound(net.minecraft.core.BlockPos p, net.minecraft.world.level.block.state.BlockState s) { { float w = caste.weight(); if (w >= 1.5f) { playSound(SoundEvents.IRON_GOLEM_STEP, 0.6f * w, 0.5f); if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.POOF, getX(), getY() + 0.1, getZ(), 3, 0.5, 0.05, 0.5, 0.02); } else playSound(SoundEvents.SPIDER_STEP, 0.25f * w, 0.6f); } }
     @Override public boolean canBeAffected(MobEffectInstance i) {

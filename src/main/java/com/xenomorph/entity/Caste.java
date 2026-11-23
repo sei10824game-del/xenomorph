@@ -181,6 +181,19 @@ public enum Caste {
     }
     /** The Mutant Monsters / Mutant More lineage (pulsing glow, ambient particles, oversized fists). */
     public boolean mutant() { return ordinal() >= HULK_XENO.ordinal() && ordinal() <= JUNGLE_XENO.ordinal() || this == CHIMERA_QUEEN; }
+    /** Voice family: 0 classic hiss, 1 deep rumble, 2 shrill, 3 rattle, 4 whisper, 5 crackle, 6 aquatic clicks, 7 reptile hiss. */
+    public int voice() {
+        return switch (this) {
+            case HULK_XENO, HUSK_XENO, HOG_XENO, GORILLA_XENO, RHINO_XENO, GIANT_BURSTER, QUEEN_MOTHER, TITAN, TRUE_KING, BRUTE, PATHOGEN_BRUTE, CRUSHER, ABOMINATION, CHIMERA_QUEEN -> 1;
+            case RUNNER, PATHOGEN_RUNNER, LARVA, JOCKEY_XENO, SNAKE_XENO, BAT, BURSTER, IMP, WORKER -> 2;
+            case BONE_XENO, MANTIS_XENO, SCORPION_XENO, WITHER_XENO, NECROMORPH_XENO, SPIKER -> 3;
+            case VOID_XENO, SHULKER_XENO, FROST_XENO, FROZEN_XENO, SIREN, WRAITH -> 4;
+            case BLAZE_XENO, BLAST_XENO, SCORCHED, TERMINATOR_XENO, EXPLODER, BODYBURSTER -> 5;
+            case DOLPHIN_XENO, SHARK_XENO, BELUGA_XENO, SWIMMER_XENO -> 6;
+            case CROCODILE_XENO, SAURIAN_XENO, LIONWORM_XENO, JUNGLE_XENO, MULTIBURSTER -> 7;
+            default -> 0;
+        };
+    }
     /** Lives in water: swims, suffocates on land. */
     public boolean aquatic() { return this == DOLPHIN_XENO || this == SHARK_XENO || this == BELUGA_XENO || this == SWIMMER_XENO; }
     public boolean cloneStrain() { return id.startsWith("clone_"); }

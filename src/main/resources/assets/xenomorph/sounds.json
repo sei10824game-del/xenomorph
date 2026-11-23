@@ -56,5 +56,194 @@
    }
   ],
   "subtitle": "subtitles.xenomorph.xeno.boss_theme"
+ },
+ "xeno.v1.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_1_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v1.amb"
+ },
+ "xeno.v1.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_1_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v1.hurt"
+ },
+ "xeno.v1.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_1_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v1.death"
+ },
+ "xeno.v2.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_2_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v2.amb"
+ },
+ "xeno.v2.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_2_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v2.hurt"
+ },
+ "xeno.v2.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_2_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v2.death"
+ },
+ "xeno.v3.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_3_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v3.amb"
+ },
+ "xeno.v3.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_3_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v3.hurt"
+ },
+ "xeno.v3.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_3_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v3.death"
+ },
+ "xeno.v4.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_4_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v4.amb"
+ },
+ "xeno.v4.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_4_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v4.hurt"
+ },
+ "xeno.v4.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_4_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v4.death"
+ },
+ "xeno.v5.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_5_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v5.amb"
+ },
+ "xeno.v5.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_5_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v5.hurt"
+ },
+ "xeno.v5.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_5_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v5.death"
+ },
+ "xeno.v6.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_6_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v6.amb"
+ },
+ "xeno.v6.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_6_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v6.hurt"
+ },
+ "xeno.v6.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_6_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v6.death"
+ },
+ "xeno.v7.amb": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_7_amb",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v7.amb"
+ },
+ "xeno.v7.hurt": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_7_hurt",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v7.hurt"
+ },
+ "xeno.v7.death": {
+  "sounds": [
+   {
+    "name": "xenomorph:xeno/voice_7_death",
+    "stream": false
+   }
+  ],
+  "subtitle": "subtitles.xenomorph.xeno.v7.death"
  }
 }

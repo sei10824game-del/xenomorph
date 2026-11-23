@@ -69,6 +69,13 @@ public class XenomorphMod {
     static final RegistryObject<Item> RESIN_ITEM = ITEMS.register("resin", () -> new net.minecraft.world.item.BlockItem(RESIN.get(), new Item.Properties()));
     static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
     private static RegistryObject<net.minecraft.sounds.SoundEvent> snd(String n) { return SOUNDS.register(n, () -> net.minecraft.sounds.SoundEvent.createVariableRangeEvent(new net.minecraft.resources.ResourceLocation(ID, n))); }
+    /** Voice families 1..7 (deep, shrill, rattle, ether, fiery, aquatic, reptile): [family][0 ambient, 1 hurt, 2 death]; family 0 uses HISS / HURT / DEATH. */
+    public static final RegistryObject<net.minecraft.sounds.SoundEvent>[][] VOICES = voices();
+    @SuppressWarnings("unchecked") private static RegistryObject<net.minecraft.sounds.SoundEvent>[][] voices() {
+        RegistryObject<net.minecraft.sounds.SoundEvent>[][] v = new RegistryObject[8][3]; String[] k = {"amb", "hurt", "death"};
+        for (int f = 1; f < 8; f++) for (int i = 0; i < 3; i++) v[f][i] = snd("xeno.v" + f + "." + k[i]);
+        return v;
+    }
     public static final RegistryObject<net.minecraft.sounds.SoundEvent> HISS = snd("xeno.hiss"), SCREECH = snd("xeno.screech"), HURT = snd("xeno.hurt"), DEATH = snd("xeno.death"),
             ATTACK = snd("xeno.attack"), SKITTER = snd("xeno.skitter"), SIZZLE = snd("xeno.sizzle"), BOSS_THEME = snd("xeno.boss_theme");
     static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ID);
