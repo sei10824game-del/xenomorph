@@ -123,7 +123,8 @@ public final class Hive {
     }
 
     /** Digs a 3-wide, 4-high ramp from the hive up to open sky (resin floor), along whichever compass direction reaches the surface soonest. */
-    static void tunnel(ServerLevel sl, BlockPos core) { tunnel(sl, core, (x, z) -> sl.getHeight(Heightmap.Types.WORLD_SURFACE, x, z)); }
+    /** Level.getHeight() answers with the world floor for chunks that are not loaded, which made tunnels stop after a few blocks: load the chunk and read its heightmap instead. */
+    static void tunnel(ServerLevel sl, BlockPos core) { tunnel(sl, core, (x, z) -> sl.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.WORLD_SURFACE, x & 15, z & 15) + 1); }
     static void tunnel(ServerLevel sl, BlockPos core, java.util.function.IntBinaryOperator surface) {
         int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         int bestDir = 0, bestLen = 999;
@@ -137,7 +138,8 @@ public final class Hive {
         var resin = XenomorphMod.RESIN.get().defaultBlockState();
         var air = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         var stair = XenomorphMod.RESIN_STAIRS.get().defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, net.minecraft.core.Direction.fromDelta(dx, 0, dz));
-        for (int i = 4; i < Math.min(bestLen + 4, 96); i++) {
+        int lastI = 4, clear = 0;   // dig until four columns in a row are open sky (terrain may rise again after the first crossing)
+        for (int i = 4; i < 150; i++) {
             int cx = core.getX() + dx * i, cz = core.getZ() + dz * i, fy = core.getY() - 4 + (i - 4);   // the hive floor sits about 4 below its core
             for (int w = -1; w <= 1; w++) {
                 int x = cx + px * w, z = cz + pz * w;
@@ -158,9 +160,12 @@ public final class Hive {
                 if (st.getDestroySpeed(sl, q) < 0) continue;
                 if (st.getBlock() instanceof net.minecraft.world.level.block.FallingBlock || !st.getFluidState().isEmpty() || (h == 4 && Math.abs(w) <= 1 && !st.isSolid())) sl.setBlock(q, resin, 2);
             }
+            lastI = i;
+            if (fy + 1 >= surface.applyAsInt(cx, cz)) clear++; else clear = 0;
+            if (clear >= 4) break;
         }
         // the mouth: two ribbed resin pillars with a lintel mark the entrance so it can be spotted from the surface
-        int ex = core.getX() + dx * bestLen, ez = core.getZ() + dz * bestLen, ey = core.getY() - 4 + (bestLen - 4);
+        int mi = Math.max(4, lastI - 3), ex = core.getX() + dx * mi, ez = core.getZ() + dz * mi, ey = core.getY() - 4 + (mi - 4);
         for (int side = -2; side <= 2; side += 4) for (int h = 0; h < 6; h++) { BlockPos q = new BlockPos(ex + px * side, ey + h, ez + pz * side); if (sl.getBlockState(q).getDestroySpeed(sl, q) >= 0) sl.setBlock(q, resin, 2); }
         for (int w = -2; w <= 2; w++) { BlockPos q = new BlockPos(ex + px * w, ey + 5, ez + pz * w); if (sl.getBlockState(q).getDestroySpeed(sl, q) >= 0) sl.setBlock(q, resin, 2); }
     }

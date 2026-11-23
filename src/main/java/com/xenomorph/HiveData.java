@@ -24,14 +24,14 @@ public class HiveData extends SavedData {
     public static HiveData load(CompoundTag t) {
         HiveData d = new HiveData();
         for (Tag e : t.getList("Hives", Tag.TAG_COMPOUND)) { CompoundTag c = (CompoundTag) e; d.hives.add(new Entry(new BlockPos(c.getInt("X"), c.getInt("Y"), c.getInt("Z")), c.getString("Kind"))); }
-        for (long l : t.getLongArray("TunneledV2")) d.tunneled.add(l);
+        for (long l : t.getLongArray("TunneledV3")) d.tunneled.add(l);
         return d;
     }
     @Override public CompoundTag save(CompoundTag t) {
         ListTag l = new ListTag();
         for (Entry e : hives) { CompoundTag c = new CompoundTag(); c.putInt("X", e.pos.getX()); c.putInt("Y", e.pos.getY()); c.putInt("Z", e.pos.getZ()); c.putString("Kind", e.kind); l.add(c); }
         t.put("Hives", l);
-        t.putLongArray("TunneledV2", tunneled.stream().mapToLong(Long::longValue).toArray());
+        t.putLongArray("TunneledV3", tunneled.stream().mapToLong(Long::longValue).toArray());
         return t;
     }
 }
