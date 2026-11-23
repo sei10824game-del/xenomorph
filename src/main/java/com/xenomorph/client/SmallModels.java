@@ -23,8 +23,9 @@ final class SmallModels {
         final ModelPart root, body, sac;
         final ModelPart[][] leg = new ModelPart[8][3];
         final ModelPart[] tail = new ModelPart[6];
+        final ModelPart wingL, wingR;   // membrane wings, shown only on the flying variant
         Hugger(ModelPart r) {
-            root = r; body = r.getChild("body"); sac = body.getChild("sac");
+            root = r; body = r.getChild("body"); sac = body.getChild("sac"); wingL = body.getChild("wingL"); wingR = body.getChild("wingR");
             for (int i = 0; i < 8; i++) { ModelPart p = body.getChild("leg" + i); leg[i][0] = p; leg[i][1] = p.getChild("m"); leg[i][2] = leg[i][1].getChild("t"); }
             ModelPart p = body.getChild("tail0"); tail[0] = p;
             for (int i = 1; i < 6; i++) { p = p.getChild("tail" + i); tail[i] = p; }
@@ -33,6 +34,8 @@ final class SmallModels {
             MeshDefinition m = new MeshDefinition(); PartDefinition r = m.getRoot();
             PartDefinition body = r.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-3, -2, -4, 6, 3, 8).texOffs(0, 12).addBox(-2.5f, -3, -3, 5, 1, 6), PartPose.offset(0, 20, 0));
             body.addOrReplaceChild("sac", CubeListBuilder.create().texOffs(0, 20).addBox(-2, -2, 0, 4, 3, 5), PartPose.offset(0, 0, 3.5f));
+            body.addOrReplaceChild("wingL", CubeListBuilder.create().texOffs(30, 12).addBox(0, -0.2f, -3, 9, 0.4f, 6), PartPose.offset(2, -2.5f, 0));
+            body.addOrReplaceChild("wingR", CubeListBuilder.create().texOffs(30, 12).addBox(-9, -0.2f, -3, 9, 0.4f, 6), PartPose.offset(-2, -2.5f, 0));
             for (int i = 0; i < 8; i++) {
                 int side = i < 4 ? 1 : -1; int k = i % 4;
                 float z = -3 + k * 2.1f;
@@ -55,6 +58,8 @@ final class SmallModels {
             float air = lt > 0 ? smooth(leapT / 3f) : 0;
             float wrap = att ? 1 : 0;
             float pulse = Mth.sin(age * 0.18f);
+            boolean fly = e.variant() == 5 && !att; wingL.visible = wingR.visible = fly;
+            if (fly) { float fl = Mth.sin(age * 1.6f) * 0.7f; wingL.zRot = -0.2f + fl; wingR.zRot = 0.2f - fl; }
             sac.zScale = 1 + 0.12f * pulse; sac.yScale = 1 + 0.2f * pulse * (att ? 2.5f : 1);
             for (int i = 0; i < 8; i++) {
                 int side = i < 4 ? 1 : -1; int k = i % 4;

@@ -338,5 +338,7 @@
  "subtitles.xenomorph.xeno.v6.death": "Xenomorph clicks (dies)",
  "subtitles.xenomorph.xeno.v7.amb": "Xenomorph hisses",
  "subtitles.xenomorph.xeno.v7.hurt": "Xenomorph hisses (hurt)",
- "subtitles.xenomorph.xeno.v7.death": "Xenomorph hisses (dies)"
+ "subtitles.xenomorph.xeno.v7.death": "Xenomorph hisses (dies)",
+ "item.xenomorph.octo_facehugger_spawn_egg": "Octo-Facehugger Spawn Egg",
+ "item.xenomorph.flying_facehugger_spawn_egg": "Flying Facehugger Spawn Egg"
 }

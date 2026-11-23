@@ -32,6 +32,7 @@ public class XenoEggEntity extends Entity {
         FacehuggerEntity f = XenomorphMod.FACEHUGGER.get().create(sl);
         if (f == null) return;
         if (red()) f.setVariant(random.nextInt(4) == 0 ? 2 : 1);
+        else if (random.nextInt(14) == 0) f.setVariant(random.nextBoolean() ? 4 : 5);   // rare octo / flying hatchlings
         f.moveTo(getX(), getY() + y, getZ(), random.nextFloat() * 360, 0); f.setDeltaMovement(0, 0.35, 0); sl.addFreshEntity(f);
     }
     public int open() { return entityData.get(OPEN); }

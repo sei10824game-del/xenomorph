@@ -108,9 +108,9 @@ public class XenomorphMod {
                     .sized(0.7f, k == HunterEntity.Kind.PREDATOR ? 2.5f : 2.8f).clientTrackingRange(10).build(id)));
             EGGS.add(ITEMS.register(id + "_spawn_egg", () -> new ForgeSpawnEggItem(HUNTERS.get(k), k == HunterEntity.Kind.PREDATOR ? 0x6b7a3a : 0xd8d8d0, k == HunterEntity.Kind.PREDATOR ? 0x2a2e30 : 0x8a8f9a, new Item.Properties())));
         }
-        for (int v = 1; v <= 3; v++) {
+        for (int v = 1; v <= 5; v++) {
             int vv = v;
-            EGGS.add(ITEMS.register((v == 1 ? "red_facehugger" : v == 2 ? "royal_facehugger" : "praeto_facehugger") + "_spawn_egg", () -> new Item(new Item.Properties()) {
+            EGGS.add(ITEMS.register((v == 1 ? "red_facehugger" : v == 2 ? "royal_facehugger" : v == 3 ? "praeto_facehugger" : v == 4 ? "octo_facehugger" : "flying_facehugger") + "_spawn_egg", () -> new Item(new Item.Properties()) {
                 @Override public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext c) {
                     if (c.getLevel() instanceof net.minecraft.server.level.ServerLevel sl) {
                         FacehuggerEntity f = FACEHUGGER.get().create(sl); net.minecraft.core.BlockPos p = c.getClickedPos().relative(c.getClickedFace());

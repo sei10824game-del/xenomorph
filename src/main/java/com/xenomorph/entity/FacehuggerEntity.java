@@ -40,7 +40,7 @@ public class FacehuggerEntity extends Monster {
     }
     @Override protected void defineSynchedData() { super.defineSynchedData(); entityData.define(ATTACHED, false); entityData.define(LEAP, 0); entityData.define(VARIANT, 0); }
     public int variant() { return entityData.get(VARIANT); }
-    public void setVariant(int v) { entityData.set(VARIANT, v); refreshDimensions(); if (v == 2) { getAttribute(Attributes.MAX_HEALTH).setBaseValue(20); setHealth(20); } }
+    public void setVariant(int v) { entityData.set(VARIANT, v); refreshDimensions(); if (v == 4) { getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.5); getAttribute(Attributes.MAX_HEALTH).setBaseValue(12); setHealth(12); } if (v == 2) { getAttribute(Attributes.MAX_HEALTH).setBaseValue(20); setHealth(20); } }
     @Override public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose p) { return super.getDimensions(p).scale(variant() == 2 ? 1.8f : 1f); }
     @Override public void onSyncedDataUpdated(EntityDataAccessor<?> k) { super.onSyncedDataUpdated(k); if (k == VARIANT) refreshDimensions(); }
     @Override public void addAdditionalSaveData(CompoundTag t) { super.addAdditionalSaveData(t); t.putInt("Variant", variant()); }
@@ -70,6 +70,7 @@ public class FacehuggerEntity extends Monster {
         if (leapCd > 0) leapCd--;
         if (level().isClientSide) { if (leapTick() > 0) clientLeapTick++; else clientLeapTick = 0; return; }
         if (leapTick() > 0) { int l = leapTick() + 1; entityData.set(LEAP, onGround() && l > 6 ? 0 : Math.min(l, 60)); }
+        if (variant() == 5 && !level().isClientSide) flyTick();        // flying strain
         if (isAttached()) { tickAttached(); return; }
         LivingEntity t = getTarget();
         if (t != null && !free(t)) { setTarget(null); t = null; }   // already carrying an embryo / is a xeno: leave it alone
@@ -77,6 +78,17 @@ public class FacehuggerEntity extends Monster {
     }
 
     /** Valid host: not a xeno and not already implanted. */
+    /** Flying variant: hovers and homes in on its prey through the air; octo variant is faster (see attributes below). */
+    private void flyTick() {
+        setNoGravity(!isAttached());
+        if (isAttached()) return;
+        LivingEntity t = getTarget();
+        if (t != null && t.isAlive() && distanceToSqr(t) < 400) {
+            Vec3 to = t.position().add(0, t.getBbHeight() * 0.8, 0).subtract(position()); double l = Math.max(0.1, to.length());
+            setDeltaMovement(getDeltaMovement().scale(0.8).add(to.scale(0.22 / l)));
+            if (leapTick() == 0 && l < 3.5) leapNow();
+        } else setDeltaMovement(getDeltaMovement().scale(0.9).add(0, Math.sin(tickCount * 0.2) * 0.004, 0));
+    }
     private boolean free(LivingEntity e) { return !XenoEntity.isXeno(e) && !e.hasEffect(XenomorphMod.EMBRYO.get()) && !e.hasEffect(XenomorphMod.RED_EMBRYO.get()) && !e.hasEffect(XenomorphMod.PRAETO_EMBRYO.get()); }
 
     private void attach(LivingEntity t) {
@@ -85,7 +97,7 @@ public class FacehuggerEntity extends Monster {
         if (!helm.isEmpty()) { helm.hurtAndBreak(40, t, e -> e.broadcastBreakEvent(EquipmentSlot.HEAD)); t.hurt(damageSources().magic(), 2); if (!t.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) { setDeltaMovement(0, 0.3, 0); return; } }
         host = t; hostId = t.getId(); attachTicks = 0;
         entityData.set(ATTACHED, true);
-        t.addEffect(new MobEffectInstance((variant() == 3 ? XenomorphMod.PRAETO_EMBRYO : variant() > 0 ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get(), 2400, 0, false, true, true));
+        t.addEffect(new MobEffectInstance((variant() == 3 ? XenomorphMod.PRAETO_EMBRYO : (variant() == 1 || variant() == 2) ? XenomorphMod.RED_EMBRYO : XenomorphMod.EMBRYO).get(), 2400, 0, false, true, true));
         playSound(SoundEvents.SLIME_SQUISH, 1.2f, 0.6f);
     }
     private void tickAttached() {
