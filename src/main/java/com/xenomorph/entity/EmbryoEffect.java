@@ -42,6 +42,27 @@ public class EmbryoEffect extends MobEffect {
 
     /** DNA reflex: the burster inherits traits of the host species. */
     static Caste hostForm(LivingEntity h) {
+        var r0 = h.getRandom();                                                                                 // species reflex: the host's body plan shapes the newborn
+        if (h instanceof net.minecraft.world.entity.monster.piglin.PiglinBrute) return Caste.ABOMINATION;
+        if (h instanceof net.minecraft.world.entity.animal.Panda) return Caste.GORILLA_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Ravager) return Caste.RHINO_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.Turtle) return Caste.CROCODILE_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.CaveSpider) return Caste.SCORPION_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Silverfish || h instanceof net.minecraft.world.entity.monster.Endermite) return Caste.SNAKE_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Spider) return Caste.MANTIS_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.frog.Frog) return Caste.SAURIAN_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.Fox) return Caste.LIONWORM_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Strider) return Caste.JOCKEY_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.Dolphin) return Caste.DOLPHIN_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Guardian) return Caste.SHARK_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.Squid) return Caste.BELUGA_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.AbstractFish) return h instanceof net.minecraft.world.entity.animal.Pufferfish ? Caste.MULTIBURSTER : Caste.SWIMMER_XENO;
+        if (h instanceof net.minecraft.world.entity.animal.Chicken || h instanceof net.minecraft.world.entity.animal.Rabbit) return Caste.LARVA;
+        if (h instanceof net.minecraft.world.entity.animal.horse.Llama) return Caste.BODYBURSTER;
+        if (h instanceof net.minecraft.world.entity.animal.IronGolem) return r0.nextBoolean() ? Caste.TERMINATOR_XENO : Caste.GIANT_BURSTER;
+        if (h instanceof net.minecraft.world.entity.monster.ZombieVillager) return Caste.NECROMORPH_XENO;
+        if (h instanceof net.minecraft.world.entity.npc.Villager && r0.nextInt(5) == 0) return Caste.EARTH_XENO;                   // human hosts occasionally breed the sleek "Earth" strain
+        if (h.getMaxHealth() >= 20 && r0.nextInt(24) == 0) return Caste.QUEEN_BURSTER;
         var rr = h.getRandom();                                                                                 // mutant lineage: the host's mutant counterpart, one birth in six
         if (rr.nextInt(6) == 0) {
             if (h instanceof net.minecraft.world.entity.monster.Husk) return Caste.HUSK_XENO;

@@ -119,7 +119,30 @@ public enum Caste {
     HOG_XENO    ("hog_xeno", 230, 15, .36f, 2.1f, 0, 4, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, TAIL_SWEEP, STOMP, CHARGE, HORN_TOSS)),
     FROZEN_XENO ("frozen_xeno", 210, 10, .22f, 2.1f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, SLAM, THROW_BLOCK, ICE_SMASH, ICICLE_VOLLEY)),
     CHIMERA_QUEEN("chimera_queen", 700, 22, .27f, 2.6f, 2, 2, true, true, true, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, IMPALE, SLAM, LAY, SUMMON, SEISMIC, ROAR_BLAST, CLONE_SPLIT, MINION_BURST, BONE_BARRAGE, QUICKSAND, THORN_PATCH)),
-    JUNGLE_XENO ("jungle_xeno", 240, 12, .30f, 2.2f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, TAIL_STAB, GRAB, WEB, THORN_PATCH, GUST, ROAR_BLAST));
+    JUNGLE_XENO ("jungle_xeno", 240, 12, .30f, 2.2f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, TAIL_STAB, GRAB, WEB, THORN_PATCH, GUST, ROAR_BLAST)),
+    // --- host-derived, aquatic, burster, Alien: Earth and crossover castes
+    GORILLA_XENO ("gorilla_xeno", 170, 17, 0.3f, 2.0f, 2, 3, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SLAM, STOMP, GRAB, BITE, GRAB_SLAM)),
+    RHINO_XENO ("rhino_xeno", 230, 20, 0.3f, 2.1f, 0, 3, false, false, false, EnumSet.of(CLAW_L, CLAW_R, CHARGE, HORN_TOSS, STOMP, SLAM, TAIL_SWEEP)),
+    CROCODILE_XENO ("crocodile_xeno", 125, 15, 0.28f, 1.7f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, DEATH_ROLL, GRAB, POUNCE, TAIL_SWEEP)),
+    SCORPION_XENO ("scorpion_xeno", 105, 12, 0.34f, 1.6f, 0, 1, false, false, false, EnumSet.of(CLAW_L, CLAW_R, TAIL_STAB, GRAB, SPIT, TAIL_SWEEP)),
+    SNAKE_XENO ("snake_xeno", 60, 9, 0.4f, 1.2f, 0, 0, false, false, false, EnumSet.of(BITE, GRAB, DEATH_ROLL, POUNCE, TAIL_SWEEP, SPIT)),
+    MANTIS_XENO ("mantis_xeno", 95, 13, 0.38f, 1.5f, 1, 1, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, LEAP_SLASH, BLADE_FLURRY, BITE, TAIL_STAB)),
+    SAURIAN_XENO ("saurian_xeno", 115, 13, 0.36f, 1.6f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, TAIL_STAB, TAIL_SWEEP, LEAP_SLASH)),
+    LIONWORM_XENO ("lionworm_xeno", 150, 14, 0.3f, 1.8f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, GRAB, DEATH_ROLL, POUNCE, TAIL_SWEEP)),
+    JOCKEY_XENO ("jockey_xeno", 70, 10, 0.45f, 1.3f, 1, 1, false, false, false, EnumSet.of(CLAW_L, CLAW_R, POUNCE, BITE, LEAP_SLASH, TAIL_STAB)),
+    DOLPHIN_XENO ("dolphin_xeno", 90, 11, 0.55f, 1.5f, 0, 0, false, false, false, EnumSet.of(BITE, POUNCE, TAIL_SWEEP, CLAW_L, CLAW_R)),
+    SHARK_XENO ("shark_xeno", 140, 16, 0.55f, 1.8f, 0, 1, false, false, false, EnumSet.of(BITE, DEATH_ROLL, POUNCE, TAIL_SWEEP, GRAB)),
+    BELUGA_XENO ("beluga_xeno", 130, 12, 0.45f, 1.8f, 0, 0, false, false, false, EnumSet.of(BITE, POUNCE, TAIL_SWEEP, SLAM, CLAW_L, CLAW_R)),
+    SWIMMER_XENO ("swimmer_xeno", 75, 9, 0.5f, 1.3f, 0, 0, false, false, false, EnumSet.of(BITE, POUNCE, TAIL_SWEEP, CLAW_L, CLAW_R)),
+    GIANT_BURSTER ("giant_burster", 110, 12, 0.28f, 1.9f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, GRAB, SLAM, TAIL_SWEEP)),
+    MULTIBURSTER ("multiburster", 70, 8, 0.36f, 1.4f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, POUNCE, TAIL_SWEEP)),
+    BODYBURSTER ("bodyburster", 60, 10, 0.34f, 1.3f, 0, 0, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, DETONATE)),
+    QUEEN_BURSTER ("queen_burster", 200, 15, 0.28f, 2.0f, 0, 2, false, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, GRAB, SLAM, TAIL_STAB, LAY, SUMMON)),
+    ABOMINATION ("abomination", 200, 19, 0.34f, 2.0f, 1, 5, true, false, true, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BITE, GRAB, STOMP, TAIL_STAB, TAIL_SWEEP, FRENZY)),
+    LARVA ("larva", 12, 3, 0.3f, 0.55f, 0, 0, false, false, false, EnumSet.of(BITE, CLAW_L, CLAW_R)),
+    EARTH_XENO ("earth_xeno", 55, 8, 0.38f, 1.15f, 1, 1, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, POUNCE)),
+    NECROMORPH_XENO ("necromorph_xeno", 120, 15, 0.34f, 1.7f, 1, 0, false, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BLADE_FLURRY, TAIL_STAB, BITE, GRAB, FLAIL)),
+    TERMINATOR_XENO ("terminator_xeno", 180, 18, 0.3f, 1.9f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, FIREARM, SLAM, BITE, TAIL_STAB));
 
     public final String id;
     public final float hp, dmg, speed, scale;
@@ -158,6 +181,8 @@ public enum Caste {
     }
     /** The Mutant Monsters / Mutant More lineage (pulsing glow, ambient particles, oversized fists). */
     public boolean mutant() { return ordinal() >= HULK_XENO.ordinal() && ordinal() <= JUNGLE_XENO.ordinal() || this == CHIMERA_QUEEN; }
+    /** Lives in water: swims, suffocates on land. */
+    public boolean aquatic() { return this == DOLPHIN_XENO || this == SHARK_XENO || this == BELUGA_XENO || this == SWIMMER_XENO; }
     public boolean cloneStrain() { return id.startsWith("clone_"); }
     /** Hard, glossy cranium that gets the specular highlight layer. */
     public boolean glossy() { return !(this == NEOMORPH || this == NEWBORN || id.startsWith("pathogen") || this == HARBINGER || this == WHITE_HYBRID || this == WHITE_KING || this == PROTOMORPH); }

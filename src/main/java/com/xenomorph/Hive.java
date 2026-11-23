@@ -31,7 +31,8 @@ public final class Hive {
     /** Spawn on their own in dark places (see biome modifiers), not in hives. */
     public static final Caste[] WILD = {Caste.CLONE_XENOMORPH, Caste.NEWBORN, Caste.WHITE_HYBRID, Caste.WHITE_KING, Caste.K_WARRIOR, Caste.K_FATALIS};
     /** Only ever born from animal hosts (see EmbryoEffect.hostForm); hives carry cocooned animals so they appear naturally. */
-    private static final Caste[] HOSTED = {Caste.PANTHER, Caste.GOAT, Caste.BAT, Caste.WINTERBEAST};
+    private static final Caste[] HOSTED = {Caste.PANTHER, Caste.GOAT, Caste.BAT, Caste.WINTERBEAST, Caste.GORILLA_XENO, Caste.RHINO_XENO, Caste.CROCODILE_XENO, Caste.SCORPION_XENO, Caste.SNAKE_XENO, Caste.MANTIS_XENO, Caste.SAURIAN_XENO, Caste.LIONWORM_XENO, Caste.JOCKEY_XENO,
+            Caste.DOLPHIN_XENO, Caste.SHARK_XENO, Caste.BELUGA_XENO, Caste.SWIMMER_XENO, Caste.GIANT_BURSTER, Caste.MULTIBURSTER, Caste.BODYBURSTER, Caste.QUEEN_BURSTER, Caste.ABOMINATION, Caste.LARVA, Caste.EARTH_XENO, Caste.NECROMORPH_XENO, Caste.TERMINATOR_XENO};   // host-born (see EmbryoEffect.hostForm); not placed in hives
     private static final net.minecraft.world.entity.EntityType<?>[] ANIMALS = {net.minecraft.world.entity.EntityType.COW, net.minecraft.world.entity.EntityType.OCELOT, net.minecraft.world.entity.EntityType.GOAT, net.minecraft.world.entity.EntityType.POLAR_BEAR, net.minecraft.world.entity.EntityType.BAT, net.minecraft.world.entity.EntityType.WOLF};
     private static final Caste[] RED = {Caste.RED_WARRIOR, Caste.RED_WARRIOR, Caste.RED_DRONE, Caste.RED_DRONE, Caste.RED_DRONE};
     private static final Caste[] KSER = {Caste.K_DRONE, Caste.K_DRONE, Caste.K_DRONE, Caste.K_WARRIOR, Caste.K_WARRIOR, Caste.K_PRAETORIAN, Caste.K_FATALIS};

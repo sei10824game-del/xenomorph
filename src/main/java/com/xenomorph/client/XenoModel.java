@@ -108,6 +108,28 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case FROZEN_XENO -> { p.style = 3; p.horns = 5; p.domeL = 9; p.domeW = 5.6f; p.torso = 1.4f; p.limb = 1.3f; p.armK = 1.05f; p.plates = 2; p.carapace = true; p.spines = 11; p.ribs = 2; p.elbow = true; p.knee = true; p.tailEnd = 2; p.cheek = true; p.clawL = 1.1f; }   // Mutant Frozen Zombie: icicle-spiked back
             case JUNGLE_XENO -> { p.style = 2; p.fan = 11; p.domeL = 12; p.domeW = 4.4f; p.torso = 1.25f; p.limb = 1.2f; p.armK = 1.4f; p.dreads = true; p.mand = true; p.spines = 6; p.ribs = 4; p.tailEnd = 3; p.tailSegs = 10; p.clawL = 1.5f; p.elbow = true; p.horns = 3; }   // Mutant Jungle Zombie: vine-draped
             case CHIMERA_QUEEN -> { p.style = 3; p.horns = 7; p.fan = 15; p.domeL = 17; p.domeH = 5.6f; p.domeW = 5.4f; p.torso = 1.35f; p.limb = 1.2f; p.armK = 1.3f; p.plates = 2; p.carapace = true; p.spines = 12; p.ribs = 6; p.elbow = true; p.knee = true; p.dreads = true; p.mand = true; p.cheek = true; p.sac = true; p.tailEnd = 3; p.tailT = 1.15f; p.clawL = 1.5f; }   // every mutant trait on one queen
+            case GORILLA_XENO -> { p.style = 5; p.torso = 1.45f; p.limb = 1.3f; p.armK = 1.55f; p.legK = 0.8f; p.neckK = 0.5f; p.plates = 1; p.spines = 4; p.ribs = 3; p.domeL = 8; p.domeW = 6f; p.domeH = 5.4f; p.tailEnd = 0; p.tailSegs = 3; }
+            case RHINO_XENO -> { p.style = 3; p.horns = 1; p.carapace = true; p.plates = 2; p.torso = 1.4f; p.limb = 1.3f; p.domeL = 7; p.domeW = 6.4f; p.domeH = 5.8f; p.spines = 3; p.tubeLen = 0; p.tailEnd = 1; }
+            case CROCODILE_XENO -> { p.domeL = 11; p.domeW = 5f; p.domeH = 2.8f; p.mand = true; p.cheek = true; p.limb = 0.75f; p.torso = 1.1f; p.tailSegs = 9; p.tailT = 1.35f; p.spines = 9; p.ribs = 1; p.tubeLen = 0; }
+            case SCORPION_XENO -> { p.tailEnd = 1; p.tailT = 1.3f; p.tailSegs = 7; p.limb = 0.85f; p.clawL = 1.6f; p.armK = 1.4f; p.spines = 5; p.carapace = true; p.plates = 1; p.tubeLen = 0; }
+            case SNAKE_XENO -> { p.limb = 0.5f; p.torso = 0.75f; p.tailSegs = 12; p.tailT = 0.9f; p.domeL = 11; p.domeW = 3.2f; p.mand = true; p.ribs = 0; p.spines = 2; p.tubeLen = 0; p.clawL = 0.6f; }
+            case MANTIS_XENO -> { p.blade = true; p.elbow = true; p.limb = 0.8f; p.armK = 1.5f; p.clawL = 1.8f; p.neckK = 1.45f; p.upright = 0.15f; p.ribs = 5; p.spines = 2; }
+            case SAURIAN_XENO -> { p.domeL = 12; p.mand = true; p.cheek = true; p.limb = 1.0f; p.torso = 0.95f; p.tailSegs = 9; p.tailEnd = 2; p.spines = 6; p.upright = 0.1f; }
+            case LIONWORM_XENO -> { p.torso = 1.0f; p.limb = 0.8f; p.tailSegs = 12; p.tailT = 1.5f; p.domeL = 9; p.mand = true; p.cheek = true; p.spines = 8; p.ribs = 2; p.tubeLen = 0; p.dreads = true; }
+            case JOCKEY_XENO -> { p.limb = 0.75f; p.torso = 0.8f; p.clawL = 1.5f; p.armK = 1.3f; p.rider = true; p.tubeLen = 0; p.spines = 3; }
+            case DOLPHIN_XENO -> { p.limb = 0.6f; p.torso = 1.0f; p.domeL = 13; p.domeW = 3.4f; p.mand = true; p.tailSegs = 7; p.tailEnd = 1; p.tubeLen = 0; p.spines = 3; }
+            case SHARK_XENO -> { p.limb = 0.55f; p.torso = 1.2f; p.domeL = 11; p.domeW = 4.8f; p.mand = true; p.cheek = true; p.tailSegs = 7; p.tailEnd = 2; p.tubeLen = 0; p.spines = 6; }
+            case BELUGA_XENO -> { p.limb = 0.6f; p.torso = 1.25f; p.domeL = 9; p.domeW = 5.4f; p.domeH = 5.5f; p.tailSegs = 6; p.tubeLen = 0; p.spines = 2; }
+            case SWIMMER_XENO -> { p.limb = 0.55f; p.torso = 0.85f; p.tailSegs = 8; p.tailT = 1.1f; p.domeL = 12; p.tubeLen = 0; p.spines = 4; p.ribs = 2; }
+            case GIANT_BURSTER -> { p.limb = 0.8f; p.torso = 1.3f; p.domeL = 7; p.tubeLen = 0; p.ribs = 1; p.spines = 2; p.bare = true; p.tailSegs = 5; }
+            case MULTIBURSTER -> { p.limb = 0.7f; p.torso = 0.95f; p.tubeLen = 0; p.ribs = 4; p.spines = 5; p.sac = true; p.tailSegs = 5; }
+            case BODYBURSTER -> { p.limb = 0.75f; p.torso = 1.05f; p.tubeLen = 0; p.ribs = 5; p.spines = 3; p.glowHead = true; p.style = 4; p.sac = true; }
+            case QUEEN_BURSTER -> { p.style = 2; p.fan = 11; p.limb = 0.85f; p.torso = 1.2f; p.domeL = 9; p.tubeLen = 0; p.ribs = 2; p.spines = 4; p.sac = true; p.tailSegs = 6; }
+            case ABOMINATION -> { p.dreads = true; p.mand = true; p.cheek = true; p.brow = true; p.torso = 1.4f; p.limb = 1.25f; p.armK = 1.2f; p.plates = 1; p.spines = 6; p.ribs = 5; p.clawL = 1.4f; p.domeL = 9; p.domeW = 5.6f; p.domeH = 5.4f; p.tailEnd = 3; }
+            case LARVA -> { p.limb = 0.5f; p.torso = 0.65f; p.tailSegs = 4; p.tubeLen = 0; p.domeL = 7; p.ribs = 2; p.spines = 0; p.clawL = 0.7f; }
+            case EARTH_XENO -> { p.ribs = 5; p.spines = 3; p.limb = 0.95f; p.torso = 0.9f; p.clawL = 1.3f; p.cheek = true; }
+            case NECROMORPH_XENO -> { p.blade = true; p.elbow = true; p.knee = true; p.limb = 0.9f; p.torso = 1.0f; p.armK = 1.45f; p.ribs = 7; p.spines = 8; p.bare = true; p.clawL = 1.7f; p.tubeLen = 0; }
+            case TERMINATOR_XENO -> { p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.25f; p.limb = 1.15f; p.ribs = 4; p.spines = 3; p.cheek = true; p.brow = true; p.clawL = 1.3f; }
             case DRONE -> { p.spines = 1; }
             case RED_DRONE -> { p.spines = 5; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.ribs = 4; p.limb = 1.05f; }
             case RED_WARRIOR -> { p.style = 1; p.spines = 6; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.elbow = true; p.ribs = 5; p.limb = 1.1f; }

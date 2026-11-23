@@ -57,11 +57,17 @@ public class XenoEntity extends Monster {
         super(type, level);
         this.caste = caste;
         this.xpReward = (int) (caste.hp / 4);
+        if (caste.aquatic()) {                                   // swimmers: water navigation and smooth swim controls
+            this.navigation = new net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation(this, level);
+            this.moveControl = new net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl(this, 85, 10, 0.1f, 0.5f, false);
+            this.lookControl = new net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl(this, 10);
+            setPathfindingMalus(net.minecraft.world.level.pathfinder.BlockPathTypes.WATER, 0f);
+        }
         if (XenoConfig.hp() != 1.0) { var mh = getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH); if (mh != null) { mh.setBaseValue(caste.hp * XenoConfig.hp()); setHealth((float) (caste.hp * XenoConfig.hp())); } }   // difficulty preset
         this.setMaxUpStep(1.1f);
         if (caste == Caste.WORKER) goalSelector.addGoal(4, new WorkerResinGoal(this));   // here, not registerGoals(): caste is still unset while the super constructor runs
         if (getNavigation() instanceof net.minecraft.world.entity.ai.navigation.GroundPathNavigation gn) gn.setCanOpenDoors(true);
-        goalSelector.addGoal(2, caste.weight() >= 1.4f ? new net.minecraft.world.entity.ai.goal.BreakDoorGoal(this, 40, d -> true) : new net.minecraft.world.entity.ai.goal.OpenDoorGoal(this, false));   // heavy castes smash wooden doors, the rest open them
+        if (!caste.aquatic()) goalSelector.addGoal(2, caste.weight() >= 1.4f ? new net.minecraft.world.entity.ai.goal.BreakDoorGoal(this, 40, d -> true) : new net.minecraft.world.entity.ai.goal.OpenDoorGoal(this, false));   // heavy castes smash wooden doors, the rest open them
         if (caste.stance == 2) entityData.set(BIPED, true);
         if (caste.hp >= 250) boss = new net.minecraft.server.level.ServerBossEvent(getDisplayName(), caste == Caste.TRUE_KING ? net.minecraft.world.BossEvent.BossBarColor.PURPLE : caste.red() ? net.minecraft.world.BossEvent.BossBarColor.RED : net.minecraft.world.BossEvent.BossBarColor.WHITE, net.minecraft.world.BossEvent.BossBarOverlay.PROGRESS);
         if (caste == Caste.KING)                 // artificial queen-killer: every queen is prey number one
@@ -113,6 +119,12 @@ public class XenoEntity extends Monster {
     private net.minecraft.server.level.ServerBossEvent boss;   // only for the giants (hp >= 250)
     private boolean landed;
     @Override protected net.minecraft.world.entity.ai.navigation.PathNavigation createNavigation(Level l) { return new net.minecraft.world.entity.ai.navigation.WallClimberNavigation(this, l); }
+    @Override public void travel(Vec3 v) {
+        if (caste != null && caste.aquatic() && isEffectiveAi() && isInWater()) { moveRelative(0.02f + getSpeed() * 0.5f, v); move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement()); setDeltaMovement(getDeltaMovement().scale(0.9)); if (getTarget() == null) setDeltaMovement(getDeltaMovement().add(0, -0.005, 0)); }
+        else super.travel(v);
+    }
+    @Override public boolean canBreatheUnderwater() { return caste != null && caste.aquatic() || super.canBreatheUnderwater(); }
+    @Override public boolean isPushedByFluid() { return !(caste != null && caste.aquatic()); }
     @Override public boolean onClimbable() { return isClimbing(); }
     @Override public boolean isImmobile() { return isHanging() || super.isImmobile(); }
     @Override public boolean causeFallDamage(float f, float m, DamageSource s) { return false; }
@@ -303,6 +315,7 @@ public class XenoEntity extends Monster {
             }
         }
         if (shellTicks > 0) shellTicks--;
+        if (caste.aquatic() && !isInWaterOrBubble() && tickCount % 20 == 0) hurt(damageSources().dryOut(), 1f);   // out of water they dry out
         if (caste == Caste.BLAZE_XENO) { float max = 90; if (shieldHp < max && ++shieldIdle > 120 && tickCount % 10 == 0) shieldHp = Math.min(max, shieldHp + 6); }
         if (cloneTicks > 0 && --cloneTicks == 0) { if (level() instanceof ServerLevel cl) cl.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 25, 0.3, 0.8, 0.3, 0.3); discard(); return; }
         if (owner != null && getTarget() == null && attack() == Attack.NONE && tickCount % 10 == 0 && level() instanceof ServerLevel os && os.getPlayerByUUID(owner) != null && distanceToSqr(os.getPlayerByUUID(owner)) > 36) {
