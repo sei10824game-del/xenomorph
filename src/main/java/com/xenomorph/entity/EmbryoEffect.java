@@ -61,6 +61,8 @@ public class EmbryoEffect extends MobEffect {
         if (h instanceof net.minecraft.world.entity.animal.horse.Llama) return Caste.BODYBURSTER;
         if (h instanceof net.minecraft.world.entity.animal.IronGolem) return r0.nextBoolean() ? Caste.TERMINATOR_XENO : Caste.GIANT_BURSTER;
         if (h instanceof net.minecraft.world.entity.monster.ZombieVillager) return Caste.NECROMORPH_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Phantom) return Caste.PHANTOM_XENO;
+        if (h instanceof net.minecraft.world.entity.monster.Vindicator || h instanceof net.minecraft.world.entity.monster.Pillager) return r0.nextBoolean() ? Caste.TARKATAN_XENO : Caste.XENOBORG;
         if (h instanceof net.minecraft.world.entity.npc.Villager && r0.nextInt(5) == 0) return Caste.EARTH_XENO;                   // human hosts occasionally breed the sleek "Earth" strain
         if (h.getMaxHealth() >= 20 && r0.nextInt(24) == 0) return Caste.QUEEN_BURSTER;
         var rr = h.getRandom();                                                                                 // mutant lineage: the host's mutant counterpart, one birth in six

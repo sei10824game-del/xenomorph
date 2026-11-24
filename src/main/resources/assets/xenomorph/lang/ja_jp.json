@@ -342,5 +342,11 @@
  "item.xenomorph.octo_facehugger_spawn_egg": "オクト・フェイスハガー スポーンエッグ",
  "item.xenomorph.flying_facehugger_spawn_egg": "飛行フェイスハガー スポーンエッグ",
  "entity.xenomorph.spider_pig": "スパイダーピッグ",
- "item.xenomorph.spider_pig_spawn_egg": "スパイダーピッグ スポーンエッグ"
+ "item.xenomorph.spider_pig_spawn_egg": "スパイダーピッグ スポーンエッグ",
+ "entity.xenomorph.xenoborg": "ゼノボーグ",
+ "item.xenomorph.xenoborg_spawn_egg": "ゼノボーグ スポーンエッグ",
+ "entity.xenomorph.tarkatan_xeno": "タルカタン・ゼノモーフ",
+ "item.xenomorph.tarkatan_xeno_spawn_egg": "タルカタン・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.phantom_xeno": "ファントム・ゼノモーフ",
+ "item.xenomorph.phantom_xeno_spawn_egg": "ファントム・ゼノモーフ スポーンエッグ"
 }

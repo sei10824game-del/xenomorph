@@ -142,7 +142,11 @@ public enum Caste {
     LARVA ("larva", 12, 3, 0.3f, 0.55f, 0, 0, false, false, false, EnumSet.of(BITE, CLAW_L, CLAW_R)),
     EARTH_XENO ("earth_xeno", 55, 8, 0.38f, 1.15f, 1, 1, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, TAIL_STAB, TAIL_SWEEP, BITE, POUNCE)),
     NECROMORPH_XENO ("necromorph_xeno", 120, 15, 0.34f, 1.7f, 1, 0, false, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BLADE_FLURRY, TAIL_STAB, BITE, GRAB, FLAIL)),
-    TERMINATOR_XENO ("terminator_xeno", 180, 18, 0.3f, 1.9f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, FIREARM, SLAM, BITE, TAIL_STAB));
+    TERMINATOR_XENO ("terminator_xeno", 180, 18, 0.3f, 1.9f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, FIREARM, SLAM, BITE, TAIL_STAB)),
+    // --- host-derived, aquatic, burster, Alien: Earth and crossover castes
+    XENOBORG ("xenoborg", 190, 16, 0.3f, 2.0f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, FIREARM, BLADE_FLURRY, SLAM, BITE)),
+    TARKATAN_XENO ("tarkatan_xeno", 150, 15, 0.4f, 1.8f, 1, 1, true, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BLADE_FLURRY, MULTI_STAB, LEAP_SLASH, BITE, TAIL_STAB)),
+    PHANTOM_XENO ("phantom_xeno", 120, 13, 0.42f, 1.8f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SHADOW_STRIKE, LEAP_SLASH, POUNCE, BITE, TAIL_SWEEP));
 
     public final String id;
     public final float hp, dmg, speed, scale;

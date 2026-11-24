@@ -342,5 +342,11 @@
  "item.xenomorph.octo_facehugger_spawn_egg": "Octo-Facehugger Spawn Egg",
  "item.xenomorph.flying_facehugger_spawn_egg": "Flying Facehugger Spawn Egg",
  "entity.xenomorph.spider_pig": "Spider Pig",
- "item.xenomorph.spider_pig_spawn_egg": "Spider Pig Spawn Egg"
+ "item.xenomorph.spider_pig_spawn_egg": "Spider Pig Spawn Egg",
+ "entity.xenomorph.xenoborg": "Xenoborg",
+ "item.xenomorph.xenoborg_spawn_egg": "Xenoborg Spawn Egg",
+ "entity.xenomorph.tarkatan_xeno": "Tarkatan Xenomorph",
+ "item.xenomorph.tarkatan_xeno_spawn_egg": "Tarkatan Xenomorph Spawn Egg",
+ "entity.xenomorph.phantom_xeno": "Phantom Xenomorph",
+ "item.xenomorph.phantom_xeno_spawn_egg": "Phantom Xenomorph Spawn Egg"
 }

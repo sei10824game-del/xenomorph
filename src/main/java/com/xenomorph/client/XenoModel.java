@@ -130,6 +130,9 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case EARTH_XENO -> { p.ribs = 5; p.spines = 3; p.limb = 0.95f; p.torso = 0.9f; p.clawL = 1.3f; p.cheek = true; }
             case NECROMORPH_XENO -> { p.blade = true; p.elbow = true; p.knee = true; p.limb = 0.9f; p.torso = 1.0f; p.armK = 1.45f; p.ribs = 7; p.spines = 8; p.bare = true; p.clawL = 1.7f; p.tubeLen = 0; }
             case TERMINATOR_XENO -> { p.carapace = true; p.plates = 2; p.elbow = true; p.knee = true; p.torso = 1.25f; p.limb = 1.15f; p.ribs = 4; p.spines = 3; p.cheek = true; p.brow = true; p.clawL = 1.3f; }
+            case XENOBORG -> { p.carapace = true; p.plates = 2; p.blade = true; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.15f; p.armK = 1.2f; p.ribs = 4; p.spines = 4; p.cheek = true; p.brow = true; p.clawL = 1.4f; }
+            case TARKATAN_XENO -> { p.blade = true; p.elbow = true; p.knee = true; p.limb = 0.9f; p.armK = 1.5f; p.clawL = 1.8f; p.torso = 1.05f; p.ribs = 6; p.spines = 7; p.mand = true; p.domeL = 11; }
+            case PHANTOM_XENO -> { p.limb = 0.8f; p.torso = 0.9f; p.armK = 1.35f; p.neckK = 1.3f; p.upright = 0.15f; p.domeL = 16; p.domeW = 3.4f; p.tailSegs = 10; p.tailEnd = 3; p.spines = 5; p.ribs = 6; p.clawL = 1.5f; p.horns = 2; }
             case DRONE -> { p.spines = 1; }
             case RED_DRONE -> { p.spines = 5; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.ribs = 4; p.limb = 1.05f; }
             case RED_WARRIOR -> { p.style = 1; p.spines = 6; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.elbow = true; p.ribs = 5; p.limb = 1.1f; }
@@ -587,6 +590,14 @@ public class XenoModel extends EntityModel<XenoEntity> {
     }
 
 
+    /** Swimming: whole-body undulation, tail beating, legs and arms tucked against the body. */
+    private void swim(XenoEntity e, float age) {
+        float w = Mth.sin(age * 0.3f), sp = Mth.clamp((float) e.getDeltaMovement().horizontalDistance() * 6f, 0.25f, 1f);
+        hips.yRot += 0.22f * w * sp; body.yRot -= 0.18f * w * sp; chest.yRot -= 0.25f * w * sp; head.yRot -= 0.15f * w * sp;
+        for (int i = 0; i < TAIL; i++) tail[i].yRot += 0.42f * Mth.sin(age * 0.3f - i * 0.7f) * (0.5f + sp);
+        for (int s = 0; s < 2; s++) { thigh[s].xRot = -0.9f; shin[s].xRot = 1.7f; foot[s].xRot = -0.6f; arm[s].xRot = 0.55f + 0.15f * w; fore[s].xRot = -0.2f; }
+    }
+
     /** Individual and status looks: colour drift per entity, veteran claws, freezing / poison / wither tints, and the face's mood. */
     private void individual(XenoEntity e, float age) {
         float sd = e.seed(), vet = e.veteran();
@@ -649,6 +660,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             for (int i = 0; i < TAIL; i++) tail[i].xRot += 0.08f * eased;
         }
         individual(e, age);
+        if (e.caste.aquatic() && e.isInWater()) swim(e, age);
         mutantAnim(e, age, pt);
     }
 
