@@ -146,7 +146,8 @@ public enum Caste {
     // --- host-derived, aquatic, burster, Alien: Earth and crossover castes
     XENOBORG ("xenoborg", 190, 16, 0.3f, 2.0f, 2, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, FIREARM, BLADE_FLURRY, SLAM, BITE)),
     TARKATAN_XENO ("tarkatan_xeno", 150, 15, 0.4f, 1.8f, 1, 1, true, true, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, BLADE_FLURRY, MULTI_STAB, LEAP_SLASH, BITE, TAIL_STAB)),
-    PHANTOM_XENO ("phantom_xeno", 120, 13, 0.42f, 1.8f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SHADOW_STRIKE, LEAP_SLASH, POUNCE, BITE, TAIL_SWEEP));
+    PHANTOM_XENO ("phantom_xeno", 120, 13, 0.42f, 1.8f, 1, 2, true, false, false, EnumSet.of(CLAW_L, CLAW_R, DOUBLE_CLAW, SHADOW_STRIKE, LEAP_SLASH, POUNCE, BITE, TAIL_SWEEP)),
+    GODZILLAMORPH("godzillamorph", 1000, 38, .22f, 4.5f, 2, 3, true, false, false, EnumSet.of(CLAW_L, CLAW_R, BITE, STOMP, SLAM, TAIL_SWEEP, ROAR_BLAST, ACID_BEAM));
 
     public final String id;
     public final float hp, dmg, speed, scale;
@@ -165,7 +166,7 @@ public enum Caste {
     /** Body mass feel: >1 = heavy (bigger knockback, slower gait, impact shake); <1 = light. */
     public float weight() {
         return switch (this) {
-            case CHIMERA_QUEEN -> 2.1f; case HULK_XENO, HUSK_XENO -> 1.9f; case HOG_XENO -> 1.7f; case FROZEN_XENO, JUNGLE_XENO, BLAZE_XENO -> 1.4f; case SHULKER_XENO -> 1.5f; case WITHER_XENO -> 0.9f; case BLAST_XENO -> 1.3f; case VOID_XENO -> 1.2f; case FROST_XENO -> 1.2f; case BONE_XENO -> 1.0f; case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case SYMBIOTIC -> 1.8f; case ULTRAMORPH -> 1.5f; case THRASHER -> 2.0f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
+            case GODZILLAMORPH -> 3.2f; case CHIMERA_QUEEN -> 2.1f; case HULK_XENO, HUSK_XENO -> 1.9f; case HOG_XENO -> 1.7f; case FROZEN_XENO, JUNGLE_XENO, BLAZE_XENO -> 1.4f; case SHULKER_XENO -> 1.5f; case WITHER_XENO -> 0.9f; case BLAST_XENO -> 1.3f; case VOID_XENO -> 1.2f; case FROST_XENO -> 1.2f; case BONE_XENO -> 1.0f; case QUEEN_MOTHER -> 2f; case TRUE_KING -> 2.3f; case SYMBIOTIC -> 1.8f; case ULTRAMORPH -> 1.5f; case THRASHER -> 2.0f; case ALPHA -> 1.4f; case TITAN -> 2.6f; case ARMORED -> 1.5f; case TUSKED -> 1.3f; case WINTERBEAST -> 1.6f; case DOG_QUEEN -> 1.3f; case PREDALIEN_QUEEN -> 1.7f; case SPIKER -> 1.6f; case WARDEN, PALATINE -> 1.5f; case K_QUEEN -> 1.5f; case CLONE_QUEEN -> 1.4f; case K_PRAETORIAN -> 1.35f; case K_FATALIS -> 1.6f; case K_WARRIOR -> 1.3f; case WHITE_HYBRID -> 0.9f; case RED_QUEEN_MOTHER -> 1.9f; case RED_WARRIOR, RED_DRONE -> 1.05f; case BERSERKER -> 1.3f; case WHITE_KING -> 1.9f; case PATHOGEN_BRUTE -> 1.8f; case CRUSHER, BRUTE -> 1.7f; case KING, EMPRESS -> 1.6f; case BULL_ALIEN, NEWBORN -> 1.5f;
             case QUEEN, CHARGER -> 1.4f; case PRAETORIAN, MATRIARCH, PATHOGEN_QUEEN -> 1.3f; case BOILER -> 1.2f;
             case RUNNER, PATHOGEN_RUNNER -> 0.7f; case WORKER -> 0.6f; case IMP -> 0.7f; case WRAITH -> 0.8f; case PANTHER -> 0.75f; case BAT -> 0.65f; case SNATCHER -> 0.75f; case EXPLODER -> 0.85f; case DEACON -> 0.8f; case LURKER, PROWLER, STALKER -> 0.85f; case NEOMORPH, BURSTER -> 0.9f; default -> 1f; };
     }
@@ -173,22 +174,22 @@ public enum Caste {
     public float ferocity() {
         return switch (this) {
             case PREDALIEN, BERSERKER, RED_QUEEN_MOTHER -> 1f; case TRUE_KING, K_FATALIS -> 0.9f; case K_PRAETORIAN, K_QUEEN -> 0.6f; case K_DRONE -> 0.55f; case K_WARRIOR, WHITE_HYBRID -> 0.65f; case RED_WARRIOR, RED_DRONE -> 0.85f; case RAVAGER, NEOMORPH -> 0.9f; case RUNNER, PATHOGEN_RUNNER, NEWBORN -> 0.8f; case BULL_ALIEN, CHARGER -> 0.7f;
-            case CHIMERA_QUEEN -> 0.9f; case STALKER, PROWLER, DEACON, KING, BONE_XENO, FROST_XENO -> 0.6f; case VOID_XENO, HULK_XENO, WITHER_XENO, HOG_XENO -> 0.8f; case JUNGLE_XENO, HUSK_XENO -> 0.7f; case BLAST_XENO -> 0.7f; case BRUTE, QUEEN, PATHOGEN_BRUTE -> 0.5f; case QUEEN_MOTHER -> 0.45f; default -> 0.25f; };
+            case GODZILLAMORPH -> 1f; case CHIMERA_QUEEN -> 0.9f; case STALKER, PROWLER, DEACON, KING, BONE_XENO, FROST_XENO -> 0.6f; case VOID_XENO, HULK_XENO, WITHER_XENO, HOG_XENO -> 0.8f; case JUNGLE_XENO, HUSK_XENO -> 0.7f; case BLAST_XENO -> 0.7f; case BRUTE, QUEEN, PATHOGEN_BRUTE -> 0.5f; case QUEEN_MOTHER -> 0.45f; default -> 0.25f; };
     }
     public boolean red() { return id.startsWith("red_"); }
     public boolean kSeries() { return id.startsWith("k_"); }
     /** Roams cave biomes on its own instead of living in a hive. */
-    public boolean wild() { return this == CLONE_XENOMORPH || this == WHITE_HYBRID || this == WHITE_KING || this == NEWBORN || kSeries(); }
+    public boolean wild() { return this == GODZILLAMORPH || this == CLONE_XENOMORPH || this == WHITE_HYBRID || this == WHITE_KING || this == NEWBORN || kSeries(); }
     /** Has an emissive overlay texture <id>_glow.png (pustules, acid pouches, seams...). */
     public boolean glows() {
-        return switch (this) { case CHIMERA_QUEEN, BLAST_XENO, VOID_XENO, FROST_XENO, BONE_XENO, WITHER_XENO, BLAZE_XENO, SHULKER_XENO, HUSK_XENO, HOG_XENO, FROZEN_XENO, JUNGLE_XENO, SPITTER, BOILER, BURSTER, BIOMORPH, IRRADIATED, SCORCHED, TITAN, EXPLODER, HARBINGER, SPIKER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
+        return switch (this) { case GODZILLAMORPH, CHIMERA_QUEEN, BLAST_XENO, VOID_XENO, FROST_XENO, BONE_XENO, WITHER_XENO, BLAZE_XENO, SHULKER_XENO, HUSK_XENO, HOG_XENO, FROZEN_XENO, JUNGLE_XENO, SPITTER, BOILER, BURSTER, BIOMORPH, IRRADIATED, SCORCHED, TITAN, EXPLODER, HARBINGER, SPIKER, K_WARRIOR, K_FATALIS, K_DRONE, K_PRAETORIAN, K_QUEEN, BULL_ALIEN, TRUE_KING, PATHOGEN_RUNNER, PATHOGEN_BLIGHT, PATHOGEN_BRUTE, PATHOGEN_QUEEN, BERSERKER -> true; default -> false; };
     }
     /** The Mutant Monsters / Mutant More lineage (pulsing glow, ambient particles, oversized fists). */
     public boolean mutant() { return ordinal() >= HULK_XENO.ordinal() && ordinal() <= JUNGLE_XENO.ordinal() || this == CHIMERA_QUEEN; }
     /** Voice family: 0 classic hiss, 1 deep rumble, 2 shrill, 3 rattle, 4 whisper, 5 crackle, 6 aquatic clicks, 7 reptile hiss. */
     public int voice() {
         return switch (this) {
-            case HULK_XENO, HUSK_XENO, HOG_XENO, GORILLA_XENO, RHINO_XENO, GIANT_BURSTER, QUEEN_MOTHER, TITAN, TRUE_KING, BRUTE, PATHOGEN_BRUTE, CRUSHER, ABOMINATION, CHIMERA_QUEEN -> 1;
+            case GODZILLAMORPH, HULK_XENO, HUSK_XENO, HOG_XENO, GORILLA_XENO, RHINO_XENO, GIANT_BURSTER, QUEEN_MOTHER, TITAN, TRUE_KING, BRUTE, PATHOGEN_BRUTE, CRUSHER, ABOMINATION, CHIMERA_QUEEN -> 1;
             case RUNNER, PATHOGEN_RUNNER, LARVA, JOCKEY_XENO, SNAKE_XENO, BAT, BURSTER, IMP, WORKER -> 2;
             case BONE_XENO, MANTIS_XENO, SCORPION_XENO, WITHER_XENO, NECROMORPH_XENO, SPIKER -> 3;
             case VOID_XENO, SHULKER_XENO, FROST_XENO, FROZEN_XENO, SIREN, WRAITH -> 4;
@@ -204,5 +205,5 @@ public enum Caste {
     /** Hard, glossy cranium that gets the specular highlight layer. */
     public boolean glossy() { return !(this == NEOMORPH || this == NEWBORN || id.startsWith("pathogen") || this == HARBINGER || this == WHITE_HYBRID || this == WHITE_KING || this == PROTOMORPH); }
     /** Heat-resistant mesoskeleton (Berserker, Warden, Ravager); everything else burns. */
-    public boolean fireproof() { return this == BLAZE_XENO || this == WITHER_XENO || this == BERSERKER || this == WARDEN || this == RAVAGER || this == TRUE_KING || this == SCORCHED || this == TITAN; }
+    public boolean fireproof() { return this == GODZILLAMORPH || this == BLAZE_XENO || this == WITHER_XENO || this == BERSERKER || this == WARDEN || this == RAVAGER || this == TRUE_KING || this == SCORCHED || this == TITAN; }
 }

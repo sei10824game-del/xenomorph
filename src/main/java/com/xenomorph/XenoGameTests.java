@@ -445,4 +445,27 @@ public class XenoGameTests {
         if (!sl.getBlockState(new BlockPos(x0, o.getY() + 1, z0 + 2)).isSolid() && !sl.getBlockState(new BlockPos(x0, o.getY() + 2, z0 + 2)).isSolid()) throw new AssertionError("laboratory has no walls");
         h.succeed();
     }
+
+    /** Godzilla-morph: the acid beam dissolves a stone wall where it lands, and the tail keeps laying facehuggers. */
+    @GameTest(template = "empty", timeoutTicks = 200, batch = "b_godzillamorph")
+    public static void godzillamorph(GameTestHelper h) {
+        floor(h);
+        var sl = h.getLevel(); BlockPos o = h.absolutePos(new BlockPos(2, 2, 4));
+        var vill = h.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(20, 2, 4)); vill.setInvulnerable(true);
+        for (int dz = -3; dz <= 3; dz++) for (int dy = 0; dy < 6; dy++) sl.setBlock(o.offset(14, dy, dz), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
+        int b0 = 0; for (int dz = -3; dz <= 3; dz++) for (int dy = 0; dy < 6; dy++) if (!sl.getBlockState(o.offset(14, dy, dz)).isAir()) b0++;
+        final int before = b0;
+        var g = (XenoEntity) h.spawnWithNoFreeWill(XenomorphMod.XENOS.get(Caste.GODZILLAMORPH).get(), new BlockPos(2, 2, 4));
+        g.setNoAi(true); g.setInvulnerable(true); g.setTarget(vill); g.setYRot(-90); g.yBodyRot = -90; g.yHeadRot = -90;
+        h.runAfterDelay(5, () -> g.startAttack(Attack.ACID_BEAM));
+        h.runAfterDelay(160, () -> {
+            int after = 0; for (int dz = -3; dz <= 3; dz++) for (int dy = 0; dy < 6; dy++) if (!sl.getBlockState(o.offset(14, dy, dz)).isAir()) after++;
+            long huggers = sl.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, new net.minecraft.world.phys.AABB(o).inflate(40), e -> e instanceof com.xenomorph.entity.FacehuggerEntity).size();
+            sl.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, new net.minecraft.world.phys.AABB(o).inflate(40), e -> e instanceof com.xenomorph.entity.FacehuggerEntity).forEach(e -> e.discard());
+            g.discard(); vill.discard();
+            if (after >= before) throw new AssertionError("acid beam melted nothing: " + before + " -> " + after);
+            if (huggers < 1) throw new AssertionError("the tail laid no facehuggers");
+            h.succeed();
+        });
+    }
 }

@@ -61,7 +61,8 @@ public enum Attack {
     ICE_SMASH(34, 22, 0, 4.2),      // freeze solid, then smash the ice
     ICICLE_VOLLEY(38, 16, 5, 26),   // freezing icicle barrage
     THORN_PATCH(30, 12, 3, 18),     // sentry vines burst from the ground
-    GUST(30, 12, 0, 9);             // leaf-blower gust that shoves everything away      // ceiling ambush: drop onto prey (only chosen from the hanging state)
+    GUST(30, 12, 0, 9),
+    ACID_BEAM(90, 34, 5, 44);       // Godzilla-morph: charged acid beam that sweeps and dissolves blocks             // leaf-blower gust that shoves everything away      // ceiling ambush: drop onto prey (only chosen from the hanging state)
 
     public final int duration, hit;
     public final double min, max;

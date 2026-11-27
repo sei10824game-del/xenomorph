@@ -46,7 +46,7 @@ public final class Hive {
     /** Every caste a natural hive can produce, directly or via a cocooned host (Predator -> Predalien, Engineer -> Deacon). */
     public static java.util.Set<Caste> reachable() {
         java.util.EnumSet<Caste> r = java.util.EnumSet.noneOf(Caste.class);
-        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING, Caste.CHIMERA_QUEEN}, MUTANTS, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON, Caste.ULTRAMORPH}}) r.addAll(java.util.Arrays.asList(a));
+        for (Caste[] a : new Caste[][]{QUEENS, NORMAL, HOSTED, PATHOGEN, PROTO, NEO, RED, KSER, CLONES, {Caste.K_QUEEN, Caste.CLONE_QUEEN}, WILD, {Caste.TRUE_KING, Caste.CHIMERA_QUEEN, Caste.GODZILLAMORPH}, MUTANTS, {Caste.RED_QUEEN_MOTHER}, {Caste.KING, Caste.PATHOGEN_QUEEN, Caste.PREDALIEN, Caste.BERSERKER, Caste.DEACON, Caste.ULTRAMORPH}}) r.addAll(java.util.Arrays.asList(a));
         return r;
     }
 

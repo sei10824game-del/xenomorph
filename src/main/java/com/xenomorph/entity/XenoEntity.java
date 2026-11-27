@@ -106,6 +106,7 @@ public class XenoEntity extends Monster {
     public int veteran() { return entityData.get(VET); }
     /** > 0 for the fleeting copies shed by CLONE_SPLIT: frail, drop nothing, vanish when the timer runs out. */
     public int cloneTicks, shellTicks;
+    public float beamYaw, beamPitch;   // Godzilla-morph acid beam aim
     public int shieldLayers() { return caste == Caste.BLAZE_XENO ? (int) Math.ceil(shieldHp / 30f) : 0; }
     private float shieldHp = 90;     // blaze layers: 3 x 30 absorb before the body is touched
     private int shieldIdle, enrage, lastHitTick;
@@ -315,6 +316,14 @@ public class XenoEntity extends Monster {
             }
         }
         if (shellTicks > 0) shellTicks--;
+        if (caste == Caste.GODZILLAMORPH && tickCount % 45 == 0 && level() instanceof ServerLevel gs && gs.getEntitiesOfClass(FacehuggerEntity.class, getBoundingBox().inflate(32)).size() < 14) {   // the tail keeps laying facehuggers
+            FacehuggerEntity f = XenomorphMod.FACEHUGGER.get().create(gs);
+            if (f != null) {
+                Vec3 tail = position().subtract(fwd().scale(caste.scale * 2.4));
+                f.moveTo(tail.x, getY() + 0.4, tail.z, random.nextFloat() * 360, 0); f.setDeltaMovement(-fwd().x * 0.35 + (random.nextDouble() - 0.5) * 0.3, 0.4, -fwd().z * 0.35 + (random.nextDouble() - 0.5) * 0.3);
+                gs.addFreshEntity(f); gs.sendParticles(ParticleTypes.ITEM_SLIME, tail.x, getY() + 0.5, tail.z, 8, 0.3, 0.2, 0.3, 0.05); playSound(SoundEvents.SLIME_SQUISH, 1.5f, 0.6f);
+            }
+        }
         if (caste.aquatic() && !isInWaterOrBubble() && tickCount % 20 == 0) hurt(damageSources().dryOut(), 1f);   // out of water they dry out
         if (caste == Caste.BLAZE_XENO) { float max = 90; if (shieldHp < max && ++shieldIdle > 120 && tickCount % 10 == 0) shieldHp = Math.min(max, shieldHp + 6); }
         if (cloneTicks > 0 && --cloneTicks == 0) { if (level() instanceof ServerLevel cl) cl.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 25, 0.3, 0.8, 0.3, 0.3); discard(); return; }

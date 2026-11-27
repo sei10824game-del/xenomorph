@@ -348,5 +348,7 @@
  "entity.xenomorph.tarkatan_xeno": "タルカタン・ゼノモーフ",
  "item.xenomorph.tarkatan_xeno_spawn_egg": "タルカタン・ゼノモーフ スポーンエッグ",
  "entity.xenomorph.phantom_xeno": "ファントム・ゼノモーフ",
- "item.xenomorph.phantom_xeno_spawn_egg": "ファントム・ゼノモーフ スポーンエッグ"
+ "item.xenomorph.phantom_xeno_spawn_egg": "ファントム・ゼノモーフ スポーンエッグ",
+ "entity.xenomorph.godzillamorph": "ゴジラモーフ",
+ "item.xenomorph.godzillamorph_spawn_egg": "ゴジラモーフ スポーンエッグ"
 }

@@ -29,7 +29,7 @@ final class MutantAttacks {
     static int lock(Attack a) {
         return switch (a) { case SEISMIC -> 70; case HURL -> 160; case ROAR_BLAST -> 400; case BONE_SHOT -> 40; case BONE_BARRAGE -> 160; case RIB_CRUSH -> 80; case BLAST_CHARGE -> 300;
             case MINION_BURST -> 260; case TELE_SMASH -> 140; case THROW_BLOCK -> 60; case CLONE_SPLIT -> 600; case WITHER_SLASH -> 50; case WITHER_BOMB -> 120; case FIRE_VOLLEY -> 100; case SHULKER_STORM -> 160; case SHELL_GUARD -> 500; case QUICKSAND -> 240;
-            case ICE_SMASH -> 120; case ICICLE_VOLLEY -> 120; case THORN_PATCH -> 240; case GUST -> 140; default -> 0; };
+            case ICE_SMASH -> 120; case ICICLE_VOLLEY -> 120; case THORN_PATCH -> 240; case GUST -> 140; case ACID_BEAM -> 320; default -> 0; };
     }
 
     static void run(XenoEntity x, Attack a, int t, LivingEntity target, double r) {
@@ -270,7 +270,45 @@ final class MutantAttacks {
                 }
                 if (t == a.hit) x.playSound(SoundEvents.PHANTOM_FLAP, 2f, 0.4f);
             }
+            case ACID_BEAM -> {
+                Vec3 mouth = x.position().add(x.fwd().scale(x.caste.scale * 0.9)).add(0, x.getBbHeight() * 0.78, 0);
+                if (t < a.hit) {                                                                       // charge: acid gathers at the mouth, dorsal fins flare
+                    if (t == 4) x.playSound(SoundEvents.BEACON_POWER_SELECT, 4f, 0.5f);
+                    sl.sendParticles(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.55f, 1f, 0.2f), 2.5f), mouth.x, mouth.y, mouth.z, 8, 0.5 + t * 0.03, 0.4, 0.5 + t * 0.03, 0);
+                    return;
+                }
+                if (t == a.hit) { x.playSound(SoundEvents.ENDER_DRAGON_GROWL, 5f, 0.5f); if (target != null) { Vec3 d = target.position().add(0, target.getBbHeight() * 0.5, 0).subtract(mouth); x.beamYaw = (float) Math.atan2(d.z, d.x); x.beamPitch = (float) Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)); } else { x.beamYaw = (float) Math.atan2(x.fwd().z, x.fwd().x); x.beamPitch = -0.15f; } }
+                if (t >= a.hit && t < a.hit + 44) {
+                    float sweep = (t - a.hit - 22) * 0.012f, yaw = x.beamYaw + sweep, pit = x.beamPitch - 0.05f * Mth.sin((t - a.hit) * 0.2f);
+                    Vec3 dir = new Vec3(Math.cos(yaw) * Math.cos(pit), Math.sin(pit), Math.sin(yaw) * Math.cos(pit));
+                    var hit = sl.clip(new net.minecraft.world.level.ClipContext(mouth, mouth.add(dir.scale(48)), net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, x));
+                    double len = hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS ? 48 : hit.getLocation().distanceTo(mouth);
+                    var acid = new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.6f, 1f, 0.15f), 2.2f);
+                    for (double d = 1; d < len; d += 1.0) { Vec3 p = mouth.add(dir.scale(d)); sl.sendParticles(acid, p.x, p.y, p.z, 2, 0.15, 0.15, 0.15, 0); if ((int) d % 4 == 0) sl.sendParticles(ParticleTypes.ELECTRIC_SPARK, p.x, p.y, p.z, 1, 0.3, 0.3, 0.3, 0.05); }
+                    for (LivingEntity e : sl.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(mouth, mouth.add(dir.scale(len))).inflate(2.5), e -> e != x && !x.friendly(e) && e.isAlive())) {
+                        Vec3 c = e.position().add(0, e.getBbHeight() * 0.5, 0); double along = c.subtract(mouth).dot(dir);
+                        if (along < 0 || along > len + 1.5 || mouth.add(dir.scale(along)).distanceTo(c) > 1.6 + e.getBbWidth()) continue;
+                        if (t % 4 == 0) { e.hurt(x.damageSources().magic(), (float) (x.caste.dmg * 0.35 * XenoConfig.dmg())); e.setSecondsOnFire(2); e.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 1)); }
+                    }
+                    Vec3 end = mouth.add(dir.scale(len)); sl.sendParticles(ParticleTypes.EXPLOSION, end.x, end.y, end.z, 1, 1, 1, 1, 0);
+                    if (t % 2 == 0) { x.playSound(SoundEvents.GENERIC_BURN, 3f, 0.6f); melt(sl, x, hit.getBlockPos(), 5.5, 38); }
+                }
+            }
             default -> {}
+        }
+    }
+
+    /** Acid dissolves the blocks around the impact: a share of the sphere each pulse, skipping unbreakable blocks; needs mobGriefing and the acidMelt config. */
+    static void melt(ServerLevel sl, XenoEntity x, BlockPos c, double rad, int max) {
+        if (!XenoConfig.ACID_MELT.get() || !sl.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) return;
+        var air = Blocks.AIR.defaultBlockState(); int done = 0, r = (int) Math.ceil(rad);
+        for (int i = 0; i < 160 && done < max; i++) {
+            BlockPos q = c.offset(x.getRandom().nextInt(2 * r + 1) - r, x.getRandom().nextInt(2 * r + 1) - r, x.getRandom().nextInt(2 * r + 1) - r);
+            if (q.distSqr(c) > rad * rad) continue;
+            var st = sl.getBlockState(q);
+            if (st.isAir() || st.getDestroySpeed(sl, q) < 0) continue;
+            sl.setBlock(q, air, 3); done++;
+            if (done % 6 == 0) sl.sendParticles(ParticleTypes.ITEM_SLIME, q.getX() + .5, q.getY() + .5, q.getZ() + .5, 3, 0.3, 0.3, 0.3, 0.05);
         }
     }
 

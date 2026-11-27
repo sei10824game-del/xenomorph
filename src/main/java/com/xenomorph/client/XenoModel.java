@@ -133,6 +133,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
             case XENOBORG -> { p.carapace = true; p.plates = 2; p.blade = true; p.elbow = true; p.knee = true; p.torso = 1.2f; p.limb = 1.15f; p.armK = 1.2f; p.ribs = 4; p.spines = 4; p.cheek = true; p.brow = true; p.clawL = 1.4f; }
             case TARKATAN_XENO -> { p.blade = true; p.elbow = true; p.knee = true; p.limb = 0.9f; p.armK = 1.5f; p.clawL = 1.8f; p.torso = 1.05f; p.ribs = 6; p.spines = 7; p.mand = true; p.domeL = 11; }
             case PHANTOM_XENO -> { p.limb = 0.8f; p.torso = 0.9f; p.armK = 1.35f; p.neckK = 1.3f; p.upright = 0.15f; p.domeL = 16; p.domeW = 3.4f; p.tailSegs = 10; p.tailEnd = 3; p.spines = 5; p.ribs = 6; p.clawL = 1.5f; p.horns = 2; }
+            case GODZILLAMORPH -> { p.domeL = 21; p.domeH = 5.2f; p.domeW = 5.2f; p.limb = 1.45f; p.torso = 1.7f; p.armK = 0.95f; p.legK = 1.35f; p.neckK = 0.8f; p.upright = 0.12f; p.ribs = 7; p.spines = 14; p.plates = 2; p.carapace = true; p.knee = true; p.elbow = true; p.cheek = true; p.brow = true; p.mand = true; p.tubeLen = 26; p.tailSegs = 10; p.tailT = 1.9f; p.tailEnd = 3; p.clawL = 1.6f; }   // Godzilla x Xenomorph
             case DRONE -> { p.spines = 1; }
             case RED_DRONE -> { p.spines = 5; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.ribs = 4; p.limb = 1.05f; }
             case RED_WARRIOR -> { p.style = 1; p.spines = 6; p.clawL = 1.4f; p.cheek = true; p.blade = true; p.elbow = true; p.ribs = 5; p.limb = 1.1f; }
@@ -476,11 +477,12 @@ public class XenoModel extends EntityModel<XenoEntity> {
         for (int i = 1; i < TAIL; i++) {
             float w = Math.max(1.2f, (4.4f - i * taper) * sp.tailT);
             CubeListBuilder cb = box(-w / 2, -w / 2, 0, w, w, 7);
-            add(cb, -w * 0.18f, -w / 2 - 0.5f, 2.2f, w * 0.36f, 0.6f, 1.6f); add(cb, -w * 0.12f, w / 2 - 0.1f, 2.6f, w * 0.24f, 0.5f, 1.2f);   // serrated ridges
+            add(cb, -w * 0.18f, -w / 2 - (c == Caste.GODZILLAMORPH ? 3.4f : 0.5f), 2.2f, w * 0.36f, c == Caste.GODZILLAMORPH ? 3.6f : 0.6f, 1.6f); add(cb, -w * 0.12f, w / 2 - 0.1f, 2.6f, w * 0.24f, 0.5f, 1.2f);   // serrated ridges
             if (i == N - 1) tailEnd(cb, sp.tailEnd, w);
             tp = tp.addOrReplaceChild("tail" + i, cb, PartPose.offset(0, 0, 7));
         }
         mutantParts(c, chest, head, T, L);
+        godzillaFins(c, hips, chest);
         return LayerDefinition.create(mesh, 256, 128);
     }
 
@@ -611,6 +613,22 @@ public class XenoModel extends EntityModel<XenoEntity> {
         if (e.isAggressive() && e.attack() == com.xenomorph.entity.Attack.NONE) {         // hostile face: jaw agape, inner jaw flicking
             float fl = Mth.sin(age * 0.35f + sd * 6) * 0.5f + 0.5f;
             jaw.xRot += 0.14f + 0.1f * fl; inner.z -= 1.4f * fl; head.xRot -= 0.05f;
+        }
+    }
+
+    /** The Godzilla-morph's dorsal plates: tall tiered fins down the back, smaller ones over the hips. */
+    private static void godzillaFins(Caste c, PartDefinition hips, PartDefinition chest) {
+        if (c != Caste.GODZILLAMORPH) return;
+        for (int i = 0; i < 9; i++) {
+            float h = 11 - Math.abs(i - 3) * 1.1f, x = ((i & 1) == 0 ? -1 : 1) * (0.4f + (i % 3) * 0.9f);
+            CubeListBuilder b = box(-3.8f, -h * 0.5f, -0.9f, 7.6f, h * 0.5f, 1.8f);
+            add(b, -2.7f, -h * 0.85f, -0.8f, 5.4f, h * 0.4f, 1.6f); add(b, -1.5f, -h * 1.2f, -0.7f, 3.0f, h * 0.38f, 1.4f);   // base, mid, tip: a stepped triangle
+            chest.addOrReplaceChild("fin" + i, b, PartPose.offsetAndRotation(x, -4 + (i % 2) * 0.6f, 3.4f + (i / 3) * 1.6f, 0.45f + (i % 3) * 0.08f, 0, x * 0.09f));
+        }
+        for (int i = 0; i < 5; i++) {
+            float h = 7 - i * 0.7f;
+            CubeListBuilder b = box(-2f, -h * 0.55f, -0.7f, 4f, h * 0.55f, 1.4f); add(b, -1.2f, -h * 1.0f, -0.6f, 2.4f, h * 0.5f, 1.2f);
+            hips.addOrReplaceChild("hfin" + i, b, PartPose.offsetAndRotation(((i & 1) == 0 ? -1 : 1) * 0.6f, -2.5f, 3 + i * 1.8f, 0.9f + i * 0.08f, 0, 0));
         }
     }
 
@@ -917,7 +935,7 @@ public class XenoModel extends EntityModel<XenoEntity> {
                     for (int s = 0; s < 2; s++) { A[s][0] = kf(t, 0, -0.6f, 10, -1.15f, 26, -0.6f); A[s][1] = (s == 0 ? 1 : -1) * 0.4f; A[s][3] = 1.2f; A[s][5] = aw * 0.8f; }
                     for (int i = 0; i < TAIL; i++) tailPitch[i] -= 0.05f * i * gather;
                 }
-                case SCREECH, ROAR_BLAST -> {
+                case SCREECH, ROAR_BLAST, ACID_BEAM -> {
                     float in = kf(t, 0, 0, 10, 1, 16, 1, 40, 1, 44, 0);
                     float shake = Mth.sin(t * 3.1f) * kf(t, 14, 0, 17, 1, 38, 1, 44, 0);
                     headX += kf(t, 0, 0, 10, -0.95f, 16, -0.9f, 40, -0.85f, 44, 0);
